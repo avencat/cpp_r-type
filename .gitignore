@@ -1,0 +1,5 @@
+# No buffer nor backup
+\#*\#
+*~
+*.idea
+*/CMakeLists.txt
