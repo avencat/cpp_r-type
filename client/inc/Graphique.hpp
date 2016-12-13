@@ -15,6 +15,7 @@ public:
 	bool	refreshFrame();
 	bool	drawObject();
 	bool	closeWindow();
+	bool	isOpen() const;
 
 private:
 	std::list<std::string>		rooms;
@@ -22,6 +23,7 @@ private:
 	int							x;
 	int							y;
 	std::string					title;
+	bool						open;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */
