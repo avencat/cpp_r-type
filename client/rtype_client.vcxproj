@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AComponent.cpp" />
     <ClCompile Include="src\Core.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Graphique.cpp" />
@@ -131,8 +132,10 @@
     <ClCompile Include="src\Room.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Socket.cpp" />
+    <ClCompile Include="src\Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\AComponent.hpp" />
     <ClInclude Include="inc\Core.hpp" />
     <ClInclude Include="inc\Game.hpp" />
     <ClInclude Include="inc\Graphique.hpp" />
@@ -140,6 +143,7 @@
     <ClInclude Include="inc\Room.hpp" />
     <ClInclude Include="inc\Scene.hpp" />
     <ClInclude Include="inc\Socket.hpp" />
+    <ClInclude Include="inc\Sprite.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
