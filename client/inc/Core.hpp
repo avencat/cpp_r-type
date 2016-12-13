@@ -7,7 +7,7 @@
 class Core
 {
 public:
-	Core(const int &x = 1280, const int &y = 720, const std::string &title = "Such a great Rtype !");
+	Core(const int &x = 1280, const int &y = 720, const std::string &title = "Such a great Rtype!");
 	virtual ~Core();
 
 	const bool	isUp() const;

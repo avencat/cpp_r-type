@@ -17,7 +17,7 @@ public:
 
 private:
 	std::string				name;
-	std::list<AComponent &>	components;
+	std::list<AComponent>	components;
 	std::pair<int, int>		pos;
 };
 

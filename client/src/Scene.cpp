@@ -16,7 +16,7 @@ bool Scene::addObject(const Object &obj)
 
 bool Scene::deleteObject(const Object &obj)
 {
-	for (std::list<const Object &>::const_iterator i = objects.begin(); i != objects.end(); i++)
+	for (std::list<Object>::const_iterator i = objects.begin(); i != objects.end(); i++)
 	{
 		if ((*i).getName() == obj.getName()) {
 			this->objects.erase(i);

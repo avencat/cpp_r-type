@@ -14,7 +14,7 @@ public:
 	bool	updateObject(const Object &);
 
 private:
-	std::list<const Object&>	objects;
+	std::list<Object>	objects;
 };
 
 #endif /* !SCENE_HPP_ */

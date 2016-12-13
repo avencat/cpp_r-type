@@ -8,7 +8,7 @@ Object::~Object()
 {
 }
 
-const std::string & Object::getName() const
+const std::string &Object::getName() const
 {
 	return (this->name);
 }

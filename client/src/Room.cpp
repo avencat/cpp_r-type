@@ -8,9 +8,9 @@ Room::~Room()
 {
 }
 
-std::vector<std::string&> Room::roomList()
+std::vector<std::string> Room::roomList()
 {
-	return std::vector<std::string&>();
+	return std::vector<std::string>();
 }
 
 bool Room::createRoom()
@@ -18,9 +18,9 @@ bool Room::createRoom()
 	return false;
 }
 
-std::vector<std::string&> Room::refreshRoomList()
+std::vector<std::string> Room::refreshRoomList()
 {
-	return std::vector<std::string&>();
+	return std::vector<std::string>();
 }
 
 bool Room::joinRoom(std::string &roomName)

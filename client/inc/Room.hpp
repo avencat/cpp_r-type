@@ -10,9 +10,9 @@ public:
 	Room();
 	virtual ~Room();
 
-	std::vector<std::string &>	roomList();
+	std::vector<std::string>	roomList();
 	bool						createRoom();
-	std::vector<std::string &>	refreshRoomList();
+	std::vector<std::string>	refreshRoomList();
 	bool						joinRoom(std::string &);
 	bool						leaveRoom();
 

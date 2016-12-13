@@ -17,7 +17,7 @@ public:
 	bool	closeWindow();
 
 private:
-	std::list<std::string &>	rooms;
+	std::list<std::string>		rooms;
 	sf::RenderWindow			window;
 	int							x;
 	int							y;
