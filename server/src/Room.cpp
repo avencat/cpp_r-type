@@ -5,21 +5,55 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Wed Dec 14 22:30:29 2016 Maxime BOUCHER
+// Last update Thu Dec 15 15:52:19 2016 Maxime BOUCHER
 //
 
+#include <unistd.h>
 #include "../inc/Room.hpp"
+
+Room	*Room::me = NULL;
+
+void	Room::setLevel(const int lvl)
+{
+  level = lvl;
+}
 
 Room::Room()
 {
-  Thread	thread;
   me = this;
-  thread.createThread(me);
+  this->thread.createThread(me);
 }
 Room::~Room(){}
 
 void	*Room::startThread(void *data)
 {
-  std::cout << "thread started" << std::endl;
+  me->loop();
   return NULL;
+}
+
+int	Room::loop()
+{
+  this->thread = me->thread;
+  thread.trylockLoop();
+  while (thread.trylockLoop() != 0)
+}
+int	Room::lockLock()
+{
+  return (thread.lockLock());
+}
+
+int	Room::unlockLock()
+{
+  return (thread.unlockLock());
+}
+
+int	Room::endLoop()
+{
+  std::cout << "endloop" << std::endl;
+  return (thread.endLoop());
+}
+
+void	Room::join()
+{
+  thread.join();
 }

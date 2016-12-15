@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:23 2016 Maxime BOUCHER
-// Last update Wed Dec 14 22:31:34 2016 Maxime BOUCHER
+// Last update Thu Dec 15 15:44:08 2016 Maxime BOUCHER
 //
 
 #ifndef ROOM_HPP_
@@ -20,19 +20,25 @@ class		Room
 private:
   //std::list <Socket>	player;
   //std::list <Socket>	viewer;
-  Room			*me;
+  static Room			*me;
   int			id;
   int			state;
   int			level;
   std::string		nameBestScore;
   int			highScore;
-  pthread_t		thread;
+  Thread		thread;
 
 public:
   Room();
   ~Room();
   int			getNbPlayer();
-  static void			*startThread(void *data);
+  static void		*startThread(void *data);
+  int			unlockLock();
+  int			lockLock();
+  int			endLoop();
+  void			join();
+  int			loop();
+  void			setLevel(const int);
 };
 
 #endif /* !ROOM_HPP_ */

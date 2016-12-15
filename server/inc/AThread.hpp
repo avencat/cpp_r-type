@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:02 2016 Maxime BOUCHER
-// Last update Wed Dec 14 22:07:59 2016 Maxime BOUCHER
+// Last update Thu Dec 15 14:57:08 2016 Maxime BOUCHER
 //
 
 #ifndef ATHREAD_HPP_
