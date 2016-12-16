@@ -3,6 +3,7 @@
 
 # include <SFML/Network.hpp>
 # include <string>
+# include "RtypeProtocol.hh"
 
 class Socket
 {
@@ -10,14 +11,15 @@ public:
 	Socket();
 	virtual ~Socket();
 
-	bool	connectServ(const unsigned short &port, const std::string &ip);
+	bool	connectServ(const std::string &ip, const std::string &_username);
 	bool	closeConnection();
 	bool	getStatus() const;
 
 private:
 	unsigned short	port;
 	bool			status;
-	sf::UdpSocket	socket;
+	sf::UdpSocket	sendSocket;
+	sf::UdpSocket	receiveSocket;
 	sf::IpAddress	ip;
 };
 

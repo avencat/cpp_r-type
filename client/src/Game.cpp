@@ -1,4 +1,4 @@
-#include "..\inc\Game.hpp"
+#include "Game.hpp"
 
 Game::Game()
 {

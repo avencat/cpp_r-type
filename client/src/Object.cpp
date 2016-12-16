@@ -1,4 +1,4 @@
-#include "..\inc\Object.hpp"
+#include "Object.hpp"
 
 Object::Object()
 {
