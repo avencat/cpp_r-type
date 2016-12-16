@@ -1,4 +1,4 @@
-#include "..\inc\Room.hpp"
+#include "Room.hpp"
 
 Room::Room()
 {

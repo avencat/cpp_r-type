@@ -1,4 +1,4 @@
-#include "..\inc\Graphique.hpp"
+#include "Graphique.hpp"
 
 Graphique::Graphique(const int &_x, const int &_y, const std::string &_title) : window(sf::VideoMode(_x, _y), _title)
 {

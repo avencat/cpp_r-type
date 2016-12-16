@@ -11,7 +11,7 @@ public:
 	virtual ~Core();
 
 	bool		isUp() const;
-	bool		joinServer(const std::string &ip, const unsigned short &port);
+	bool		joinServer(const std::string &ip, const std::string &username);
 	bool		run();
 
 private:
