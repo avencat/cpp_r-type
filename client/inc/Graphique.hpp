@@ -5,6 +5,8 @@
 # include <list>
 # include <SFML/Graphics.hpp>
 
+# include "Scene.hpp"
+
 class Graphique
 {
 public:
@@ -16,6 +18,14 @@ public:
 	bool	drawObject();
 	bool	closeWindow();
 	bool	isOpen() const;
+	bool	linkServerScene();
+
+	const std::string		&getUsername(unsigned int id);
+	const std::string		&getHost(unsigned int id);
+	const int				&getPort(unsigned int id);
+	void					setUsername(std::string);
+	void					setHost(std::string);
+	void					setPort(int);
 
 private:
 	std::list<std::string>		rooms;
@@ -24,6 +34,10 @@ private:
 	int							y;
 	std::string					title;
 	bool						open;
+
+	std::string					ht;
+	int							port;
+	std::string					username;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */

@@ -13,8 +13,27 @@ public:
 	bool	deleteObject(const Object &);
 	bool	updateObject(const Object &);
 
+	bool					loadFont(const std::string&);
+	void					addText(const sf::Vector2f&, const std::string&, unsigned int = 30);
+	const std::string		&getText(unsigned int id);
+	void					addToText(unsigned int id, sf::Uint32);
+	void					removeBackText(unsigned int id);
+	void					addSprite(const sf::Vector2f&, const sf::Vector2f&, const std::string&, const sf::Vector2f&);
+	void					setTextColor(unsigned int id, const sf::Color &clr);
+	void					addButton(const sf::Vector2f&, const std::string&, const sf::Color& = sf::Color::Black, unsigned int = 30, bool = false);
+	bool					buttonEvent(unsigned int id, const sf::Vector2f&);
+	void					draw(sf::RenderWindow &);
+
 private:
 	std::list<Object>	objects;
+
+	sf::Font						font;
+	std::string						wildString;
+	std::vector<sf::Sprite>			sprites;
+	std::vector<sf::Texture>		textures;
+	std::vector<sf::RectangleShape>	rects;
+	std::vector<sf::Text>			button_text;
+	std::vector<sf::Text>			texts;
 };
 
 #endif /* !SCENE_HPP_ */
