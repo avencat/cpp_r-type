@@ -21,7 +21,6 @@ bool Core::joinServer(const std::string &ip, const std::string &username)
 
 bool Core::run()
 {
-	joinServer("localhost", "Boudou33");
 	while (this->graphique.isOpen())
 	{
 		graphique.refreshFrame();
