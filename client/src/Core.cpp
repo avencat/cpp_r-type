@@ -21,7 +21,7 @@ bool Core::joinServer(const std::string &ip, const std::string &username)
 
 bool Core::run()
 {
-	while (this->graphique.isOpen())
+	while (this->graphique.isOpen() && !this->socket.getInternalError())
 	{
 		if (graphique.getIp().length() > 0 && graphique.getUsername().length() > 0 && socket.getStatus() == 0) {
 			graphique.refreshFrame();

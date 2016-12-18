@@ -1,6 +1,6 @@
 #include "Graphique.hpp"
 
-Graphique::Graphique(const int &_x, const int &_y, const std::string &_title) : window(sf::VideoMode(_x, _y), _title)
+Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::string &_title) : window(sf::VideoMode(_x, _y), _title), roomManager(socket)
 {
 	this->x = _x;
 	this->y = _y;

@@ -7,6 +7,7 @@
 # include <iostream>
 
 # include "Scene.hpp"
+# include "RoomManager.hpp"
 
 enum ScenesEnum
 {
@@ -18,25 +19,25 @@ enum ScenesEnum
 class Graphique
 {
 public:
-	Graphique(const int &_x, const int &_y, const std::string &_title);
+	Graphique(Socket &socket, const int &_x, const int &_y, const std::string &_title);
 	virtual ~Graphique();
 
-	bool	initWindow(const int &_x, const int &_y, const std::string &_title);
-	bool	refreshFrame();
-	bool	drawObject();
-	bool	closeWindow();
-	bool	isOpen() const;
-	bool	linkServerScene();
-	bool	loadingScene();
-	bool	loadCurrentScene();
+	bool						initWindow(const int &_x, const int &_y, const std::string &_title);
+	bool						refreshFrame();
+	bool						drawObject();
+	bool						closeWindow();
+	bool						isOpen() const;
+	bool						linkServerScene();
+	bool						loadingScene();
+	bool						loadCurrentScene();
 
-	const std::string		&getUsername() const;
-	const std::string		&getIp() const;
-	void					setUsername(std::string);
-	void					setIp(std::string);
-	Scene					&getActiveScene();
-	bool					loadNextScene();
-	bool					loadPrevScene();
+	const std::string			&getUsername() const;
+	const std::string			&getIp() const;
+	void						setUsername(std::string);
+	void						setIp(std::string);
+	Scene						&getActiveScene();
+	bool						loadNextScene();
+	bool						loadPrevScene();
 
 private:
 	std::list<std::string>		rooms;
@@ -46,6 +47,7 @@ private:
 	std::string					title;
 	bool						open;
 	bool						firstTime;
+	RoomManager					roomManager;
 
 	std::string					ip;
 	std::string					username;
