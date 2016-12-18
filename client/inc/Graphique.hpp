@@ -7,12 +7,14 @@
 # include <iostream>
 
 # include "Scene.hpp"
+# include "Socket.hpp"
 # include "RoomManager.hpp"
 
 enum ScenesEnum
 {
 	getIp,
 	loading,
+	listRooms,
 	null,
 };
 
@@ -30,6 +32,7 @@ public:
 	bool						linkServerScene();
 	bool						loadingScene();
 	bool						loadCurrentScene();
+	bool						showRoomScene();
 
 	const std::string			&getUsername() const;
 	const std::string			&getIp() const;

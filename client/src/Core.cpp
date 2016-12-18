@@ -1,6 +1,6 @@
 #include "Core.hpp"
 
-Core::Core(const int &_x, const int &_y, const std::string &_title) : graphique(_x, _y, _title)
+Core::Core(const int &_x, const int &_y, const std::string &_title) : graphique(socket, _x, _y, _title)
 {
 	graphique.initWindow(_x, _y, _title);
 }
