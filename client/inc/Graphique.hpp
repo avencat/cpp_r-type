@@ -8,6 +8,13 @@
 
 # include "Scene.hpp"
 
+enum ScenesEnum
+{
+	getIp,
+	loading,
+	null,
+};
+
 class Graphique
 {
 public:
@@ -20,11 +27,16 @@ public:
 	bool	closeWindow();
 	bool	isOpen() const;
 	bool	linkServerScene();
+	bool	loadingScene();
+	bool	loadCurrentScene();
 
 	const std::string		&getUsername() const;
 	const std::string		&getIp() const;
 	void					setUsername(std::string);
 	void					setIp(std::string);
+	Scene					&getActiveScene();
+	bool					loadNextScene();
+	bool					loadPrevScene();
 
 private:
 	std::list<std::string>		rooms;
@@ -33,9 +45,18 @@ private:
 	int							y;
 	std::string					title;
 	bool						open;
+	bool						firstTime;
 
 	std::string					ip;
 	std::string					username;
+	Scene						linkServer;
+	Scene						loading;
+	Scene						listRooms;
+	sf::Event					event;
+	sf::Vector2f				pos;
+	char						focus;
+	ScenesEnum					activeScene;
+	ScenesEnum					prevScene;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */

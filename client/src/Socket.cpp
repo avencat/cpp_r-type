@@ -4,6 +4,10 @@
 Socket::Socket()
 {
 	this->port = 42142;
+	if (this->receiveSocket.bind(this->port) != sf::Socket::Done)
+	{
+		std::cerr << "[INTERNAL ERROR] Couldn't bind the port " << this->port << std::endl;
+	}
 }
 
 Socket::~Socket()
@@ -19,29 +23,32 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	sf::SocketSelector				selector;
 
 	this->ip = _ip;
+	this->status = 1;
 	this->sendSocket.setBlocking(true);
 	this->receiveSocket.setBlocking(true);
-	selector.add(sendSocket);
-	if (this->receiveSocket.bind(this->port + 1) != sf::Socket::Done)
-	{
-		std::cerr << "Couldn't bind the port " << this->port << std::endl;
-		return (false);
-	}
 	syn = new RtypeProtocol::Data::Handshake;
 	syn->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::SYN);
 	syn->syn = rand() % 4242;
 	syn->ack = 0;
+	selector.add(receiveSocket);
 	if (this->sendSocket.send(syn, sizeof(RtypeProtocol::Data::Handshake), this->ip, this->port) != sf::Socket::Done)
 	{
-		std::cerr << "Couldn't send message :\"SYN\" to " << ip << ":" << port << std::endl;
+		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"SYN\" to " << ip << ":" << port << std::endl;
 		delete syn;
 		return (false);
 	}
 	data = new char[100];
 	memset(data, 0, 100);
-	if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, port) != sf::Socket::Done)
-	{
-		std::cerr << "Couldn't receive message from " << ip << ":" << port << std::endl;
+	if (selector.wait(sf::seconds(3))) {
+		if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, port) != sf::Socket::Done)
+		{
+			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << port << std::endl;
+			delete syn;
+			delete data;
+			return (false);
+		}
+	} else {
+		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << port << std::endl;
 		delete syn;
 		delete data;
 		return (false);
@@ -52,23 +59,29 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 		syn->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::ACK);
 		syn->ack = reinterpret_cast<RtypeProtocol::Data::Handshake *>(data)->ack + 1;
 		syn->syn = 0;
-	}
-	else {
+	} else {
 		delete syn;
 		delete data;
 		return (false);
 	}
 	if (this->sendSocket.send(syn, sizeof(RtypeProtocol::Data::Handshake), this->ip, this->port) != sf::Socket::Done)
 	{
-		std::cerr << "Couldn't send message :\"SYN\" to " << ip << ":" << port << std::endl;
+		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"SYN\" to " << ip << ":" << port << std::endl;
 		delete syn;
 		delete data;
 		return (false);
 	}
 	memset(data, 0, 100);
-	if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, port) != sf::Socket::Done)
-	{
-		std::cerr << "Couldn't receive message from " << ip << ":" << port << std::endl;
+	if (selector.wait(sf::seconds(3))) {
+		if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, port) != sf::Socket::Done)
+		{
+			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << port << std::endl;
+			delete syn;
+			delete data;
+			return (false);
+		}
+	} else {
+		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << port << std::endl;
 		delete syn;
 		delete data;
 		return (false);
@@ -88,7 +101,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 		username->username[i] = _username.c_str()[i];
 	if (this->sendSocket.send(username, sizeof(RtypeProtocol::Data::Username), this->ip, this->port) != sf::Socket::Done)
 	{
-		std::cerr << "Couldn't send message :\"USERNAME\" to " << ip << ":" << port << std::endl;
+		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"USERNAME\" to " << ip << ":" << port << std::endl;
 		delete username;
 		delete data;
 		return (false);
@@ -108,7 +121,12 @@ bool Socket::closeConnection()
 	return (true);
 }
 
-bool Socket::getStatus() const
+int Socket::getStatus() const
 {
 	return (this->status);
+}
+
+void Socket::setStatus(int st)
+{
+	this->status = st;
 }

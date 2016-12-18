@@ -23,6 +23,15 @@ bool Core::run()
 {
 	while (this->graphique.isOpen())
 	{
+		if (graphique.getIp().length() > 0 && graphique.getUsername().length() > 0 && socket.getStatus() == 0) {
+			graphique.refreshFrame();
+			joinServer(graphique.getIp(), graphique.getUsername());
+		} else {
+			socket.setStatus(0);
+			graphique.setIp("");
+			graphique.setUsername("");
+			graphique.loadPrevScene();
+		}
 		graphique.refreshFrame();
 	}
 	return (true);

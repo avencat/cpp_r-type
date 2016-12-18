@@ -8,6 +8,8 @@ Graphique::Graphique(const int &_x, const int &_y, const std::string &_title) : 
 	this->open = true;
 	this->ip = "";
 	this->username = "";
+	this->firstTime = true;
+	this->activeScene = ScenesEnum::getIp;
 }
 
 Graphique::~Graphique()
@@ -27,6 +29,44 @@ const std::string		&Graphique::getUsername() const
 	return (username);
 }
 
+Scene	&Graphique::getActiveScene()
+{
+	switch (activeScene)
+	{
+	case ScenesEnum::getIp:
+		return (linkServer);
+	case ScenesEnum::loading:
+		return (loading);
+	default:
+		return (linkServer);
+	}
+}
+
+bool Graphique::loadNextScene()
+{
+	firstTime = true;
+	switch (activeScene)
+	{
+	case ScenesEnum::getIp:
+		prevScene = activeScene;
+		activeScene = ScenesEnum::loading;
+		return (loadingScene());
+	default:
+		return (linkServerScene());
+	}
+}
+
+bool Graphique::loadPrevScene()
+{
+	switch (prevScene)
+	{
+	case ScenesEnum::getIp:
+		activeScene = prevScene;
+		prevScene = ScenesEnum::null;
+		return (linkServerScene());
+	}
+}
+
 const std::string		&Graphique::getIp() const
 {
 	return (ip);
@@ -44,23 +84,9 @@ void					Graphique::setIp(std::string str)
 
 bool Graphique::refreshFrame()
 {
-	sf::Event event;
-	while (window.pollEvent(event))
-	{
-		if (event.type == sf::Event::Closed) {
-			this->closeWindow();
-			return (true);
-		}
-	}
-	window.clear();
-	if (this->ip.length() == 0) {
-		if (linkServerScene() == false) {
-			ip = "";
-			username = "";
-			return (false);
-		}
-		std::cout << "Je sors de la boucle avec tout bon !" << std::endl;
-	}
+	if (loadCurrentScene() == false)
+		return (false);
+	window.clear(sf::Color::Black);
 	if (drawObject() == false)
 		return (false);
 	window.display();
@@ -69,7 +95,7 @@ bool Graphique::refreshFrame()
 
 bool Graphique::drawObject()
 {
-//	linkServerScene();
+	getActiveScene().draw(window);
 	return (true);
 }
 
@@ -85,106 +111,125 @@ bool Graphique::isOpen() const
 	return this->open;
 }
 
+bool Graphique::loadingScene()
+{
+	if (firstTime) {
+		if (!loading.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
+			return (false);
+
+		// Title
+		loading.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 50 * static_cast<float>(window.getSize().y) / 1080), "Loading...", 48);
+		loading.setTextColor(0, sf::Color::White);
+		firstTime = false;
+	}
+}
+
+bool Graphique::loadCurrentScene()
+{
+	switch (activeScene)
+	{
+	case ScenesEnum::getIp:
+		return (linkServerScene());
+	case ScenesEnum::loading:
+		return (loadingScene());
+	default:
+		return (linkServerScene());
+	}
+}
+
 bool Graphique::linkServerScene()
 {
-	Scene			linkServer;
-	sf::Event		event;
-	sf::Vector2f	pos;
-	char			focus;
+	if (firstTime) {
+		focus = 0;
 
-	focus = 0;
-
-	if (!linkServer.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
-		return (false);
-
-	
-	// Host / IP
-	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 315 * static_cast<float>(window.getSize().y) / 1080), "Ip:");
-	linkServer.addText(sf::Vector2f(90 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), "");
-	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), ">");
-	
-	// Port
-	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 410 * static_cast<float>(window.getSize().y) / 1080), "Username:");
-	linkServer.addText(sf::Vector2f(90 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), "");
-	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), ">");
-	
-	// Button
-	linkServer.addButton(sf::Vector2f(230 * static_cast<float>(window.getSize().x) / 1920, 550 * static_cast<float>(window.getSize().y) / 1080), "Connect");
-	linkServer.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), "", sf::Color::Transparent, 30, true);
-	linkServer.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), "", sf::Color::Transparent, 30, true);
-	
-	linkServer.setTextColor(2, sf::Color::Yellow);
-	linkServer.setTextColor(5, sf::Color::Yellow);
-	
-	// Title
-	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 50 * static_cast<float>(window.getSize().y) / 1080), "R-Type", 48);
-	linkServer.setTextColor(1, sf::Color::Red);
+		if (!linkServer.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
+			return (false);
 
 
-	while (window.isOpen())
+		// IP
+		linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 315 * static_cast<float>(window.getSize().y) / 1080), "Ip:");
+		linkServer.addText(sf::Vector2f(90 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), "");
+		linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), ">");
+
+		// Username
+		linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 410 * static_cast<float>(window.getSize().y) / 1080), "Username:");
+		linkServer.addText(sf::Vector2f(90 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), "");
+		linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), ">");
+
+		// Button
+		linkServer.addButton(sf::Vector2f(230 * static_cast<float>(window.getSize().x) / 1920, 550 * static_cast<float>(window.getSize().y) / 1080), "Connect");
+		linkServer.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), "", sf::Color::Transparent, 30, true);
+		linkServer.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), "", sf::Color::Transparent, 30, true);
+
+		linkServer.setTextColor(2, sf::Color::Yellow);
+		linkServer.setTextColor(5, sf::Color::Yellow);
+
+		// Title
+		linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 50 * static_cast<float>(window.getSize().y) / 1080), "R-Type", 48);
+		linkServer.setTextColor(6, sf::Color::Red);
+		firstTime = false;
+	}
+
+	while (window.pollEvent(event))
 	{
-		while (window.pollEvent(event))
+		switch (event.type)
 		{
-			switch (event.type)
+		case sf::Event::Closed:
+			closeWindow();
+			break;
+		case sf::Event::MouseButtonPressed:
+			pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			if (linkServer.buttonEvent(0, pos))
 			{
-			case sf::Event::Closed:
-				closeWindow();
-				break;
-			case sf::Event::MouseButtonPressed:
-				pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-				if (linkServer.buttonEvent(0, pos))
-				{
+				ip = linkServer.getText(1);
+				username = linkServer.getText(4);
+				loadNextScene();
+				return (ip.length() > 0 && username.length() > 0);
+			}
+			else if (linkServer.buttonEvent(1, pos))
+				focus = 0;
+			else if (linkServer.buttonEvent(2, pos))
+				focus = 1;
+			break;
+		case sf::Event::TextEntered:
+			if (event.text.unicode < 128)
+			{
+				switch (event.text.unicode) {
+				case 8:
+					linkServer.removeBackText(focus == 0 ? 1 : 4);
+					break;
+				case 0:
+					break;
+				case 13:
 					ip = linkServer.getText(1);
-					username = linkServer.getText(3);
+					username = linkServer.getText(4);
+					loadNextScene();
 					return (ip.length() > 0 && username.length() > 0);
-				}
-				else if (linkServer.buttonEvent(1, pos))
-					focus = 0;
-				else if (linkServer.buttonEvent(2, pos))
-					focus = 1;
-				break;
-			case sf::Event::TextEntered:
-				if (event.text.unicode < 128)
-				{
-					switch (event.text.unicode) {
-					case 8:
-						linkServer.removeBackText(focus == 0 ? 1 : 4);
-						break;
-					case 0:
-						break;
-					case 13:
-						ip = linkServer.getText(1);
-						username = linkServer.getText(3);
-						return (ip.length() > 0 && username.length() > 0);
-						break;
-					case 9:
-						focus = focus ? 0 : 1;
-						break;
-					default:
-						linkServer.addToText(focus == 0 ? 1 : 4, event.text.unicode);
-						break;
-					}
-				}
-			case sf::Event::KeyPressed:
-				switch (event.key.code)
-				{
-				case sf::Keyboard::Escape:
-					closeWindow();
+					break;
+				case 9:
+					focus = focus ? 0 : 1;
 					break;
 				default:
+					linkServer.addToText(focus == 0 ? 1 : 4, event.text.unicode);
 					break;
 				}
+			}
+		case sf::Event::KeyPressed:
+			switch (event.key.code)
+			{
+			case sf::Keyboard::Escape:
+				closeWindow();
+				break;
 			default:
 				break;
 			}
+		default:
+			break;
 		}
-		linkServer.setTextColor(focus ? 3 : 1, sf::Color::Yellow);
-		linkServer.setTextColor(focus ? 1 : 3, sf::Color::White);
-		linkServer.setTextColor(focus ? 5 : 4, sf::Color::Yellow);
-		linkServer.setTextColor(focus ? 4 : 5, sf::Color::White);
-		window.clear(sf::Color::Black);
-		linkServer.draw(window);
-		window.display();
 	}
+	linkServer.setTextColor(focus != 0 ? 4 : 1, sf::Color::Yellow);
+	linkServer.setTextColor(focus != 0 ? 1 : 4, sf::Color::White);
+	linkServer.setTextColor(focus != 0 ? 5 : 2, sf::Color::Yellow);
+	linkServer.setTextColor(focus != 0 ? 2 : 5, sf::Color::White);
 	return (true);
 }

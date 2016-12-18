@@ -13,11 +13,12 @@ public:
 
 	bool	connectServ(const std::string &ip, const std::string &_username);
 	bool	closeConnection();
-	bool	getStatus() const;
+	int		getStatus() const;
+	void    setStatus(int);
 
 private:
 	unsigned short	port;
-	bool			status;
+	int				status;
 	sf::UdpSocket	sendSocket;
 	sf::UdpSocket	receiveSocket;
 	sf::IpAddress	ip;
