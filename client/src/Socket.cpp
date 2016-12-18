@@ -16,10 +16,12 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	RtypeProtocol::Data::Handshake	*syn;
 	RtypeProtocol::Data::Username	*username;
 	void							*data;
+	sf::SocketSelector				selector;
 
 	this->ip = _ip;
 	this->sendSocket.setBlocking(true);
 	this->receiveSocket.setBlocking(true);
+	selector.add(sendSocket);
 	if (this->receiveSocket.bind(this->port + 1) != sf::Socket::Done)
 	{
 		std::cerr << "Couldn't bind the port " << this->port << std::endl;

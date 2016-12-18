@@ -6,6 +6,8 @@ Graphique::Graphique(const int &_x, const int &_y, const std::string &_title) : 
 	this->y = _y;
 	this->title = _title;
 	this->open = true;
+	this->ip = "";
+	this->username = "";
 }
 
 Graphique::~Graphique()
@@ -20,19 +22,14 @@ bool Graphique::initWindow(const int &_x, const int &_y, const std::string &_tit
 	return (true);
 }
 
-const std::string		&Graphique::getUsername(unsigned int id)
+const std::string		&Graphique::getUsername() const
 {
 	return (username);
 }
 
-const std::string		&Graphique::getHost(unsigned int id)
+const std::string		&Graphique::getIp() const
 {
-	return (ht);
-}
-
-const int				&Graphique::getPort(unsigned int id)
-{
-	return (port);
+	return (ip);
 }
 
 void					Graphique::setUsername(std::string str)
@@ -40,14 +37,9 @@ void					Graphique::setUsername(std::string str)
 	this->username = str;
 }
 
-void					Graphique::setHost(std::string str)
+void					Graphique::setIp(std::string str)
 {
-	this->ht = str;
-}
-
-void					Graphique::setPort(int host)
-{
-	this->ht = host;
+	this->ip = str;
 }
 
 bool Graphique::refreshFrame()
@@ -61,8 +53,14 @@ bool Graphique::refreshFrame()
 		}
 	}
 	window.clear();
-	if (linkServerScene() == false)
-		return (false);
+	if (this->ip.length() == 0) {
+		if (linkServerScene() == false) {
+			ip = "";
+			username = "";
+			return (false);
+		}
+		std::cout << "Je sors de la boucle avec tout bon !" << std::endl;
+	}
 	if (drawObject() == false)
 		return (false);
 	window.display();
@@ -71,7 +69,7 @@ bool Graphique::refreshFrame()
 
 bool Graphique::drawObject()
 {
-	linkServerScene();
+//	linkServerScene();
 	return (true);
 }
 
@@ -93,7 +91,6 @@ bool Graphique::linkServerScene()
 	sf::Event		event;
 	sf::Vector2f	pos;
 	char			focus;
-	std::string		host;
 
 	focus = 0;
 
@@ -102,12 +99,12 @@ bool Graphique::linkServerScene()
 
 	
 	// Host / IP
-	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 315 * static_cast<float>(window.getSize().y) / 1080), "Hostname:");
+	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 315 * static_cast<float>(window.getSize().y) / 1080), "Ip:");
 	linkServer.addText(sf::Vector2f(90 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), "");
 	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 360 * static_cast<float>(window.getSize().y) / 1080), ">");
 	
 	// Port
-	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 410 * static_cast<float>(window.getSize().y) / 1080), "Port:");
+	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 410 * static_cast<float>(window.getSize().y) / 1080), "Username:");
 	linkServer.addText(sf::Vector2f(90 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), "");
 	linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 455 * static_cast<float>(window.getSize().y) / 1080), ">");
 	
@@ -131,16 +128,15 @@ bool Graphique::linkServerScene()
 			switch (event.type)
 			{
 			case sf::Event::Closed:
-				window.clear();
-				window.close();
+				closeWindow();
 				break;
 			case sf::Event::MouseButtonPressed:
 				pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 				if (linkServer.buttonEvent(0, pos))
 				{
-					host = linkServer.getText(1);
-					port = atoi(linkServer.getText(3).c_str());
-					return (atoi(linkServer.getText(3).c_str()));
+					ip = linkServer.getText(1);
+					username = linkServer.getText(3);
+					return (ip.length() > 0 && username.length() > 0);
 				}
 				else if (linkServer.buttonEvent(1, pos))
 					focus = 0;
@@ -157,8 +153,9 @@ bool Graphique::linkServerScene()
 					case 0:
 						break;
 					case 13:
-						host = linkServer.getText(1);
-						return (atoi(linkServer.getText(3).c_str()));
+						ip = linkServer.getText(1);
+						username = linkServer.getText(3);
+						return (ip.length() > 0 && username.length() > 0);
 						break;
 					case 9:
 						focus = focus ? 0 : 1;
@@ -172,8 +169,7 @@ bool Graphique::linkServerScene()
 				switch (event.key.code)
 				{
 				case sf::Keyboard::Escape:
-					window.clear();
-					window.close();
+					closeWindow();
 					break;
 				default:
 					break;

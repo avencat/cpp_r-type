@@ -4,6 +4,7 @@
 # include <string>
 # include <list>
 # include <SFML/Graphics.hpp>
+# include <iostream>
 
 # include "Scene.hpp"
 
@@ -20,12 +21,10 @@ public:
 	bool	isOpen() const;
 	bool	linkServerScene();
 
-	const std::string		&getUsername(unsigned int id);
-	const std::string		&getHost(unsigned int id);
-	const int				&getPort(unsigned int id);
+	const std::string		&getUsername() const;
+	const std::string		&getIp() const;
 	void					setUsername(std::string);
-	void					setHost(std::string);
-	void					setPort(int);
+	void					setIp(std::string);
 
 private:
 	std::list<std::string>		rooms;
@@ -35,8 +34,7 @@ private:
 	std::string					title;
 	bool						open;
 
-	std::string					ht;
-	int							port;
+	std::string					ip;
 	std::string					username;
 };
 
