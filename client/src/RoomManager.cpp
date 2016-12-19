@@ -12,7 +12,6 @@ RoomManager::~RoomManager()
 {
 }
 
-// Call this function only the first time you show the RoomListView !!!
 std::list<Room>	&RoomManager::roomList()
 {
 	RtypeProtocol::Data::Username	*username;
@@ -229,6 +228,7 @@ bool								RoomManager::manageServerCodes()
 	RtypeProtocol::Data::Room		*receivedRoom;
 	RtypeProtocol::Data::RoomInfo	*roomInfo;
 	RtypeProtocol::Data::RoomBegin	*roomBegin;
+	RtypeProtocol::Data::RoomJoined	*joined;
 
 	code = reinterpret_cast<RtypeProtocol::Data::Code *>(socket.getReceivedData())->code;
 	if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrServerClosing)) {
@@ -259,6 +259,49 @@ bool								RoomManager::manageServerCodes()
 	} else if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomList)) {
 		roomBegin = reinterpret_cast<RtypeProtocol::Data::RoomBegin *>(socket.getReceivedData());
 		this->tickrate = roomBegin->tickrate;
+	} else if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomReady)) {
+		roomInfo = reinterpret_cast<RtypeProtocol::Data::RoomInfo *>(socket.getReceivedData());
+		if (currentRoom.getPlayer1() == roomInfo->name) {
+			currentRoom.setP1Ready(true);
+		} else if (currentRoom.getPlayer2() == roomInfo->name) {
+			currentRoom.setP2Ready(true);
+		} else if (currentRoom.getPlayer3() == roomInfo->name) {
+			currentRoom.setP3Ready(true);
+		} else if (currentRoom.getPlayer4() == roomInfo->name) {
+			currentRoom.setP4Ready(true);
+		}
+	} else if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomNotReady)) {
+		roomInfo = reinterpret_cast<RtypeProtocol::Data::RoomInfo *>(socket.getReceivedData());
+		if (currentRoom.getPlayer1() == roomInfo->name) {
+			currentRoom.setP1Ready(false);
+		}
+		else if (currentRoom.getPlayer2() == roomInfo->name) {
+			currentRoom.setP2Ready(false);
+		}
+		else if (currentRoom.getPlayer3() == roomInfo->name) {
+			currentRoom.setP3Ready(false);
+		}
+		else if (currentRoom.getPlayer4() == roomInfo->name) {
+			currentRoom.setP4Ready(false);
+		}
+	}
+	else if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomJoined)) {
+		joined = reinterpret_cast<RtypeProtocol::Data::RoomJoined *>(socket.getReceivedData());
+		currentRoom.setId(joined->id);
+		currentRoom.setPlayer1(joined->name1);
+		currentRoom.setPlayer2(joined->name2);
+		currentRoom.setPlayer3(joined->name3);
+		currentRoom.setPlayer4(joined->name4);
+	} else if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrPlayerLimit)) {
+		std::cerr << "[Error] Already 4 players in this room." << std::endl;
+		return (false);
+	} else if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrAlreadyStarted)) {
+		std::cerr << "[Error] Game already started in this room." << std::endl;
+		return (false);
+	} else if (code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrIDConflict)) {
+		std::cerr << "[Error] This id is already taken by another room. \
+Failed to create a new room. You should try to refresh the rooms list and try again." << std::endl;
+		return (false);
 	}
 	return (true);
 }
