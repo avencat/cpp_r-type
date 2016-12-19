@@ -5,10 +5,10 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:16 2016 Jessica VAN-DEN-ZANDE
-// Last update Thu Dec 15 11:42:25 2016 Jessica VAN-DEN-ZANDE
+// Last update Mon Dec 19 18:36:41 2016 Jessica VAN-DEN-ZANDE
 //
 
-#include "Socket.hpp"
+#include "../inc/Socket.hpp"
 
 Socket::Socket() 
 {
@@ -16,6 +16,8 @@ Socket::Socket()
   this->score = 0;
   this->lives = 3;
   this->powerup = 0;
+  this->syn = -1;
+  this->ack = -1;
 }
 
 Socket::~Socket() {}
@@ -71,4 +73,24 @@ void		Socket::setFdClient(int fd)
 int		Socket::getFdClient(void)
 {
   return this->fdClient;
+}
+
+void		Socket::setSyn(int syn)
+{
+  this->syn = syn;
+}
+
+int		Socket::getSyn(void) const
+{
+  return syn;
+}
+
+void		Socket::setAck(int ack)
+{
+  this->ack = ack;
+}
+
+int		Socket::getAck(void) const
+{
+  return ack;
 }

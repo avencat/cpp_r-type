@@ -1,11 +1,11 @@
 //
-// Network.hpp for INetwork in /home/van-de_j/Tek3/rendu/RType/test_rtype
+// INetwork.hpp for INetwork in /home/van-de_j/Tek3/rendu/RType/test_rtype
 // 
 // Made by Jessica VAN-DEN-ZANDE
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:47:42 2016 Jessica VAN-DEN-ZANDE
-// Last update Thu Dec 15 12:05:58 2016 Jessica VAN-DEN-ZANDE
+// Last update Mon Dec 19 16:12:44 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef TEST_RTYPE_INETWORK_HPP
@@ -27,6 +27,7 @@ class INetwork
 public:
   virtual ~INetwork() {};
   virtual bool initServer(int port, int queue) = 0;
+  virtual bool runServer(bool stateServer) = 0;
 };
 
 #endif /* TEST_RTYPE_INETWORK_HPP */
