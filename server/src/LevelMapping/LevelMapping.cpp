@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Fri Dec  2 18:20:26 2016 Theo TOUZET
-// Last update Fri Dec 16 21:08:49 2016 Theo TOUZET
+// Last update Mon Dec 19 16:12:17 2016 Theo TOUZET
 //
 
 #include "LevelMapping.hh"
@@ -188,4 +188,86 @@ std::istream	&LevelMapping::operator>>(std::istream &is, LevelMapping::StringDat
   is.read(&data.data[0], data.length);
 
   return (is);
+}
+
+// Sprite
+LevelMapping::Sprite::Sprite()
+{
+}
+
+LevelMapping::Sprite::Sprite(const LevelMapping::StringData &_name, const LevelMapping::Pair &_pos)
+{
+  name = _name;
+  pos = _pos;
+}
+
+std::ofstream	&LevelMapping::operator<<(std::ofstream &ofs, const LevelMapping::Sprite &spr)
+{
+  return (ofs << spr.name << spr.pos);
+}
+
+std::fstream	&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::Sprite &spr)
+{
+  return (fs << spr.name << spr.pos);
+}
+
+std::ostream	&LevelMapping::operator<<(std::ostream &os, const LevelMapping::Sprite &spr)
+{
+  os << "Sprite name: " << spr.name << std::endl;
+  os << "Position: " << spr.pos.x << ";" << spr.pos.y << std::endl;
+  return (os);
+}
+
+std::istream	&LevelMapping::operator>>(std::istream &is, LevelMapping::Sprite &spr)
+{
+  return (is >> spr.name >> spr.pos);
+}
+
+bool    LevelMapping::Sprite::operator==(const LevelMapping::Sprite &spr) const
+{
+  return (spr.name == name && spr.pos == pos);
+}
+
+// Hitbox
+LevelMapping::Hitbox::Hitbox()
+{
+}
+
+LevelMapping::Hitbox::Hitbox(const LevelMapping::Pair &_pos, const LevelMapping::Pair &_size)
+{
+  pos = _pos;
+  size = _size;
+}
+
+LevelMapping::Hitbox::Hitbox(const int posx, const int posy, const int sizex, const int sizey)
+{
+  pos = LevelMapping::Pair(posx, posy);
+  size = LevelMapping::Pair(sizex, sizey);
+}
+
+std::ofstream	&LevelMapping::operator<<(std::ofstream &ofs, const LevelMapping::Hitbox &hb)
+{
+  return (ofs << hb.pos << hb.size);
+}
+
+std::fstream	&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::Hitbox &hb)
+{
+  return (fs << hb.pos << hb.size);
+}
+
+std::ostream	&LevelMapping::operator<<(std::ostream &os, const LevelMapping::Hitbox &hb)
+{
+  os << "Hitbox position: " << hb.pos.x << ";" << hb.pos.y << std::endl;
+  os << "Size: " << hb.size.x << ";" << hb.size.y << std::endl;
+  return (os);
+}
+
+std::istream	&LevelMapping::operator>>(std::istream &is, LevelMapping::Hitbox &hb)
+{
+  return (is >> hb.pos >> hb.size);
+}
+
+bool    LevelMapping::Hitbox::operator==(const LevelMapping::Hitbox &hb) const
+{
+  return (pos == hb.pos && size == hb.size);
 }

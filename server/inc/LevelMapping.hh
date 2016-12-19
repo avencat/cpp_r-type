@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Tue Nov 29 16:39:34 2016 Theo TOUZET
-// Last update Fri Dec 16 21:08:12 2016 Theo TOUZET
+// Last update Mon Dec 19 16:06:20 2016 Theo TOUZET
 //
 
 #ifndef LEVELMAPPING_HH_
@@ -70,6 +70,35 @@ namespace LevelMapping
   std::fstream	&operator<<(std::fstream &fs, const StringData &data);
   std::ostream	&operator<<(std::ostream &os, const StringData &str);
   std::istream	&operator>>(std::istream &is, StringData &data);
+
+  struct        Sprite
+  {
+    Sprite();
+    Sprite(const StringData &_name, const Pair &_pos);
+    StringData	name;
+    Pair	pos;
+    bool    operator==(const Sprite &spr) const;
+  };
+
+  std::ofstream	&operator<<(std::ofstream &ofs, const Sprite &spr);
+  std::fstream	&operator<<(std::fstream &fs, const Sprite &spr);
+  std::ostream	&operator<<(std::ostream &os, const Sprite &spr);
+  std::istream	&operator>>(std::istream &is, Sprite &spr);
+
+  struct	Hitbox
+  {
+    Hitbox();
+    Hitbox(const Pair &_pos, const Pair &_size);
+    Hitbox(const int posx, const int posy, const int sizex, const int sizey);
+    Pair	pos;
+    Pair	size;
+    bool    operator==(const Hitbox &hb) const;
+  };
+
+  std::ofstream	&operator<<(std::ofstream &ofs, const Hitbox &hb);
+  std::fstream	&operator<<(std::fstream &fs, const Hitbox &hb);
+  std::ostream	&operator<<(std::ostream &os, const Hitbox &hb);
+  std::istream	&operator>>(std::istream &is, Hitbox &hb);
 }
 
 #endif /* !LEVELMAPPING_HH_ */

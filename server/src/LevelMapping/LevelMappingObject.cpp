@@ -5,14 +5,13 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Fri Dec 16 17:10:14 2016 Theo TOUZET
-// Last update Fri Dec 16 21:02:02 2016 Theo TOUZET
+// Last update Mon Dec 19 16:47:53 2016 Theo TOUZET
 //
 
 #include "LevelMappingObject.hh"
 
-LevelMapping::Object::Object(const LevelMapping::mapCode &code, const LevelMapping::Pair &position, const LevelMapping::Pair vector,
-			     const LevelMapping::StringData &name, const LevelMapping::StringData &ai) :
-  code(code), position(position), vector(vector), name(name), ai(ai)
+LevelMapping::Object::Object(const mapCode &code, const std::vector<Sprite> &_sprites, const std::vector<Hitbox> &_hitboxes, const Pair vector, const StringData &ai) :
+  code(code), sprites(_sprites), hitboxes(_hitboxes), vector(vector), ai(ai)
 {
 }
 
@@ -23,9 +22,9 @@ LevelMapping::Object::~Object()
 LevelMapping::Object	&LevelMapping::Object::operator=(LevelMapping::Object const &obj)
 {
   code = obj.code;
-  position = obj.position;
+  sprites = obj.sprites;
+  hitboxes = obj.hitboxes;
   vector = obj.vector;
-  name = obj.name;
   ai = obj.ai;
   return (*this);
 }
@@ -34,17 +33,15 @@ bool	LevelMapping::Object::operator==(LevelMapping::Object const &obj) const
 {
   if (code != obj.code)
     return (false);
-  if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject)
-    {
-      if (code == LevelMapping::mapCode::MovingObject && vector != obj.vector)
+  else if ((code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject) &&
+          code == LevelMapping::mapCode::MovingObject && vector != obj.vector)
 	return (false);
-    }
   return (true);
 }
 
 bool	LevelMapping::Object::operator<(LevelMapping::Object const &obj) const
 {
-  return (name.data < obj.name.data);
+  return (code < obj.code);
 }
 
 LevelMapping::mapCode	LevelMapping::Object::getCode() const
@@ -57,56 +54,136 @@ void	LevelMapping::Object::setCode(const LevelMapping::mapCode &_code)
   this->code = _code;
 }
 
-LevelMapping::Pair	LevelMapping::Object::getPosition() const
+const std::vector<LevelMapping::Sprite>	&LevelMapping::Object::getSprites() const
 {
-  return (this->position);
+  return (this->sprites);
 }
 
-void	LevelMapping::Object::setPosition(const int &x, const int &y)
+void	                LevelMapping::Object::addSprite(const std::string &name, const int posx, const int posy)
 {
-  this->setPair(x, y, this->position);
+  this->sprites.push_back(LevelMapping::Sprite(name, LevelMapping::Pair(posx, posy)));
 }
 
-void	LevelMapping::Object::setPosition(const LevelMapping::Pair &pair)
+void	        LevelMapping::Object::addSprite(const std::string &name, const Pair &pos)
 {
-  this->position.x = pair.x;
-  this->position.y = pair.y;
+    this->sprites.push_back(LevelMapping::Sprite(name, pos));
 }
 
-LevelMapping::Pair	LevelMapping::Object::getVector() const
+void		LevelMapping::Object::addSprite(const LevelMapping::Sprite &spr)
 {
-  return (this->vector);
+    this->sprites.push_back(spr);
 }
 
-void	LevelMapping::Object::setVector(const int &x, const int &y)
+void		LevelMapping::Object::removeSprite(const std::string &name)
 {
-  this->setPair(x, y, this->vector);
+    for (std::vector<Sprite>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+        if ((*it).name == name)
+        {
+            this->sprites.erase(it);
+            it = this->sprites.begin();
+        }
 }
 
-void	LevelMapping::Object::setVector(const LevelMapping::Pair &pair)
+void		LevelMapping::Object::removeSprite(const Pair &pos)
 {
-  this->vector.x = pair.x;
-  this->vector.y = pair.y;
+    for (std::vector<Sprite>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+        if ((*it).pos == pos)
+        {
+            this->sprites.erase(it);
+            it = this->sprites.begin();
+        }
 }
 
-std::string	LevelMapping::Object::getName() const
+void		LevelMapping::Object::removeSprite(const int x, const int y)
 {
-  return (this->name.data);
+    LevelMapping::Pair p(x, y);
+
+    for (std::vector<Sprite>::iterator it = this->sprites.begin(); it != this->sprites.end(); ++it)
+        if ((*it).pos == p)
+        {
+            this->sprites.erase(it);
+            it = this->sprites.begin();
+        }
 }
 
-LevelMapping::StringData	LevelMapping::Object::getNameStruct() const
+void		LevelMapping::Object::removeSprite(const LevelMapping::Sprite &spr)
 {
-  return (this->name);
+    std::vector<LevelMapping::Sprite>::iterator it;
+
+    while ((it = std::find(sprites.begin(), sprites.end(), spr)) != sprites.end())
+        sprites.erase(it);
 }
 
-void	LevelMapping::Object::setName(const std::string &data)
+void    LevelMapping::Object::clearSprites()
 {
-  this->setStringData(data, this->name);
+    sprites.clear();
 }
 
-void	LevelMapping::Object::setName(const LevelMapping::StringData &data)
+const std::vector<LevelMapping::Hitbox>	&LevelMapping::Object::getHitboxes() const
 {
-  this->name = data;
+    return (this->hitboxes);
+}
+
+void	        LevelMapping::Object::addHitbox(const int posx, const int posy, const int sizex, const int sizey)
+{
+    hitboxes.push_back(LevelMapping::Hitbox(LevelMapping::Pair(posx, posy), LevelMapping::Pair(sizex, sizey)));
+}
+
+void	        LevelMapping::Object::addHitbox(const Pair &pos, const Pair &size)
+{
+    hitboxes.push_back(LevelMapping::Hitbox(pos, size));
+}
+
+void		LevelMapping::Object::addHitbox(const LevelMapping::Hitbox &hb)
+{
+    hitboxes.push_back(hb);
+}
+
+void		LevelMapping::Object::removeHitbox(const int posx, const int posy, const int sizex, const int sizey)
+{
+    LevelMapping::Hitbox    hb(LevelMapping::Pair(posx, posy), LevelMapping::Pair(sizex, sizey));
+    std::vector<Hitbox>::iterator it;
+
+    while ((it = std::find(hitboxes.begin(), hitboxes.end(), hb)) != hitboxes.end())
+        hitboxes.erase(it);
+}
+
+void		LevelMapping::Object::removeHitbox(const Pair &pos, const Pair &size)
+{
+    LevelMapping::Hitbox    hb(pos, size);
+    std::vector<Hitbox>::iterator it;
+
+    while ((it = std::find(hitboxes.begin(), hitboxes.end(), hb)) != hitboxes.end())
+        hitboxes.erase(it);
+}
+
+void		LevelMapping::Object::removeHitbox(const LevelMapping::Hitbox &hb)
+{
+    std::vector<Hitbox>::iterator   it;
+
+    while ((it = std::find(hitboxes.begin(), hitboxes.end(), hb)) != hitboxes.end())
+        hitboxes.erase(it);
+}
+
+void    LevelMapping::Object::clearHitboxes()
+{
+    hitboxes.clear();
+}
+
+const LevelMapping::Pair	&LevelMapping::Object::getVector() const
+{
+    return (vector);
+}
+
+void		LevelMapping::Object::setVector(const int x, const int y)
+{
+    vector.x = x;
+    vector.y = y;
+}
+
+void		LevelMapping::Object::setVector(const LevelMapping::Pair &pair)
+{
+    vector = pair;
 }
 
 std::string	LevelMapping::Object::getAI() const
@@ -114,7 +191,7 @@ std::string	LevelMapping::Object::getAI() const
   return (this->ai.data);
 }
 
-LevelMapping::StringData	LevelMapping::Object::getAIStruct() const
+const LevelMapping::StringData	&LevelMapping::Object::getAIStruct() const
 {
   return (this->ai);
 }
@@ -129,12 +206,12 @@ void	LevelMapping::Object::setAI(const LevelMapping::StringData &data)
   this->ai = data;
 }
 
-void	LevelMapping::Object::fillObject(const mapCode &_code, const Pair &_position, const Pair &_vector, const std::string &_name, const std::string &_ai)
+void	LevelMapping::Object::fillObject(const mapCode &_code, const std::vector<Sprite> &_sprites, const std::vector<Hitbox> &_hitboxes, const Pair &_vector, const std::string &_ai)
 {
   code = _code;
-  position = _position;
+  sprites = _sprites;
+  hitboxes = _hitboxes;
   vector = _vector;
-  name = _name;
   ai = _ai;
 }
 
@@ -153,12 +230,24 @@ void	LevelMapping::Object::setStringData(const std::string &data, LevelMapping::
 std::ostream			&LevelMapping::operator<<(std::ostream &os, const LevelMapping::Object &obj)
 {
   const LevelMapping::mapCode	&code = obj.getCode();
+  const std::vector<LevelMapping::Sprite> &sprites = obj.getSprites();
+  const std::vector<LevelMapping::Hitbox> &hitboxes = obj.getHitboxes();
 
   os << "Code: " << code << std::endl;
-  os << "Position: " << obj.getPosition() << std::endl;
-  if (code == LevelMapping::mapCode::MovingObject)
-    os << "Vector: " << obj.getVector() << std::endl;
-  os << "Name: " << obj.getNameStruct() << std::endl;
+  if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject) {
+      if (sprites.size() > 0) {
+          os << "Sprite" << (sprites.size() == 1 ? "" : "s") << ": " << std::endl;
+          for (std::vector<LevelMapping::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); ++it)
+              os << "\t- " << it->name << ": " << it->pos.x << ";" << it->pos.y << std::endl;
+      }
+      if (hitboxes.size() > 0) {
+          os << "Hitbox" << (hitboxes.size() == 1 ? "" : "es") << ": " << std::endl;
+          for (std::vector<LevelMapping::Hitbox>::const_iterator it = hitboxes.begin(); it != hitboxes.end(); ++it)
+              os << "\t- " << it->pos.x << ";" << it->pos.y << " | " << it->size.x << ";" << it->size.y << std::endl;
+      }
+      if (code == LevelMapping::mapCode::MovingObject)
+          os << "Vector: " << obj.getVector() << std::endl;
+  }
   os << "AI: " << obj.getAIStruct() << std::endl;
   return (os);
 }
@@ -171,11 +260,22 @@ std::ofstream	&LevelMapping::operator<<(std::ofstream &ofs, const LevelMapping::
   ofs.write(pc, sizeof(code));
   if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject)
     {
-      ofs << obj.getPosition();
-      if (code == LevelMapping::mapCode::MovingObject)
-	ofs << obj.getVector();
-      ofs << obj.getNameStruct();
-      ofs << obj.getAIStruct();
+        const std::vector<LevelMapping::Sprite> sprites = obj.getSprites();
+        const std::vector<LevelMapping::Hitbox> hitboxes = obj.getHitboxes();
+        unsigned long   sz = sprites.size();
+
+        ofs.write(reinterpret_cast<char*>(&sz), sizeof(sz));
+        if (sz > 0)
+            for (std::vector<LevelMapping::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); ++it)
+                ofs << *it;
+        sz = hitboxes.size();
+        ofs.write(reinterpret_cast<char*>(&sz), sizeof(sz));
+        if (sz > 0)
+            for (std::vector<LevelMapping::Hitbox>::const_iterator it = hitboxes.begin(); it != hitboxes.end(); ++it)
+                ofs << *it;
+        if (code == LevelMapping::mapCode::MovingObject)
+    	    ofs << obj.getVector();
+        ofs << obj.getAIStruct();
     }
   return (ofs);
 }
@@ -188,22 +288,37 @@ std::fstream	&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::Obj
   fs.write(pc, sizeof(code));
   if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject)
     {
-      fs << obj.getPosition();
-      if (code == LevelMapping::mapCode::MovingObject)
-	fs << obj.getVector();
-      fs << obj.getNameStruct();
-      fs << obj.getAIStruct();
+        const std::vector<LevelMapping::Sprite> sprites = obj.getSprites();
+        const std::vector<LevelMapping::Hitbox> hitboxes = obj.getHitboxes();
+        unsigned long sz = sprites.size();
+
+        fs.write(reinterpret_cast<char*>(&sz), sizeof(sz));
+        if (sz > 0)
+            for (std::vector<LevelMapping::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); ++it)
+                fs << *it;
+        sz = hitboxes.size();
+        fs.write(reinterpret_cast<char*>(&sz), sizeof(sz));
+        if (sz > 0)
+            for (std::vector<LevelMapping::Hitbox>::const_iterator it = hitboxes.begin(); it != hitboxes.end(); ++it)
+                fs << *it;
+        if (code == LevelMapping::mapCode::MovingObject)
+            fs << obj.getVector();
+        fs << obj.getAIStruct();
     }
   return (fs);
 }
 
 std::istream			&LevelMapping::operator>>(std::istream &is, LevelMapping::Object &obj)
 {
-  short				code = 0;
+  short				    code = 0;
   unsigned char			*pc = reinterpret_cast<unsigned char*>(&code);
   LevelMapping::Pair		pair(0, 0);
   LevelMapping::StringData	data("");
+  unsigned long        vecSize = 0;
+  char                  *pv = reinterpret_cast<char*>(&vecSize);
 
+  obj.clearSprites();
+  obj.clearHitboxes();
   for (size_t i = 0; i < sizeof(code); ++i, ++pc)
     {
       if (is.eof())
@@ -216,16 +331,28 @@ std::istream			&LevelMapping::operator>>(std::istream &is, LevelMapping::Object 
   obj.setCode(static_cast<LevelMapping::mapCode>(code));
   if ((code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject) && !is.eof())
     {
-      is >> pair;
-      obj.setPosition(pair);
+        is.read(pv, sizeof(vecSize));
+        for (unsigned int i = 0; i < vecSize; ++i)
+        {
+            is >> data;
+            is >> pair;
+            obj.addSprite(data.data, pair);
+            data = "";
+        }
+        pv = reinterpret_cast<char*>(&vecSize);
+        is.read(pv, sizeof(vecSize));
+        LevelMapping::Pair  pair2;
+        for (unsigned int i = 0; i < vecSize; ++i)
+        {
+            is >> pair;
+            is >> pair2;
+            obj.addHitbox(pair, pair2);
+        }
       if (code == LevelMapping::mapCode::MovingObject)
-	{
-	  is >> pair;
-	  obj.setVector(pair);
-	}
-      is >> data;
-      obj.setName(data);
-      data = "";
+    	{
+	      is >> pair;
+    	  obj.setVector(pair);
+    	}
       is >> data;
       obj.setAI(data);
     }
