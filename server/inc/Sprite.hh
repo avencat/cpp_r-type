@@ -5,7 +5,7 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:41:04 2016 kevin rochon
-// Last update Mon Dec 19 07:52:08 2016 kevin rochon
+// Last update Mon Dec 19 16:57:50 2016 kevin rochon
 //
 
 #ifndef SPRITE_HH_
@@ -13,7 +13,7 @@
 
 # include <utility>
 # include <string>
-# include "AComponent.hpp"
+# include "AComponent.hh"
 
 class			Sprite : public AComponent
 {
@@ -22,11 +22,11 @@ class			Sprite : public AComponent
   std::string		_name;
 
  public:
-  Sprite(const int id);
+  Sprite(const int id, const std::string name);
   ~Sprite();
-  std::pair<int, int>	getPos();
-  std::string		getName();
-  void			setPos(std::pair<int, int> pos);
+  std::pair<int, int>	getPos() const;
+  std::string		getName() const;
+  void			setPos(int x, int y);
   void			setName(std::string name);
 };
 

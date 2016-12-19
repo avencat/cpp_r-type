@@ -5,14 +5,14 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:42:23 2016 kevin rochon
-// Last update Mon Dec 19 08:12:03 2016 kevin rochon
+// Last update Mon Dec 19 17:11:32 2016 kevin rochon
 //
 
 #ifndef HITBOX_HH_
 # define HITBOX_HH_
 
 # include <utility>
-# include "AComponent.hpp"
+# include "AComponent.hh"
 
 class			Hitbox : public AComponent
 {
@@ -21,11 +21,11 @@ class			Hitbox : public AComponent
   int			_size;
 
  public:
-  Hitbox(const int id);
+  Hitbox(const int id, const int size);
   ~Hitbox();
-  std::pair<int, int>	getPos();
-  int			getSize();
-  void			setPos(std::pair<int, int> _pos);
+  std::pair<int, int>	getPos() const;
+  int			getSize() const;
+  void			setPos(int x, int y);
   void			setSize(int _size);
 };
 

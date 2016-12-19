@@ -5,13 +5,13 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:43:17 2016 kevin rochon
-// Last update Sun Dec 18 00:55:37 2016 kevin rochon
+// Last update Mon Dec 19 16:32:12 2016 kevin rochon
 //
 
 #ifndef IAI_HPP_
 # define IAI_HPP_
 
-# include "AComponent.hpp"
+# include "AComponent.hh"
 
 class		IAI : public AComponent
 {

@@ -5,12 +5,12 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:45:04 2016 kevin rochon
-// Last update Mon Dec 19 08:14:21 2016 kevin rochon
+// Last update Mon Dec 19 17:05:50 2016 kevin rochon
 //
 
 #include "Sprite.hh"
 
-Sprite::Sprite(const int id) : AComponent(id)
+Sprite::Sprite(const int id, const std::string name) : AComponent(id), _name(name)
 {
 
 }
@@ -20,18 +20,20 @@ Sprite::~Sprite()
 
 }
 
-std::pair<int, int>	Sprite::getPos()
+std::pair<int, int>	Sprite::getPos() const
 {
   return (this->_pos);
 }
 
-std::string		Sprite::getName()
+std::string		Sprite::getName() const
 {
   return (this->_name);
 }
 
-void			Sprite::setPos(std::pair<int, int> pos)
+void			Sprite::setPos(int x , int y)
 {
+  std::pair <int, int> pos(x, y);
+
   this->_pos = pos;
 }
 
