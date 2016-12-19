@@ -8,6 +8,7 @@ RoomManager::RoomManager(Socket &socket) : socket(socket)
 	listRooms.push_back(Room(4, 4, RtypeProtocol::roomState::Full));
 	listRooms.push_back(Room(12, 3, RtypeProtocol::roomState::Waiting));
 	currentRoom = listRooms.front();
+	currentRoom.setNbUsers(3);
 	currentRoom.setPlayer1("Théo");
 	currentRoom.setPlayer2("Louis");
 	currentRoom.setPlayer3("Axel");
