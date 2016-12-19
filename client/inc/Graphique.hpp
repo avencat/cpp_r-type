@@ -17,6 +17,12 @@ enum ScenesEnum
 	null,
 };
 
+enum StatusEnum
+{
+	Player,
+	Spectator,
+};
+
 class Graphique
 {
 public:
@@ -35,6 +41,8 @@ public:
 
 	const std::string			&getUsername() const;
 	const std::string			&getIp() const;
+	const StatusEnum			&getStatusUser() const;
+	void						setStatusUser(StatusEnum);
 	void						setUsername(std::string);
 	void						setIp(std::string);
 	Scene						&getActiveScene();
@@ -61,6 +69,7 @@ private:
 	char						focus;
 	ScenesEnum					activeScene;
 	ScenesEnum					prevScene;
+	StatusEnum					user;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */

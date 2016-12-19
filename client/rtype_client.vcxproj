@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="..\common\src\RtypeProtocol.cpp" />
     <ClCompile Include="src\AComponent.cpp" />
+    <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\Core.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Graphique.cpp" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="..\common\inc\RtypeProtocol.hh" />
     <ClInclude Include="inc\AComponent.hpp" />
+    <ClInclude Include="inc\Button.hpp" />
     <ClInclude Include="inc\Core.hpp" />
     <ClInclude Include="inc\Game.hpp" />
     <ClInclude Include="inc\Graphique.hpp" />

@@ -9,7 +9,8 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->ip = "";
 	this->username = "";
 	this->firstTime = true;
-	this->activeScene = ScenesEnum::getIp;
+	this->user = Player;
+	this->activeScene = ScenesEnum::listRooms;
 }
 
 Graphique::~Graphique()
@@ -27,6 +28,16 @@ bool Graphique::initWindow(const int &_x, const int &_y, const std::string &_tit
 const std::string		&Graphique::getUsername() const
 {
 	return (username);
+}
+
+const StatusEnum			&Graphique::getStatusUser() const
+{
+	return (user);
+}
+
+void						Graphique::setStatusUser(StatusEnum state)
+{
+	this->user = state;
 }
 
 Scene	&Graphique::getActiveScene()
@@ -253,9 +264,9 @@ bool Graphique::linkServerScene()
 
 bool	Graphique::showRoomScene()
 {
-	int	j;
+	int	j = 0;
+	int	k = 0;
 
-	j = 0;
 	if (firstTime) {
 
 		if (!listRooms.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
@@ -266,20 +277,17 @@ bool	Graphique::showRoomScene()
 
 		//roomManager.roomList();
 		for (std::list<Room>::const_iterator i = roomManager.getRooms().begin(); i != roomManager.getRooms().end(); i++) {
-			listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), i->getText(), sf::Color::Transparent, 30, true);
 			if (i->getState() == RtypeProtocol::roomState::Waiting)
-				listRooms.setButtonTextColor(j, sf::Color::Green);
+				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(400, 40), sf::Color::Green, sf::Color::Transparent, Button::buttonEnum::Room);
 			else if (i->getState() == RtypeProtocol::roomState::Full)
-				listRooms.setButtonTextColor(j, sf::Color::Blue);
+				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(400, 50), sf::Color::Yellow, sf::Color::Transparent, Button::buttonEnum::Room);
 			else
-				listRooms.setButtonTextColor(j, sf::Color::Red);
+				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(400, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Room);
 			j++;
 		}
-		listRooms.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (++j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Mode:", 30);
-		listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (++j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Spectator", sf::Color::Transparent, 30, true);
-		listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (++j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Player", sf::Color::Transparent, 30, true);
-		listRooms.setButtonTextColor(j - 3, sf::Color::Red);
-		listRooms.setButtonTextColor(j - 2, sf::Color::Green);
+		listRooms.addButs("Player", sf::Vector2f(100, 600), sf::Vector2f(100, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Player);
+		listRooms.addButs("Spectator", sf::Vector2f(300, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Spectat);
+		listRooms.addButs("Create", sf::Vector2f(500, 600), sf::Vector2f(100, 50), sf::Color(204, 51, 102), sf::Color::Transparent, Button::buttonEnum::Create);
 		firstTime = false;
 	}
 
@@ -292,19 +300,40 @@ bool	Graphique::showRoomScene()
 			break;
 		case sf::Event::MouseButtonPressed:
 			pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-			for (int k = 0; k < roomManager.getRooms().size(); k++) {
-				if (listRooms.buttonEvent(k, pos)) {
-					if (k < roomManager.getRooms().size() / 2) {
-						if (roomManager.joinRoom(k, false))
+			for (std::list<Room>::const_iterator l = roomManager.getRooms().begin(); l != roomManager.getRooms().end(); l++) {
+				if (listRooms.buttonClik(k, pos)) {
+					if (k < roomManager.getRooms().size() && l->getState() == RtypeProtocol::roomState::Waiting) {
+						std::cout << "Enter room" << std::endl;
+						if (roomManager.joinRoom(l->getId(), user == Player ? false : true)) {
 							return (true);
+						}
 					}
-					else {
-						if (roomManager.joinRoom(k, true))
-							return (true);
-					}
-					
 				}
+				k++;
 			}
+			k = 0;
+			for (std::vector<Button *>::const_iterator i = listRooms.getButtons().begin(); i != listRooms.getButtons().end(); i++) {
+				if (listRooms.buttonClik(k, pos)) {
+					if ((*i)->getId() == Button::buttonEnum::Player) {
+						std::cout << "Choose Player" << std::endl;
+						setStatusUser(Player);
+						listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
+						listRooms.getButtons()[k + 1]->setTxtColor(sf::Color::White);
+					}
+					else if ((*i)->getId() == Button::buttonEnum::Spectat) {
+						std::cout << "Choose SPecta" << std::endl;
+						setStatusUser(Spectator);
+						listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
+						listRooms.getButtons()[k - 1]->setTxtColor(sf::Color::White);
+					}
+					else if ((*i)->getId() == Button::buttonEnum::Room) {
+						// create room
+					}
+				}
+				k++;
+			}
+
+
 		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{

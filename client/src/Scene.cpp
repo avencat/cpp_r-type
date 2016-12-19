@@ -1,20 +1,28 @@
 #include "Scene.hpp"
 
+#include <iostream>
+#include <string>
+
 Scene::Scene()
 {
 }
 
 Scene::~Scene()
 {
+	for (std::vector<Button*>::iterator it = buttons.begin(); it != buttons.end(); it++)
+	{
+		delete (*it);
+		it = buttons.erase(it);
+	}
 }
 
-bool Scene::addObject(const Object &obj)
+bool						Scene::addObject(const Object &obj)
 {
 	this->objects.push_back(obj);
 	return (true);
 }
 
-bool Scene::deleteObject(const Object &obj)
+bool						Scene::deleteObject(const Object &obj)
 {
 	for (std::list<Object>::const_iterator i = objects.begin(); i != objects.end(); i++)
 	{
@@ -26,12 +34,12 @@ bool Scene::deleteObject(const Object &obj)
 	return (false);
 }
 
-bool Scene::updateObject(const Object &obj)
+bool						Scene::updateObject(const Object &obj)
 {
 	return (false);
 }
 
-bool Scene::loadFont(const std::string &fontName)
+bool						Scene::loadFont(const std::string &fontName)
 {
 	if (!font.loadFromFile(fontName)) {
 		return (false);
@@ -43,7 +51,7 @@ bool Scene::loadFont(const std::string &fontName)
 	return (true);
 }
 
-const std::string &Scene::getText(unsigned int id)
+const std::string			&Scene::getText(unsigned int id)
 {
 	wildString = "";
 	if (id > texts.size())
@@ -52,7 +60,17 @@ const std::string &Scene::getText(unsigned int id)
 	return (wildString);
 }
 
-void Scene::addToText(unsigned int id, sf::Uint32 c)
+const std::vector<sf::Text>	&Scene::getTextList() const
+{
+	return (texts);
+}
+
+const sf::Font					&Scene::getFont() const
+{
+	return (font);
+}
+
+void						Scene::addToText(unsigned int id, sf::Uint32 c)
 {
 	std::string tmp;
 
@@ -64,7 +82,7 @@ void Scene::addToText(unsigned int id, sf::Uint32 c)
 	}
 }
 
-void Scene::removeBackText(unsigned int id)
+void						Scene::removeBackText(unsigned int id)
 {
 	std::string tmp;
 
@@ -77,7 +95,7 @@ void Scene::removeBackText(unsigned int id)
 	}
 }
 
-void Scene::addSprite(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &file, const sf::Vector2f &winsize)
+void						Scene::addSprite(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &file, const sf::Vector2f &winsize)
 {
 	sf::Texture tx;
 	sf::IntRect ir;
@@ -93,25 +111,30 @@ void Scene::addSprite(const sf::Vector2f &pos, const sf::Vector2f &size, const s
 	sprites.back().setScale(winsize.x / 1920, winsize.y / 1080);
 }
 
-void Scene::setTextColor(unsigned int id, const sf::Color &color)
+void						Scene::setTextColor(unsigned int id, const sf::Color &color)
 {
 	if (id <= texts.size())
 		texts[id].setColor(color);
 }
 
-void Scene::setButtonTextColor(unsigned int id, const sf::Color &color)
+void						Scene::setButtonTextColor(unsigned int id, const sf::Color &color)
 {
 	if (id <= button_text.size())
 		button_text[id].setColor(color);
 }
 
-void Scene::addText(const sf::Vector2f &pos, const std::string &str, unsigned int size)
+void						Scene::addText(const sf::Vector2f &pos, const std::string &str, unsigned int size)
 {
 	texts.push_back(sf::Text(str, font, size));
 	texts.back().setPosition(pos);
 }
 
-void Scene::addButton(const sf::Vector2f &pos, const std::string &str, const sf::Color &clr, unsigned int size, bool full)
+const std::vector<sf::Text>	&Scene::getTextButton() const
+{
+	return (button_text);
+}
+
+void						Scene::addButton(const sf::Vector2f &pos, const std::string &str, const sf::Color &clr, unsigned int size, bool full)
 {
 	rects.push_back(sf::RectangleShape());
 	rects.back().setPosition(pos);
@@ -122,7 +145,7 @@ void Scene::addButton(const sf::Vector2f &pos, const std::string &str, const sf:
 	button_text.back().setCharacterSize(size);
 }
 
-bool Scene::buttonEvent(unsigned int id, const sf::Vector2f &pos)
+bool						Scene::buttonEvent(unsigned int id, const sf::Vector2f &pos)
 {
 	sf::FloatRect fr;
 
@@ -135,7 +158,30 @@ bool Scene::buttonEvent(unsigned int id, const sf::Vector2f &pos)
 	return (false);
 }
 
-void Scene::draw(sf::RenderWindow &window)
+bool						Scene::buttonClik(unsigned int id, const sf::Vector2f &pos)
+{
+	sf::FloatRect fr;
+
+	if (id < buttons.size())
+	{
+		fr = buttons[id]->getRect().getGlobalBounds();
+		if (pos.x <= fr.left + fr.width && pos.x >= fr.left && pos.y <= fr.top + fr.height && pos.y >= fr.top)
+			return (true);
+	}
+	return (false);
+}
+
+const std::vector<Button*>	&Scene:: getButtons() const
+{
+	return (buttons);
+}
+
+void						Scene::addButs(const std::string &_name, const sf::Vector2f &_pos, const sf::Vector2f &_size, const sf::Color &_clrTxt, const sf::Color &_clrBg, const Button::buttonEnum &butEnum)
+{
+	buttons.push_back(new Button(font, _name, _pos, _size, _clrTxt, _clrBg, butEnum));
+}
+
+void						Scene::draw(sf::RenderWindow &window)
 {
 	for (std::vector<sf::Sprite>::iterator it = sprites.begin(); it != sprites.end(); it++)
 	{
@@ -152,5 +198,10 @@ void Scene::draw(sf::RenderWindow &window)
 	for (std::vector<sf::Text>::iterator it = button_text.begin(); it != button_text.end(); it++)
 	{
 		window.draw(*it);
+	}
+	for (std::vector<Button*>::iterator it = buttons.begin(); it != buttons.end(); it++)
+	{
+		window.draw((*it)->getRect());
+		window.draw((*it)->getText());
 	}
 }
