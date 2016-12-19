@@ -5,7 +5,7 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:55:22 2016 kevin rochon
-// Last update Mon Dec 19 17:06:23 2016 kevin rochon
+// Last update Mon Dec 19 18:49:26 2016 kevin rochon
 //
 
 #include "Object.hh"
@@ -20,7 +20,7 @@ Object::~Object()
 
 }
 
-std::list<AComponent*>	Object::getComponents() const
+std::list<AComponent>	Object::getComponents() const
 {
   return (this->_components);
 }
@@ -40,7 +40,7 @@ int			Object::getHp() const
   return (this->_hp);
 }
 
-void			Object::setComponents(std::list<AComponent*> components)
+void			Object::setComponents(std::list<AComponent> components)
 {
   this->_components = components;
 }
