@@ -5,12 +5,12 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:44:52 2016 kevin rochon
-// Last update Tue Dec 13 19:53:47 2016 kevin rochon
+// Last update Mon Dec 19 07:40:12 2016 kevin rochon
 //
 
 #include "Hitbox.hh"
 
-Hitbox::Hitbox()
+Hitbox::Hitbox(const int id) : AComponent(id)
 {
 
 }
@@ -18,4 +18,24 @@ Hitbox::Hitbox()
 Hitbox::~Hitbox()
 {
 
+}
+
+std::pair<int, int>	Hitbox::getPos()
+{
+  return (this->_pos);
+}
+
+int			Hitbox::getSize()
+{
+  return (this->_size);
+}
+
+void			Hitbox::setPos(std::pair<int, int> pos)
+{
+  this->_pos = pos;
+}
+
+void			Hitbox::setSize(int size)
+{
+  this->_size = size;
 }

@@ -5,13 +5,15 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:43:17 2016 kevin rochon
-// Last update Tue Dec 13 19:46:36 2016 kevin rochon
+// Last update Sun Dec 18 00:55:37 2016 kevin rochon
 //
 
 #ifndef IAI_HPP_
 # define IAI_HPP_
 
-class		IAI
+# include "AComponent.hpp"
+
+class		IAI : public AComponent
 {
  public:
   virtual void	update() = 0;

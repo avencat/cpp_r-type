@@ -5,8 +5,10 @@
 // Login   <rochon_k@epitech.net>
 //
 // Started on  Tue Dec 13 19:55:22 2016 kevin rochon
-// Last update Tue Dec 13 19:55:59 2016 kevin rochon
+// Last update Mon Dec 19 08:18:08 2016 kevin rochon
 //
+
+#include "Object.hh"
 
 Object::Object()
 {
@@ -16,4 +18,44 @@ Object::Object()
 Object::~Object()
 {
 
+}
+
+std::list<AComponent*>	Object::getComponents()
+{
+  return (this->_components);
+}
+
+int			Object::getId()
+{
+  return (this->_id);
+}
+
+Object::Type		Object::getType()
+{
+  return (this->_type);
+}
+
+int			Object::getHp()
+{
+  return (this->_hp);
+}
+
+void			Object::setComponents(std::list<AComponent*> components)
+{
+  this->_components = components;
+}
+
+void			Object::setId(int id)
+{
+  this->_id = id;
+}
+
+void			Object::setType(Object::Type type)
+{
+  this->_type = type;
+}
+
+void			Object::setHp(int hp)
+{
+  this->_hp = hp;
 }
