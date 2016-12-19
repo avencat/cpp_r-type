@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::listRooms;
+	this->activeScene = ScenesEnum::getIp;
 }
 
 Graphique::~Graphique()

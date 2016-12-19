@@ -71,12 +71,12 @@ const bool &Room::getP2Ready() const
 	return (this->p2Ready);
 }
 
-const bool & Room::getP3Ready() const
+const bool &Room::getP3Ready() const
 {
 	return (this->p3Ready);
 }
 
-const bool & Room::getP4Ready() const
+const bool &Room::getP4Ready() const
 {
 	return (this->p4Ready);
 }

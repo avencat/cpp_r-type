@@ -22,12 +22,15 @@ public:
 	bool						leaveRoom();
 	std::list<Room>				&getRooms();
 	bool						manageServerCodes();
+	bool						ready();
+	bool						notReady();
 
 private:
 	std::list<Room>	listRooms;
 	Room			currentRoom;
 	Socket			&socket;
 	int				tickrate;
+	bool			gameStarted;
 };
 
 #endif /* !ROOMMANAGER_HPP_ */
