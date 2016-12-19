@@ -18,6 +18,7 @@ public:
 	const std::string				&getPlayer2() const;
 	const std::string				&getPlayer3() const;
 	const std::string				&getPlayer4() const;
+	std::string						getText() const;
 	void							setId(const int &id);
 	void							setNbUsers(const int &nbUsers);
 	void							setState(const RtypeProtocol::roomState &state);

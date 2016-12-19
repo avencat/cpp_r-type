@@ -27,6 +27,7 @@ private:
 	std::list<Room>	listRooms;
 	Room			currentRoom;
 	Socket			&socket;
+	int				tickrate;
 };
 
 #endif /* !ROOMMANAGER_HPP_ */

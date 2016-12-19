@@ -20,6 +20,7 @@ public:
 	void					removeBackText(unsigned int id);
 	void					addSprite(const sf::Vector2f&, const sf::Vector2f&, const std::string&, const sf::Vector2f&);
 	void					setTextColor(unsigned int id, const sf::Color &clr);
+	void					setButtonTextColor(unsigned int id, const sf::Color &clr);
 	void					addButton(const sf::Vector2f&, const std::string&, const sf::Color& = sf::Color::Black, unsigned int = 30, bool = false);
 	bool					buttonEvent(unsigned int id, const sf::Vector2f&);
 	void					draw(sf::RenderWindow &);

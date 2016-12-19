@@ -131,6 +131,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Room.cpp" />
+    <ClCompile Include="src\RoomManager.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Socket.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="inc\Graphique.hpp" />
     <ClInclude Include="inc\Object.hpp" />
     <ClInclude Include="inc\Room.hpp" />
+    <ClInclude Include="inc\RoomManager.hpp" />
     <ClInclude Include="inc\Scene.hpp" />
     <ClInclude Include="inc\Socket.hpp" />
     <ClInclude Include="inc\Sprite.hpp" />

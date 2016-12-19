@@ -50,6 +50,27 @@ const std::string &Room::getPlayer4() const
 	return (this->player4);
 }
 
+std::string	Room::getText() const
+{
+	std::string	mode;
+
+	switch (this->state)
+	{
+	case RtypeProtocol::roomState::Full:
+		mode = " [Complète]";
+		break;
+	case RtypeProtocol::roomState::Playing:
+		mode = " [Jeu lancé]";
+		break;
+	case RtypeProtocol::roomState::Waiting:
+		mode = " [En attente]";
+		break;
+	default:
+		break;
+	}
+	return std::string("Room " + std::to_string(this->id) + " contenant " + std::to_string(this->nbUsers) + " joueurs." + mode);
+}
+
 void Room::setId(const int &id)
 {
 	this->id = id;

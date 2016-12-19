@@ -7,7 +7,6 @@
 # include <iostream>
 
 # include "Scene.hpp"
-# include "Socket.hpp"
 # include "RoomManager.hpp"
 
 enum ScenesEnum

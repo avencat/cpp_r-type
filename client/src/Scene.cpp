@@ -95,8 +95,14 @@ void Scene::addSprite(const sf::Vector2f &pos, const sf::Vector2f &size, const s
 
 void Scene::setTextColor(unsigned int id, const sf::Color &color)
 {
-	if (id < texts.size())
+	if (id <= texts.size())
 		texts[id].setColor(color);
+}
+
+void Scene::setButtonTextColor(unsigned int id, const sf::Color &color)
+{
+	if (id <= button_text.size())
+		button_text[id].setColor(color);
 }
 
 void Scene::addText(const sf::Vector2f &pos, const std::string &str, unsigned int size)

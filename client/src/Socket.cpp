@@ -11,6 +11,7 @@ Socket::Socket()
 	data = new char[100];
 	selector.add(receiveSocket);
 	this->internalError = false;
+	this->status = 0;
 }
 
 Socket::~Socket()
@@ -34,10 +35,15 @@ bool Socket::send(void *dataToSend, const size_t &sizeOfData)
 
 bool Socket::receive(const size_t &sizeToReceive)
 {
-	memset(data, 0, 100);
-	if (this->receiveSocket.receive(data, sizeToReceive, received, ip, port) != sf::Socket::Done)
-	{
-		std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << port << std::endl;
+	if (selector.wait(sf::milliseconds(500))) {
+		memset(data, 0, 100);
+		if (this->receiveSocket.receive(data, sizeToReceive, received, ip, port) != sf::Socket::Done)
+		{
+			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << port << std::endl;
+			return (false);
+		}
+	} else {
+		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << port << std::endl;
 		return (false);
 	}
 	return (true);
@@ -67,6 +73,9 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	this->username = _username;
 	this->ip = _ip;
 	this->status = 1;
+	// Delete this line
+	this->status = 2;
+	// Delete the line before this line
 	this->sendSocket.setBlocking(true);
 	this->receiveSocket.setBlocking(true);
 	syn = new RtypeProtocol::Data::Handshake;
@@ -161,6 +170,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 		return (false);
 	}
 	delete username;
+	this->status = 2;
 	return (true);
 }
 

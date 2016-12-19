@@ -9,7 +9,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->ip = "";
 	this->username = "";
 	this->firstTime = true;
-	this->activeScene = ScenesEnum::listRooms;
+	this->activeScene = ScenesEnum::getIp;
 }
 
 Graphique::~Graphique()
@@ -53,6 +53,11 @@ bool Graphique::loadNextScene()
 		prevScene = activeScene;
 		activeScene = ScenesEnum::loading;
 		return (loadingScene());
+	case ScenesEnum::loading:
+		if (prevScene == ScenesEnum::getIp) {
+			activeScene = ScenesEnum::listRooms;
+			return (showRoomScene());
+		}
 	default:
 		return (linkServerScene());
 	}
@@ -64,6 +69,14 @@ bool Graphique::loadPrevScene()
 	{
 	case ScenesEnum::getIp:
 		activeScene = prevScene;
+		prevScene = ScenesEnum::null;
+		return (linkServerScene());
+	case ScenesEnum::null:
+		activeScene = ScenesEnum::getIp;
+		prevScene = ScenesEnum::null;
+		return (linkServerScene());
+	default:
+		activeScene = ScenesEnum::getIp;
 		prevScene = ScenesEnum::null;
 		return (linkServerScene());
 	}
@@ -253,13 +266,21 @@ bool	Graphique::showRoomScene()
 
 		//roomManager.roomList();
 		for (std::list<Room>::const_iterator i = roomManager.getRooms().begin(); i != roomManager.getRooms().end(); i++) {
-			listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Room", sf::Color::White, 30, true);
+			listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), i->getText(), sf::Color::Transparent, 30, true);
+			if (i->getState() == RtypeProtocol::roomState::Waiting)
+				listRooms.setButtonTextColor(j, sf::Color::Green);
+			else if (i->getState() == RtypeProtocol::roomState::Full)
+				listRooms.setButtonTextColor(j, sf::Color::Blue);
+			else
+				listRooms.setButtonTextColor(j, sf::Color::Red);
 			j++;
 		}
-		for (std::list<Room>::const_iterator i = roomManager.getRooms().begin(); i != roomManager.getRooms().end(); i++) {
-			listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Spectat' rooms", sf::Color::White, 30, true);
-			j++;
-		}
+		listRooms.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (++j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Mode:", 30);
+		listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (++j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Spectator", sf::Color::Transparent, 30, true);
+		listRooms.addButton(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, (++j * 50 + 360) * static_cast<float>(window.getSize().y) / 1080), "Player", sf::Color::Transparent, 30, true);
+		listRooms.setButtonTextColor(j - 3, sf::Color::Red);
+		listRooms.setButtonTextColor(j - 2, sf::Color::Green);
+		firstTime = false;
 	}
 
 	while (window.pollEvent(event))
