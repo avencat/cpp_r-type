@@ -1,4 +1,4 @@
-#include "..\inc\Room.hpp"
+#include "Room.hpp"
 
 Room::Room()
 {
@@ -57,18 +57,18 @@ std::string	Room::getText() const
 	switch (this->state)
 	{
 	case RtypeProtocol::roomState::Full:
-		mode = " [Complète]";
+		mode = " [Full]";
 		break;
 	case RtypeProtocol::roomState::Playing:
-		mode = " [Jeu lancé]";
+		mode = " [In game]";
 		break;
 	case RtypeProtocol::roomState::Waiting:
-		mode = " [En attente]";
+		mode = " [Waiting]";
 		break;
 	default:
 		break;
 	}
-	return std::string("Room " + std::to_string(this->id) + " contenant " + std::to_string(this->nbUsers) + " joueurs." + mode);
+	return std::string("Room " + std::to_string(this->id) + "\t" + std::to_string(this->nbUsers) + "p\t" + mode);
 }
 
 void Room::setId(const int &id)

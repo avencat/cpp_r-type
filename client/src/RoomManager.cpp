@@ -139,16 +139,13 @@ bool RoomManager::joinRoom(const Room &roomToJoin, const bool &spectator)
 			currentRoom.setPlayer3(joined->name3);
 			currentRoom.setPlayer4(joined->name4);
 			return (true);
-		}
-		else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrPlayerLimit)) {
+		} else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrPlayerLimit)) {
 			std::cerr << "[Error] Already 4 players in the room." << std::endl;
 			return (false);
-		}
-		else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrAlreadyStarted)) {
+		} else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrAlreadyStarted)) {
 			std::cerr << "[Error] Game already started in Room " << roomToJoin.getId() << std::endl;
 			return (false);
-		}
-		else {
+		} else {
 			if (manageServerCodes() == false)
 				return (false);
 		}
