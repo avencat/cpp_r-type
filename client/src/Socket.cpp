@@ -4,6 +4,7 @@
 Socket::Socket()
 {
 	this->port = 42142;
+	this->receivePort = 42142;
 	if (this->receiveSocket.bind(this->port) != sf::Socket::Done)
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't bind the port " << this->port << std::endl;
@@ -80,29 +81,31 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	this->receiveSocket.setBlocking(true);
 	syn = new RtypeProtocol::Data::Handshake;
 	syn->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::SYN);
-	syn->syn = rand() % 4242;
+	srand(time(NULL));
+	syn->syn = rand();
 	syn->ack = 0;
-	if (this->sendSocket.send(syn, sizeof(syn), this->ip, this->port) != sf::Socket::Done)
+	if (sendSocket.send(syn, sizeof(RtypeProtocol::Data::Handshake), sf::IpAddress(this->ip), this->port) != sf::Socket::Done)
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"SYN\" to " << ip << ":" << port << std::endl;
 		delete syn;
 		return (false);
 	}
+	std::cout << "Sent message to " << this->ip << ":" << this->port << std::endl;
 	memset(data, 0, 100);
 	if (selector.wait(sf::seconds(3))) {
-		if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, port) != sf::Socket::Done)
+		if (receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, receivePort) != sf::Socket::Done)
 		{
-			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << port << std::endl;
+			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << receivePort << std::endl;
 			delete syn;
 			return (false);
 		}
 	} else {
-		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << port << std::endl;
+		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << receivePort << std::endl;
 		delete syn;
 		return (false);
 	}
 	std::cout << reinterpret_cast<RtypeProtocol::Data::Handshake *>(data)->code << std::endl;
-	std::cout << "Received " << received << " bytes from " << ip << " on port " << port << " (" << data << ")" << std::endl;
+	std::cout << "Received " << received << " bytes from " << ip << " on port " << receivePort << " (" << data << ")" << std::endl;
 	if (reinterpret_cast<RtypeProtocol::Data::Handshake *>(data)->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::SYN_ACK)) {
 		syn->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::ACK);
 		syn->ack = reinterpret_cast<RtypeProtocol::Data::Handshake *>(data)->ack + 1;
@@ -119,19 +122,19 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	}
 	memset(data, 0, 100);
 	if (selector.wait(sf::seconds(3))) {
-		if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, port) != sf::Socket::Done)
+		if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Handshake), received, ip, receivePort) != sf::Socket::Done)
 		{
-			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << port << std::endl;
+			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << receivePort << std::endl;
 			delete syn;
 			return (false);
 		}
 	} else {
-		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << port << std::endl;
+		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << receivePort << std::endl;
 		delete syn;
 		return (false);
 	}
 	std::cout << reinterpret_cast<RtypeProtocol::Data::Handshake *>(data)->code << std::endl;
-	std::cout << "Received " << received << " bytes from " << ip << " on port " << port << " (" << data << ")" << std::endl;
+	std::cout << "Received " << received << " bytes from " << ip << " on port " << receivePort << " (" << data << ")" << std::endl;
 	if (reinterpret_cast<RtypeProtocol::Data::Handshake *>(data)->code != RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Accepted)) {
 		std::cerr << "Server didn't accept you." << std::endl;
 		delete syn;
@@ -142,7 +145,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	username->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::Username);
 	for (short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
 		username->username[i] = _username.c_str()[i];
-	if (this->sendSocket.send(username, sizeof(RtypeProtocol::Data::Username), this->ip, this->port) != sf::Socket::Done)
+	if (sendSocket.send(username, sizeof(RtypeProtocol::Data::Username), this->ip, this->port) != sf::Socket::Done)
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"USERNAME\" to " << ip << ":" << port << std::endl;
 		delete username;
@@ -150,9 +153,9 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	}
 	memset(data, 0, 100);
 	if (selector.wait(sf::seconds(3))) {
-		if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Username), received, ip, port) != sf::Socket::Done)
+		if (this->receiveSocket.receive(data, sizeof(RtypeProtocol::Data::Username), received, ip, receivePort) != sf::Socket::Done)
 		{
-			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << port << std::endl;
+			std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << receivePort << std::endl;
 			delete syn;
 			return (false);
 		}

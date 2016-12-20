@@ -25,17 +25,17 @@ bool Graphique::initWindow(const int &_x, const int &_y, const std::string &_tit
 	return (true);
 }
 
-const std::string		&Graphique::getUsername() const
+const std::string	&Graphique::getUsername() const
 {
 	return (username);
 }
 
-const StatusEnum			&Graphique::getStatusUser() const
+const StatusEnum	&Graphique::getStatusUser() const
 {
 	return (user);
 }
 
-void						Graphique::setStatusUser(StatusEnum state)
+void	Graphique::setStatusUser(const StatusEnum &state)
 {
 	this->user = state;
 }
@@ -110,6 +110,9 @@ bool Graphique::loadPrevScene()
 		activeScene = ScenesEnum::getIp;
 		prevScene = ScenesEnum::null;
 		return (linkServerScene());
+	case ScenesEnum::listRooms:
+		activeScene = prevScene;
+		return (showRoomScene());
 	default:
 		activeScene = ScenesEnum::getIp;
 		prevScene = ScenesEnum::null;
@@ -122,25 +125,26 @@ const std::string		&Graphique::getIp() const
 	return (ip);
 }
 
-void					Graphique::setUsername(std::string str)
+void					Graphique::setUsername(const std::string &str)
 {
 	this->username = str;
 }
 
-void					Graphique::setIp(std::string str)
+void					Graphique::setIp(const std::string &str)
 {
 	this->ip = str;
 }
 
-bool Graphique::refreshFrame()
+bool		Graphique::refreshFrame()
 {
-	if (loadCurrentScene() == false)
-		return (false);
+	bool	retValue;
+
+	retValue = loadCurrentScene();
 	window.clear(sf::Color::Black);
 	if (drawObject() == false)
 		return (false);
 	window.display();
-	return (true);
+	return (retValue);
 }
 
 bool Graphique::drawObject()
@@ -220,7 +224,8 @@ bool Graphique::linkServerScene()
 			{
 				ip = linkServer.getText(1);
 				username = linkServer.getText(4);
-				loadNextScene();
+				if (ip.length() > 0 && username.length() > 0)
+					loadNextScene();
 				return (ip.length() > 0 && username.length() > 0);
 			}
 			else if (linkServer.buttonEvent(1, pos))
@@ -240,7 +245,8 @@ bool Graphique::linkServerScene()
 				case 13:
 					ip = linkServer.getText(1);
 					username = linkServer.getText(4);
-					loadNextScene();
+					if (ip.length() > 0 && username.length() > 0)
+						loadNextScene();
 					return (ip.length() > 0 && username.length() > 0);
 					break;
 				case 9:
@@ -429,9 +435,7 @@ bool	Graphique::lobbyScene()
 						break;
 					case Button::buttonEnum::Leave:
 						std::cout << "LEAVE !" << std::endl;
-						if (!roomManager.leaveRoom())
-							return (false);
-						break;
+						return (loadPrevScene());
 					default:
 						break;
 					}

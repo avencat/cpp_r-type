@@ -14,13 +14,13 @@ public:
 	virtual ~RoomManager();
 
 	// Call this function only the first time you show the RoomListView !!!
-	std::list<Room>				&roomList();
+	const std::list<Room>		&roomList();
 	bool						createRoom();
-	std::list<Room>				&refreshRoomList();
+	const std::list<Room>		&refreshRoomList();
 	bool						joinRoom(const Room &, const bool &spectator);
 	bool						joinRoom(const int &, const bool &spectator);
 	bool						leaveRoom();
-	std::list<Room>				&getRooms();
+	const std::list<Room>		&getRooms();
 	bool						manageServerCodes();
 	bool						ready();
 	bool						notReady();

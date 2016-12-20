@@ -24,6 +24,7 @@ public:
 
 private:
 	unsigned short		port;
+	unsigned short		receivePort;
 	int					status;
 	sf::UdpSocket		sendSocket;
 	sf::UdpSocket		receiveSocket;

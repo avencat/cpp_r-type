@@ -22,7 +22,7 @@ RoomManager::~RoomManager()
 {
 }
 
-const Room					&RoomManager::getCurrentRoom()
+const Room	&RoomManager::getCurrentRoom()
 {
 	return (currentRoom);
 }
@@ -62,7 +62,7 @@ bool			RoomManager::notReady()
 }
 
 // Only call this function once, the first time !
-std::list<Room>	&RoomManager::roomList()
+const std::list<Room>	&RoomManager::roomList()
 {
 	RtypeProtocol::Data::Username	*username;
 	std::string						_username;
@@ -128,7 +128,7 @@ bool RoomManager::createRoom()
 	return (true);
 }
 
-std::list<Room> &RoomManager::refreshRoomList()
+const std::list<Room> &RoomManager::refreshRoomList()
 {
 	RtypeProtocol::Data::Code	*roomList;
 	int							code;
@@ -260,7 +260,7 @@ bool								RoomManager::leaveRoom()
 	return (true);
 }
 
-std::list<Room>	&RoomManager::getRooms()
+const std::list<Room>	&RoomManager::getRooms()
 {
 	return (this->listRooms);
 }

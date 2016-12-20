@@ -44,9 +44,9 @@ public:
 	const std::string			&getUsername() const;
 	const std::string			&getIp() const;
 	const StatusEnum			&getStatusUser() const;
-	void						setStatusUser(StatusEnum);
-	void						setUsername(std::string);
-	void						setIp(std::string);
+	void						setStatusUser(const StatusEnum &);
+	void						setUsername(const std::string &);
+	void						setIp(const std::string &);
 	Scene						&getActiveScene();
 	bool						loadNextScene();
 	bool						loadPrevScene();
