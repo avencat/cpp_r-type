@@ -75,27 +75,27 @@ void						Button::setBgColor(const sf::Color &clr)
 	colorBg = clr;
 }
 
-const Button::buttonEnum			&Button::getId()
+const Button::buttonEnum			&Button::getId() const
 {
 	return (id);
 }
 
-const sf::Text				&Button::getText()
+const sf::Text				&Button::getText() const
 {
 	return (text);
 }
 
-const sf::RectangleShape	&Button::getRect()
+const sf::RectangleShape	&Button::getRect() const
 {
 	return (rect);
 }
 
-const sf::Color				&Button::getColorTxt()
+const sf::Color				&Button::getColorTxt() const
 {
 	return (colorTxt);
 }
 
-const sf::Color				&Button::getColorBg()
+const sf::Color				&Button::getColorBg() const
 {
 	return (colorBg);
 }

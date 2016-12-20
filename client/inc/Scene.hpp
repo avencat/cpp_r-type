@@ -25,7 +25,7 @@ public:
 	void							addButton(const sf::Vector2f&, const std::string&, const sf::Color& = sf::Color::Black, unsigned int = 30, bool = false);
 	bool							buttonEvent(unsigned int id, const sf::Vector2f&);
 	bool							buttonClik(unsigned int id, const sf::Vector2f&);
-	void							draw(sf::RenderWindow &);
+	void							draw(sf::RenderWindow &) const;
 	const std::vector<sf::Text>		&getTextList() const;
 	const std::vector<sf::Text>		&getTextButton() const;
 	const std::vector<Button*>		&getButtons() const;

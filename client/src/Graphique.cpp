@@ -365,17 +365,17 @@ bool	Graphique::showRoomScene()
 
 bool	Graphique::lobbyScene()
 {
+	int			k = 0;
+	std::string	room_str;
+
 	if (firstTime) {
 
 		if (!lobby.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
 			return (false);
-
-		std::string	room_str;
 		room_str = "Lobby - Room " + std::to_string(roomManager.getCurrentRoom().getId());
 		lobby.addText(sf::Vector2f(100 * static_cast<float>(window.getSize().x) / 1920, 100 * static_cast<float>(window.getSize().y) / 1080), room_str, 48);
 		lobby.setTextColor(0, sf::Color::Yellow);
 
-		//for (int i = 0; i < roomManager.getCurrentRoom().getNbUsers(); i++) {}
 		if (roomManager.getCurrentRoom().getPlayer1() != "")
 			lobby.addText(sf::Vector2f(100, 200), roomManager.getCurrentRoom().getPlayer1() + (roomManager.getCurrentRoom().getP1Ready() ? "\tReady" : "\tNot ready"), 30);
 		if (roomManager.getCurrentRoom().getPlayer2() != "")
@@ -385,9 +385,9 @@ bool	Graphique::lobbyScene()
 		if (roomManager.getCurrentRoom().getPlayer4() != "")
 			lobby.addText(sf::Vector2f(100, 350), roomManager.getCurrentRoom().getPlayer4() + (roomManager.getCurrentRoom().getP4Ready() ? "\tReady" : "\tNot ready"), 30);
 
-		lobby.addButs("Ready", sf::Vector2f(100, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Player);
-		lobby.addButs("Not Ready", sf::Vector2f(300, 600), sf::Vector2f(160, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Spectat);
-		lobby.addButs("Leave", sf::Vector2f(500, 600), sf::Vector2f(160, 50), sf::Color::Blue, sf::Color::Transparent, Button::buttonEnum::Spectat);
+		lobby.addButs("Ready", sf::Vector2f(100, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Ready);
+		lobby.addButs("Not Ready", sf::Vector2f(350, 600), sf::Vector2f(160, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::NotReady);
+		lobby.addButs("Leave", sf::Vector2f(600, 600), sf::Vector2f(160, 50), sf::Color::Blue, sf::Color::Transparent, Button::buttonEnum::Leave);
 		firstTime = false;
 	}
 
@@ -400,27 +400,43 @@ bool	Graphique::lobbyScene()
 			break;
 		case sf::Event::MouseButtonPressed:
 			pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-			
-			//int k = 0;
 			for (std::vector<Button *>::const_iterator i = lobby.getButtons().begin(); i != lobby.getButtons().end(); i++) {
-				//if (lobby.buttonClik(k, pos)) {
-					//if ((*i)->getId() == Button::buttonEnum::Player) {
-					//	std::cout << "Choose Player" << std::endl;
-					//	setStatusUser(Player);
-					//	lobby.getButtons()[k]->setTxtColor(sf::Color::Red);
-					//	lobby.getButtons()[k + 1]->setTxtColor(sf::Color::White);
-					//
-					//else if ((*i)->getId() == Button::buttonEnum::Spectat) {
-					//	std::cout << "Choose SPecta" << std::endl;
-					//	setStatusUser(Spectator);
-					//	lobby.getButtons()[k]->setTxtColor(sf::Color::Red);
-					//	lobby.getButtons()[k - 1]->setTxtColor(sf::Color::White);
-					//}
-					//else if ((*i)->getId() == Button::buttonEnum::Room) {
-					//	// create room
-					//}
-				//}
-				//k++;
+				if (lobby.buttonClik(k, pos)) {
+					switch ((*i)->getId())
+					{
+					case Button::buttonEnum::Ready:
+
+						std::cout << "READY !" << std::endl;
+						/*if (username == roomManager.getCurrentRoom().getPlayer1())
+							roomManager.getCurrentRoom().setP1Ready(true);
+						else if (username == roomManager.getCurrentRoom().getPlayer2())
+							roomManager.getCurrentRoom().setP2Ready(true);
+						else if (username == roomManager.getCurrentRoom().getPlayer3())
+							roomManager.getCurrentRoom().setP3Ready(true);
+						else if (username == roomManager.getCurrentRoom().getPlayer4())
+							roomManager.getCurrentRoom().setP4Ready(true);*/
+						break;
+					case Button::buttonEnum::NotReady:
+						std::cout << "NOT READY !" << std::endl;
+						/*if (username == roomManager.getCurrentRoom().getPlayer1())
+							roomManager.getCurrentRoom().setP1Ready(false);
+						else if (username == roomManager.getCurrentRoom().getPlayer2())
+							roomManager.getCurrentRoom().setP2Ready(false);
+						else if (username == roomManager.getCurrentRoom().getPlayer3())
+							roomManager.getCurrentRoom().setP3Ready(false);
+						else if (username == roomManager.getCurrentRoom().getPlayer4())
+							roomManager.getCurrentRoom().setP4Ready(false);*/
+						break;
+					case Button::buttonEnum::Leave:
+						std::cout << "LEAVE !" << std::endl;
+						if (!roomManager.leaveRoom())
+							return (false);
+						break;
+					default:
+						break;
+					}
+				}
+				k++;
 			}
 
 		case sf::Event::KeyPressed:

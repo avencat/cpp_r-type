@@ -15,6 +15,9 @@ public:
 		Spectat,
 		Create,
 		Room,
+		Ready,
+		NotReady,
+		Leave,
 	};
 
 	Button();
@@ -28,11 +31,11 @@ public:
 	void						setTxtColor(const sf::Color &);
 	void						setBgColor(const sf::Color &);
 	bool						setFont(const std::string &);
-	const sf::Text				&getText();
-	const sf::RectangleShape	&getRect();
-	const sf::Color				&getColorTxt();
-	const sf::Color				&getColorBg();
-	const buttonEnum			&getId();
+	const sf::Text				&getText() const;
+	const sf::RectangleShape	&getRect() const;
+	const sf::Color				&getColorTxt() const;
+	const sf::Color				&getColorBg() const;
+	const buttonEnum			&getId() const;
 
 private:
 	sf::Text			text;
