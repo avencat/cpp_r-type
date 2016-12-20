@@ -24,6 +24,7 @@ public:
 	bool						manageServerCodes();
 	bool						ready();
 	bool						notReady();
+	const Room					&getCurrentRoom();
 
 private:
 	std::list<Room>	listRooms;

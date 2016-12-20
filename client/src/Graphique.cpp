@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::getIp;
+	this->activeScene = ScenesEnum::lobby;
 }
 
 Graphique::~Graphique()
@@ -50,6 +50,8 @@ Scene	&Graphique::getActiveScene()
 		return (loading);
 	case ScenesEnum::listRooms:
 		return (listRooms);
+	case ScenesEnum::lobby:
+		return (lobby);
 	default:
 		return (linkServer);
 	}
@@ -333,6 +335,84 @@ bool	Graphique::showRoomScene()
 				k++;
 			}
 
+
+		case sf::Event::KeyPressed:
+			switch (event.key.code)
+			{
+			case sf::Keyboard::Escape:
+				closeWindow();
+				break;
+			default:
+				break;
+			}
+		default:
+			break;
+		}
+	}
+	return (true);
+}
+
+bool	Graphique::LobbyScene()
+{
+	std::string	room_str;
+
+
+	if (firstTime) {
+
+		if (!lobby.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
+			return (false);
+
+		room_str = "Lobby - Room " + std::to_string(roomManager.getCurrentRoom().getId());
+		lobby.addText(sf::Vector2f(100 * static_cast<float>(window.getSize().x) / 1920, 100 * static_cast<float>(window.getSize().y) / 1080), room_str, 48);
+		lobby.setTextColor(0, sf::Color::Yellow);
+
+		//for (int i = 0; i < roomManager.getCurrentRoom().getNbUsers(); i++) {}
+		if (roomManager.getCurrentRoom().getPlayer1() != "")
+			lobby.addText(sf::Vector2f(100, 200), roomManager.getCurrentRoom().getPlayer1(), 30);
+		if (roomManager.getCurrentRoom().getPlayer2() != "")
+			lobby.addText(sf::Vector2f(100, 250), roomManager.getCurrentRoom().getPlayer2(), 30);
+		if (roomManager.getCurrentRoom().getPlayer3() != "")
+			lobby.addText(sf::Vector2f(100, 300), roomManager.getCurrentRoom().getPlayer3(), 30);
+		if (roomManager.getCurrentRoom().getPlayer4() != "")
+			lobby.addText(sf::Vector2f(100, 350), roomManager.getCurrentRoom().getPlayer4(), 30);
+
+		lobby.addButs("Player", sf::Vector2f(100, 600), sf::Vector2f(100, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Player);
+		lobby.addButs("Spectator", sf::Vector2f(300, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Spectat);
+		lobby.addButs("Create", sf::Vector2f(500, 600), sf::Vector2f(100, 50), sf::Color(204, 51, 102), sf::Color::Transparent, Button::buttonEnum::Create);
+		firstTime = false;
+	}
+
+	while (window.pollEvent(event))
+	{
+		switch (event.type)
+		{
+		case sf::Event::Closed:
+			closeWindow();
+			break;
+		case sf::Event::MouseButtonPressed:
+			pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			
+			//int k = 0;
+			for (std::vector<Button *>::const_iterator i = lobby.getButtons().begin(); i != lobby.getButtons().end(); i++) {
+				//if (lobby.buttonClik(k, pos)) {
+					//if ((*i)->getId() == Button::buttonEnum::Player) {
+					//	std::cout << "Choose Player" << std::endl;
+					//	setStatusUser(Player);
+					//	lobby.getButtons()[k]->setTxtColor(sf::Color::Red);
+					//	lobby.getButtons()[k + 1]->setTxtColor(sf::Color::White);
+					//
+					//else if ((*i)->getId() == Button::buttonEnum::Spectat) {
+					//	std::cout << "Choose SPecta" << std::endl;
+					//	setStatusUser(Spectator);
+					//	lobby.getButtons()[k]->setTxtColor(sf::Color::Red);
+					//	lobby.getButtons()[k - 1]->setTxtColor(sf::Color::White);
+					//}
+					//else if ((*i)->getId() == Button::buttonEnum::Room) {
+					//	// create room
+					//}
+				//}
+				//k++;
+			}
 
 		case sf::Event::KeyPressed:
 			switch (event.key.code)

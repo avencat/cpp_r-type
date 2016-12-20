@@ -22,6 +22,11 @@ RoomManager::~RoomManager()
 {
 }
 
+const Room					&RoomManager::getCurrentRoom()
+{
+	return (currentRoom);
+}
+
 bool								RoomManager::ready()
 {
 	RtypeProtocol::Data::Code		*code;
