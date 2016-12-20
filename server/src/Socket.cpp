@@ -5,10 +5,10 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:16 2016 Jessica VAN-DEN-ZANDE
-// Last update Mon Dec 19 18:36:41 2016 Jessica VAN-DEN-ZANDE
+// Last update Tue Dec 20 13:16:29 2016 Jessica VAN-DEN-ZANDE
 //
 
-#include "../inc/Socket.hpp"
+#include "Socket.hpp"
 
 Socket::Socket() 
 {

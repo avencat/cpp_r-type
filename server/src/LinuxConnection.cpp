@@ -5,11 +5,11 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Mon Dec 19 23:50:15 2016 Jessica VAN-DEN-ZANDE
+// Last update Tue Dec 20 13:16:19 2016 Jessica VAN-DEN-ZANDE
 //
 
-#include "../inc/LinuxConnection.hpp"
-#include "../../common/inc/RtypeProtocol.hh"
+#include "LinuxConnection.hpp"
+#include "RtypeProtocol.hh"
 
 Network::Network() 
 {

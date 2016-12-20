@@ -5,10 +5,10 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 00:59:07 2016 Jessica VAN-DEN-ZANDE
-// Last update Mon Dec 19 18:32:06 2016 Jessica VAN-DEN-ZANDE
+// Last update Tue Dec 20 13:15:59 2016 Jessica VAN-DEN-ZANDE
 //
 
-#include "../inc/ASocket.hpp"
+#include "ASocket.hpp"
 
 ASocket::ASocket()
 {

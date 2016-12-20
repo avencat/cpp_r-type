@@ -5,10 +5,10 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Fri Dec  2 16:56:04 2016 Theo TOUZET
-// Last update Mon Dec 19 23:44:03 2016 Jessica VAN-DEN-ZANDE
+// Last update Tue Dec 20 13:15:33 2016 Jessica VAN-DEN-ZANDE
 //
 
-#include "../inc/RtypeProtocol.hh"
+#include "RtypeProtocol.hh"
 
 short		RtypeProtocol::convertShort(const RtypeProtocol::clientCodes a)
 {

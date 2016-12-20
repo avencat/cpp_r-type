@@ -5,12 +5,12 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Mon Dec 19 18:27:07 2016 Jessica VAN-DEN-ZANDE
-// Last update Mon Dec 19 18:38:23 2016 Jessica VAN-DEN-ZANDE
+// Last update Tue Dec 20 13:16:40 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include <iostream>
 #include <string>
-#include "../inc/LinuxConnection.hpp"
+#include "LinuxConnection.hpp"
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 ## Login   <van-de_j@epitech.net>
 ## 
 ## Started on  Mon Dec 19 18:28:51 2016 Jessica VAN-DEN-ZANDE
-## Last update Mon Dec 19 23:45:05 2016 Jessica VAN-DEN-ZANDE
+## Last update Tue Dec 20 13:15:17 2016 Jessica VAN-DEN-ZANDE
 ##
 
 CXX		= g++
@@ -24,7 +24,7 @@ SRC		= $(DIR_PROTO)RtypeProtocol.cpp	\
 
 OBJ		= $(SRC:.cpp=.o)
 
-CXXFLAGS	= -std=c++11 -W -Wall -Werror -Wextra -g
+CXXFLAGS	= -std=c++11 -W -Wall -Werror -Wextra -I ../common/inc/ -I ./inc/
 
 RM		= rm -rf
 
