@@ -39,7 +39,7 @@ public:
 	bool						loadingScene();
 	bool						loadCurrentScene();
 	bool						showRoomScene();
-	bool						LobbyScene();
+	bool						lobbyScene();
 
 	const std::string			&getUsername() const;
 	const std::string			&getIp() const;

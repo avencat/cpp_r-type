@@ -3,6 +3,7 @@
 # define BUTTON_H_
 
 # include <SFML/Graphics.hpp>
+# include <string>
 
 class Button
 {

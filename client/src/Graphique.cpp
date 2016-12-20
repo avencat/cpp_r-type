@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::lobby;
+	this->activeScene = ScenesEnum::getIp;
 }
 
 Graphique::~Graphique()
@@ -38,6 +38,23 @@ const StatusEnum			&Graphique::getStatusUser() const
 void						Graphique::setStatusUser(StatusEnum state)
 {
 	this->user = state;
+}
+
+bool Graphique::loadCurrentScene()
+{
+	switch (activeScene)
+	{
+	case ScenesEnum::getIp:
+		return (linkServerScene());
+	case ScenesEnum::loading:
+		return (loadingScene());
+	case ScenesEnum::listRooms:
+		return (showRoomScene());
+	case ScenesEnum::lobby:
+		return (lobbyScene());
+	default:
+		return (linkServerScene());
+	}
 }
 
 Scene	&Graphique::getActiveScene()
@@ -71,6 +88,11 @@ bool Graphique::loadNextScene()
 			activeScene = ScenesEnum::listRooms;
 			return (showRoomScene());
 		}
+		break;
+	case ScenesEnum::listRooms:
+		prevScene = activeScene;
+		activeScene = ScenesEnum::lobby;
+		return (lobbyScene());
 	default:
 		return (linkServerScene());
 	}
@@ -149,21 +171,6 @@ bool Graphique::loadingScene()
 		loading.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 50 * static_cast<float>(window.getSize().y) / 1080), "Loading...", 48);
 		loading.setTextColor(0, sf::Color::White);
 		firstTime = false;
-	}
-}
-
-bool Graphique::loadCurrentScene()
-{
-	switch (activeScene)
-	{
-	case ScenesEnum::getIp:
-		return (linkServerScene());
-	case ScenesEnum::loading:
-		return (loadingScene());
-	case ScenesEnum::listRooms:
-		return (showRoomScene());
-	default:
-		return (linkServerScene());
 	}
 }
 
@@ -305,9 +312,15 @@ bool	Graphique::showRoomScene()
 			for (std::list<Room>::const_iterator l = roomManager.getRooms().begin(); l != roomManager.getRooms().end(); l++) {
 				if (listRooms.buttonClik(k, pos)) {
 					if (k < roomManager.getRooms().size() && l->getState() == RtypeProtocol::roomState::Waiting) {
-						std::cout << "Enter room" << std::endl;
+						user == Player ?
+						std::cout << "You're joining the room as Player" << std::endl :
+						std::cout << "You're joining the room as spectator" << std::endl;
 						if (roomManager.joinRoom(l->getId(), user == Player ? false : true)) {
-							return (true);
+							return (loadNextScene());
+						}
+						// To delete once the connection with the server is correctly established or the demo is finished
+						else {
+							return (loadNextScene());
 						}
 					}
 				}
@@ -317,13 +330,11 @@ bool	Graphique::showRoomScene()
 			for (std::vector<Button *>::const_iterator i = listRooms.getButtons().begin(); i != listRooms.getButtons().end(); i++) {
 				if (listRooms.buttonClik(k, pos)) {
 					if ((*i)->getId() == Button::buttonEnum::Player) {
-						std::cout << "Choose Player" << std::endl;
 						setStatusUser(Player);
 						listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
 						listRooms.getButtons()[k + 1]->setTxtColor(sf::Color::White);
 					}
 					else if ((*i)->getId() == Button::buttonEnum::Spectat) {
-						std::cout << "Choose SPecta" << std::endl;
 						setStatusUser(Spectator);
 						listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
 						listRooms.getButtons()[k - 1]->setTxtColor(sf::Color::White);
@@ -352,33 +363,31 @@ bool	Graphique::showRoomScene()
 	return (true);
 }
 
-bool	Graphique::LobbyScene()
+bool	Graphique::lobbyScene()
 {
-	std::string	room_str;
-
-
 	if (firstTime) {
 
 		if (!lobby.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
 			return (false);
 
+		std::string	room_str;
 		room_str = "Lobby - Room " + std::to_string(roomManager.getCurrentRoom().getId());
 		lobby.addText(sf::Vector2f(100 * static_cast<float>(window.getSize().x) / 1920, 100 * static_cast<float>(window.getSize().y) / 1080), room_str, 48);
 		lobby.setTextColor(0, sf::Color::Yellow);
 
 		//for (int i = 0; i < roomManager.getCurrentRoom().getNbUsers(); i++) {}
 		if (roomManager.getCurrentRoom().getPlayer1() != "")
-			lobby.addText(sf::Vector2f(100, 200), roomManager.getCurrentRoom().getPlayer1(), 30);
+			lobby.addText(sf::Vector2f(100, 200), roomManager.getCurrentRoom().getPlayer1() + (roomManager.getCurrentRoom().getP1Ready() ? "\tReady" : "\tNot ready"), 30);
 		if (roomManager.getCurrentRoom().getPlayer2() != "")
-			lobby.addText(sf::Vector2f(100, 250), roomManager.getCurrentRoom().getPlayer2(), 30);
+			lobby.addText(sf::Vector2f(100, 250), roomManager.getCurrentRoom().getPlayer2() + (roomManager.getCurrentRoom().getP2Ready() ? "\tReady" : "\tNot ready"), 30);
 		if (roomManager.getCurrentRoom().getPlayer3() != "")
-			lobby.addText(sf::Vector2f(100, 300), roomManager.getCurrentRoom().getPlayer3(), 30);
+			lobby.addText(sf::Vector2f(100, 300), roomManager.getCurrentRoom().getPlayer3() + (roomManager.getCurrentRoom().getP3Ready() ? "\tReady" : "\tNot ready"), 30);
 		if (roomManager.getCurrentRoom().getPlayer4() != "")
-			lobby.addText(sf::Vector2f(100, 350), roomManager.getCurrentRoom().getPlayer4(), 30);
+			lobby.addText(sf::Vector2f(100, 350), roomManager.getCurrentRoom().getPlayer4() + (roomManager.getCurrentRoom().getP4Ready() ? "\tReady" : "\tNot ready"), 30);
 
-		lobby.addButs("Player", sf::Vector2f(100, 600), sf::Vector2f(100, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Player);
-		lobby.addButs("Spectator", sf::Vector2f(300, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Spectat);
-		lobby.addButs("Create", sf::Vector2f(500, 600), sf::Vector2f(100, 50), sf::Color(204, 51, 102), sf::Color::Transparent, Button::buttonEnum::Create);
+		lobby.addButs("Ready", sf::Vector2f(100, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Player);
+		lobby.addButs("Not Ready", sf::Vector2f(300, 600), sf::Vector2f(160, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Spectat);
+		lobby.addButs("Leave", sf::Vector2f(500, 600), sf::Vector2f(160, 50), sf::Color::Blue, sf::Color::Transparent, Button::buttonEnum::Spectat);
 		firstTime = false;
 	}
 

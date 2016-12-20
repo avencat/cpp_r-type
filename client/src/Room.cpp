@@ -144,7 +144,7 @@ void Room::setP1Ready(const bool &ready)
 
 void Room::setP2Ready(const bool &ready)
 {
-	this->p3Ready = ready;
+	this->p2Ready = ready;
 }
 
 void Room::setP3Ready(const bool &ready)

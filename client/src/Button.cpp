@@ -4,9 +4,6 @@ Button::Button()
 {
 }
 
-#include <iostream>
-#include <string>
-
 Button::Button(const sf::Font &_font, const std::string &name, const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Color &clrTxt, const sf::Color &clrBg, const buttonEnum &_id)
 {
 	id = _id;
@@ -16,6 +13,7 @@ Button::Button(const sf::Font &_font, const std::string &name, const sf::Vector2
 	if (_id != buttonEnum::Room) {
 		sf::Vector2f newPos = pos;
 		newPos.x = newPos.x + ((size.x - text.getLocalBounds().width) / 2);
+		newPos.y = newPos.y + ((size.y - text.getLocalBounds().height) / 4);
 		text.setPosition(newPos);
 	}
 	text.setColor(clrTxt);

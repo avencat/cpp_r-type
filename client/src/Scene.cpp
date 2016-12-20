@@ -9,10 +9,9 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	for (std::vector<Button*>::iterator it = buttons.begin(); it != buttons.end(); it++)
+	for (std::vector<Button*>::iterator it = buttons.begin(); it != buttons.end(); it = buttons.erase(it))
 	{
 		delete (*it);
-		it = buttons.erase(it);
 	}
 }
 
@@ -171,7 +170,7 @@ bool						Scene::buttonClik(unsigned int id, const sf::Vector2f &pos)
 	return (false);
 }
 
-const std::vector<Button*>	&Scene:: getButtons() const
+const std::vector<Button*>	&Scene::getButtons() const
 {
 	return (buttons);
 }
