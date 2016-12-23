@@ -182,25 +182,25 @@ void						Scene::addButs(const std::string &_name, const sf::Vector2f &_pos, con
 
 void						Scene::draw(sf::RenderWindow &window) const
 {
-	for (std::vector<sf::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); it++)
-	{
+	for (std::vector<sf::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); it++) {
 		window.draw(*it);
 	}
-	for (std::vector<sf::RectangleShape>::const_iterator it = rects.begin(); it != rects.end(); it++)
-	{
+	for (std::vector<sf::RectangleShape>::const_iterator it = rects.begin(); it != rects.end(); it++) {
 		window.draw(*it);
 	}
-	for (std::vector<sf::Text>::const_iterator it = texts.begin(); it != texts.end(); it++)
-	{
+	for (std::vector<sf::Text>::const_iterator it = texts.begin(); it != texts.end(); it++) {
 		window.draw(*it);
 	}
-	for (std::vector<sf::Text>::const_iterator it = button_text.begin(); it != button_text.end(); it++)
-	{
+	for (std::vector<sf::Text>::const_iterator it = button_text.begin(); it != button_text.end(); it++) {
 		window.draw(*it);
 	}
-	for (std::vector<Button*>::const_iterator it = buttons.begin(); it != buttons.end(); it++)
-	{
+	for (std::vector<Button*>::const_iterator it = buttons.begin(); it != buttons.end(); it++) {
 		window.draw((*it)->getRect());
 		window.draw((*it)->getText());
+	}
+	for (std::list<Object>::const_iterator it = objects.begin(); it != objects.end(); it++) {
+		for (std::list<AComponent>::const_iterator i = it->getComponents().begin(); i != it->getComponents().end(); i++) {
+			window.draw((*i).getCSprite().getSprite());
+		}
 	}
 }

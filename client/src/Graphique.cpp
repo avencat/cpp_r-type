@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::getIp;
+	this->activeScene = ScenesEnum::InGame;
 }
 
 Graphique::~Graphique()
@@ -52,6 +52,8 @@ bool Graphique::loadCurrentScene()
 		return (showRoomScene());
 	case ScenesEnum::lobby:
 		return (lobbyScene());
+	case ScenesEnum::InGame:
+		return (inGameScene());
 	default:
 		return (linkServerScene());
 	}
@@ -69,6 +71,8 @@ Scene	&Graphique::getActiveScene()
 		return (listRooms);
 	case ScenesEnum::lobby:
 		return (lobby);
+	case ScenesEnum::InGame:
+		return (inGame);
 	default:
 		return (linkServer);
 	}
@@ -446,6 +450,45 @@ bool	Graphique::lobbyScene()
 		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{
+			case sf::Keyboard::Escape:
+				closeWindow();
+				break;
+			default:
+				break;
+			}
+		default:
+			break;
+		}
+	}
+	return (true);
+}
+
+bool	Graphique::inGameScene()
+{
+	Object	obj;
+
+	obj.setName("Player1");
+	obj.addAComponent(1, Sprite::TypeSpriteEnum::Player1);
+	inGame.addObject(obj);
+
+	while (window.pollEvent(event))
+	{
+		switch (event.type)
+		{
+		case sf::Event::Closed:
+			closeWindow();
+			break;
+		case sf::Event::KeyPressed:
+			switch (event.key.code)
+			{
+			case sf::Keyboard::Up:
+				break;
+			case sf::Keyboard::Down:
+				break;
+			case sf::Keyboard::Left:
+				break;
+			case sf::Keyboard::Right:
+				break;
 			case sf::Keyboard::Escape:
 				closeWindow();
 				break;

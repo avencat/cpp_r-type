@@ -10,9 +10,9 @@ class Scene
 public:
 	Scene();
 	virtual ~Scene();
-	bool	addObject(const Object &);
-	bool	deleteObject(const Object &);
-	bool	updateObject(const Object &);
+	bool							addObject(const Object &);
+	bool							deleteObject(const Object &);
+	bool							updateObject(const Object &);
 
 	bool							loadFont(const std::string&);
 	void							addText(const sf::Vector2f&, const std::string&, unsigned int = 30);

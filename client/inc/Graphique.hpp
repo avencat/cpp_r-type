@@ -15,6 +15,7 @@ enum ScenesEnum
 	loading,
 	listRooms,
 	lobby,
+	InGame,
 	null,
 };
 
@@ -40,6 +41,7 @@ public:
 	bool						loadCurrentScene();
 	bool						showRoomScene();
 	bool						lobbyScene();
+	bool						inGameScene();
 
 	const std::string			&getUsername() const;
 	const std::string			&getIp() const;
@@ -67,6 +69,7 @@ private:
 	Scene						loading;
 	Scene						listRooms;
 	Scene						lobby;
+	Scene						inGame;
 	sf::Event					event;
 	sf::Vector2f				pos;
 	char						focus;
