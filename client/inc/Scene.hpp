@@ -30,21 +30,28 @@ public:
 	const std::vector<sf::Text>		&getTextButton() const;
 	const std::vector<Button*>		&getButtons() const;
 	const sf::Font					&getFont() const;
+	const sf::Sprite				&getBGSprite() const;
+	const sf::Texture				&getBGTexture() const;
+	void							setBGSprite(const std::string &);
+	void							setBGTexture(const std::string &);
 	void							addButs(const std::string &, const sf::Vector2f &, const sf::Vector2f &, const sf::Color &, const sf::Color &, const Button::buttonEnum &);
+	const Object					&getObj(std::string);
+	void							setObjPos(std::string, int, int);
 
 private:
 	std::list<Object>				objects;
 
 	sf::Font						font;
 	std::string						wildString;
+
 	std::vector<sf::Sprite>			sprites;
 	std::vector<sf::Texture>		textures;
-
 	std::vector<sf::RectangleShape>	rects;
 	std::vector<sf::Text>			button_text;
 	std::vector<sf::Text>			texts;
-	
-	std::vector<Button*>				buttons;
+	std::vector<Button*>			buttons;
+	sf::Sprite						BGSprite;
+	sf::Texture						BGTexture;
 };
 
 #endif /* !SCENE_HPP_ */

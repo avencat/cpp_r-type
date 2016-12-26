@@ -23,13 +23,13 @@ const std::list<AComponent>		&Object::getComponents() const
 	return (components);
 }
 
-void							Object::addAComponent(int _id, const Sprite::TypeSpriteEnum &_type)
+void							Object::addAComponent(int _id, const Sprite::TypeSpriteEnum &_type, int lvl)
 {
 	AComponent		tmp;
 
 	components.push_back(tmp);
 	components.back().setId(_id);
-	components.back().setSprite(_type);
+	components.back().setSprite(_type, lvl);
 }
 
 const AComponent				&Object::getComponent(int _id) const
@@ -49,8 +49,11 @@ const std::pair<int, int>		&Object::getPos() const
 	return (pos);
 }
 
-void							Object::setPos(int ft, int sd)
+void							Object::setPos(int _x, int _y)
 {
-	pos.first = ft;
-	pos.second = sd;
+	pos.first = _x;
+	pos.second = _y;
+	for (std::list<AComponent>::iterator i = components.begin(); i != components.end(); i++) {
+		(*i).setPosition(_x, _y);
+	}
 }

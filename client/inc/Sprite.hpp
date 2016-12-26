@@ -16,15 +16,16 @@ public:
 		Player3,
 		Player4,
 		Bullet,
-		ennemies,
+		Ennemies,
 	};
 
 	Sprite();
 	~Sprite();
 	
-	void						setSprite(const TypeSpriteEnum &);
+	void						setSprite(const TypeSpriteEnum &,int);
 	void						setSpriteRect(int, int, int, int);
 	const sf::Sprite			&getSprite() const;
+	const TypeSpriteEnum		&getType() const;
 	void						setPosSprite(int, int);
 	const std::pair<int,int>	&getPosSprite() const;
 
@@ -32,6 +33,7 @@ public:
 private:
 	std::pair<int, int>	pos;
 	std::string			name;
+	int					level;
 
 	sf::Texture			texture;
 	sf::Sprite			sprite;

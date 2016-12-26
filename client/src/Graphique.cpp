@@ -465,11 +465,19 @@ bool	Graphique::lobbyScene()
 
 bool	Graphique::inGameScene()
 {
-	Object	obj;
 
-	obj.setName("Player1");
-	obj.addAComponent(1, Sprite::TypeSpriteEnum::Player1);
-	inGame.addObject(obj);
+	if (firstTime) {
+		
+		inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
+
+		mainShip.setName("Player1");
+		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
+		mainShip.setPos(100, 300);
+		inGame.addObject(mainShip);
+
+
+		firstTime = false;
+	}
 
 	while (window.pollEvent(event))
 	{
@@ -482,12 +490,28 @@ bool	Graphique::inGameScene()
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Up:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second - 10);
+				break;
+			case sf::Keyboard::Z:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second - 10);
 				break;
 			case sf::Keyboard::Down:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second + 10);
+				break;
+			case sf::Keyboard::S:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second + 10);
 				break;
 			case sf::Keyboard::Left:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first - 10, inGame.getObj("Player1").getPos().second);
+				break;
+			case sf::Keyboard::Q:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first - 10, inGame.getObj("Player1").getPos().second);
 				break;
 			case sf::Keyboard::Right:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first + 10, inGame.getObj("Player1").getPos().second);
+				break;
+			case sf::Keyboard::D:
+				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first + 10, inGame.getObj("Player1").getPos().second);
 				break;
 			case sf::Keyboard::Escape:
 				closeWindow();

@@ -17,7 +17,7 @@ public:
 	const std::string				&getName() const;
 	void							setName(const std::string &);
 	const std::list<AComponent>		&getComponents() const;
-	void							addAComponent(int, const Sprite::TypeSpriteEnum &);
+	void							addAComponent(int, const Sprite::TypeSpriteEnum &, int);
 	const AComponent				&getComponent(int) const;
 	const std::pair<int, int>		&getPos() const;
 	void							setPos(int, int);

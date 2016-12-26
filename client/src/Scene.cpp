@@ -175,6 +175,44 @@ const std::vector<Button*>	&Scene::getButtons() const
 	return (buttons);
 }
 
+const Object				&Scene::getObj(std::string _name)
+{
+	for (std::list<Object>::const_iterator it = objects.begin(); it != objects.end(); it++) {
+		if ((*it).getName() == _name)
+			return ((*it));
+	}
+	return (objects.back());
+}
+
+void						Scene::setObjPos(std::string _name, int _x, int _y)
+{
+	for (std::list<Object>::iterator it = objects.begin(); it != objects.end(); it++) {
+		if ((*it).getName() == _name)
+			(*it).setPos(_x, _y);
+	}
+}
+
+const sf::Sprite			&Scene::getBGSprite() const
+{
+	return (BGSprite);
+}
+
+const sf::Texture			&Scene::getBGTexture() const
+{
+	return (BGTexture);
+}
+
+void						Scene::setBGSprite(const std::string &_path)
+{
+	setBGTexture(_path);
+	BGSprite.setTexture(BGTexture);
+}
+
+void						Scene::setBGTexture(const std::string &_path)
+{
+	BGTexture.loadFromFile(_path);
+}
+
 void						Scene::addButs(const std::string &_name, const sf::Vector2f &_pos, const sf::Vector2f &_size, const sf::Color &_clrTxt, const sf::Color &_clrBg, const Button::buttonEnum &butEnum)
 {
 	buttons.push_back(new Button(font, _name, _pos, _size, _clrTxt, _clrBg, butEnum));
@@ -182,6 +220,7 @@ void						Scene::addButs(const std::string &_name, const sf::Vector2f &_pos, con
 
 void						Scene::draw(sf::RenderWindow &window) const
 {
+	window.draw(BGSprite);
 	for (std::vector<sf::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); it++) {
 		window.draw(*it);
 	}

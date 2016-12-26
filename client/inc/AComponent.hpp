@@ -11,7 +11,8 @@ public:
 	virtual ~AComponent();
 
 	void					setId(const int &);
-	void					setSprite(const Sprite::TypeSpriteEnum &);
+	void					setPosition(int, int);
+	void					setSprite(const Sprite::TypeSpriteEnum &, int);
 	const int				&getId() const;
 	const Sprite			&getCSprite() const;
 

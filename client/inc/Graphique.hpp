@@ -76,6 +76,10 @@ private:
 	ScenesEnum					activeScene;
 	ScenesEnum					prevScene;
 	StatusEnum					user;
+
+	// Scene In Game
+	Object						mainShip;
+
 };
 
 #endif /* !GRAPHIQUE_HPP_ */
