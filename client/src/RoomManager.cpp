@@ -265,6 +265,19 @@ const std::list<Room>	&RoomManager::getRooms()
 	return (this->listRooms);
 }
 
+void	RoomManager::setCurrentPlayerReadiness(const bool &ready)
+{
+	if (this->socket.getUsername() == currentRoom.getPlayer1()) {
+		this->currentRoom.setP1Ready(ready);
+	} else if (this->socket.getUsername() == currentRoom.getPlayer2()) {
+		this->currentRoom.setP2Ready(ready);
+	} else if (this->socket.getUsername() == currentRoom.getPlayer3()) {
+		this->currentRoom.setP3Ready(ready);
+	} else if (this->socket.getUsername() == currentRoom.getPlayer4()) {
+		this->currentRoom.setP4Ready(ready);
+	}
+}
+
 bool								RoomManager::manageServerCodes()
 {
 	RtypeProtocol::serverCodes		code;

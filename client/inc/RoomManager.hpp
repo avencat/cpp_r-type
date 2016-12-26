@@ -25,6 +25,7 @@ public:
 	bool						ready();
 	bool						notReady();
 	const Room					&getCurrentRoom();
+	void						setCurrentPlayerReadiness(const bool &ready);
 
 private:
 	std::list<Room>	listRooms;

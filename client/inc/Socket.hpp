@@ -1,9 +1,10 @@
 #ifndef SOCKET_HPP_
 # define SOCKET_HPP_
 
-# include <SFML/Network.hpp>
 # include <string>
 # include "RtypeProtocol.hh"
+# include "ASocket.hpp"
+# include <ctime>
 
 class Socket
 {
@@ -23,15 +24,11 @@ public:
 	void				*getReceivedData() const;
 
 private:
-	unsigned short		port;
-	unsigned short		receivePort;
 	int					status;
-	sf::UdpSocket		sendSocket;
-	sf::UdpSocket		receiveSocket;
-	sf::IpAddress		ip;
+	ASocket				socket;
+	std::string			ip;
 	void				*data;
 	std::size_t			received;
-	sf::SocketSelector	selector;
 	std::string			username;
 	bool				internalError;
 };

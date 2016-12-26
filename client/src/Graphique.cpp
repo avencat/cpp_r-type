@@ -415,7 +415,7 @@ bool	Graphique::lobbyScene()
 					switch ((*i)->getId())
 					{
 					case Button::buttonEnum::Ready:
-
+						roomManager.setCurrentPlayerReadiness(true);
 						std::cout << "READY !" << std::endl;
 						/*if (username == roomManager.getCurrentRoom().getPlayer1())
 							roomManager.getCurrentRoom().setP1Ready(true);
@@ -427,6 +427,7 @@ bool	Graphique::lobbyScene()
 							roomManager.getCurrentRoom().setP4Ready(true);*/
 						break;
 					case Button::buttonEnum::NotReady:
+						roomManager.setCurrentPlayerReadiness(false);
 						std::cout << "NOT READY !" << std::endl;
 						/*if (username == roomManager.getCurrentRoom().getPlayer1())
 							roomManager.getCurrentRoom().setP1Ready(false);
