@@ -20,7 +20,7 @@ void	*Socket::getReceivedData() const
 
 bool Socket::send(void *dataToSend, const size_t &sizeOfData)
 {
-	if (!socket.sockSend(dataToSend, sizeOfData)) {
+	if (!socket.sendTo(dataToSend, sizeOfData)) {
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"" << reinterpret_cast<RtypeProtocol::Data::Code *>(data)->code << "\" to " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
@@ -30,7 +30,7 @@ bool Socket::send(void *dataToSend, const size_t &sizeOfData)
 bool Socket::receive(const size_t &sizeToReceive)
 {
 	memset(data, 0, 100);
-	if (!this->socket.sockRecv(data, sizeToReceive))
+	if (!this->socket.recvFrom(data, sizeToReceive))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
@@ -62,7 +62,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	RtypeProtocol::Data::Handshake	*syn;
 	RtypeProtocol::Data::Username	*username;
 
-	socket.sockCreate(_ip, 42142, ASocket::SockMode::UDP);
+	socket.create(_ip, 42142, ASocket::SockMode::UDP);
 	this->username = _username;
 	this->ip = _ip;
 	this->status = 1;
@@ -75,7 +75,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	srand(time(NULL));
 	syn->syn = rand();
 	syn->ack = 0;
-	if (!socket.sockSend(syn, sizeof(RtypeProtocol::Data::Handshake)))
+	if (!socket.sendTo(syn, sizeof(RtypeProtocol::Data::Handshake)))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"SYN\" to " << ip << ":" << socket.getPort() << std::endl;
 		delete syn;
@@ -83,7 +83,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	}
 	std::cout << "Sent message to " << this->ip << ":" << socket.getPort() << std::endl;
 	memset(data, 0, 100);
-	if (!socket.sockRecv(data, sizeof(RtypeProtocol::Data::Handshake)))
+	if (!socket.recvFrom(data, sizeof(RtypeProtocol::Data::Handshake)))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		delete syn;
@@ -103,14 +103,14 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 		delete syn;
 		return (false);
 	}
-	if (!this->socket.sockSend(syn, sizeof(RtypeProtocol::Data::Handshake)))
+	if (!this->socket.sendTo(syn, sizeof(RtypeProtocol::Data::Handshake)))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"SYN\" to " << ip << ":" << socket.getPort() << std::endl;
 		delete syn;
 		return (false);
 	}
 	memset(data, 0, 100);
-	if (!this->socket.sockRecv(data, sizeof(RtypeProtocol::Data::Handshake)))
+	if (!this->socket.recvFrom(data, sizeof(RtypeProtocol::Data::Handshake)))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		delete syn;
@@ -132,14 +132,14 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	username->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::Username);
 	for (short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
 		username->username[i] = _username.c_str()[i];
-	if (socket.sockSend(username, sizeof(RtypeProtocol::Data::Username)))
+	if (socket.sendTo(username, sizeof(RtypeProtocol::Data::Username)))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"USERNAME\" to " << ip << ":" << socket.getPort() << std::endl;
 		delete username;
 		return (false);
 	}
 	memset(data, 0, 100);
-	if (socket.sockRecv(data, sizeof(RtypeProtocol::Data::Username)))
+	if (socket.recvFrom(data, sizeof(RtypeProtocol::Data::Username)))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		delete syn;
@@ -159,6 +159,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	}
 	delete username;
 	this->status = 2;
+	socket.setBlocking(false);
 	return (true);
 }
 
@@ -168,7 +169,7 @@ bool Socket::closeConnection()
 
 	code = new RtypeProtocol::Data::Code;
 	code->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::PlayerLeave);
-	if (socket.sockSend(code, 3))
+	if (socket.sendTo(code, 3))
 	{
 		std::cerr << "Couldn't tell the server that we left." << std::endl;
 		delete code;
