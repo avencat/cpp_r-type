@@ -464,22 +464,89 @@ bool	Graphique::lobbyScene()
 	return (true);
 }
 
+bool Graphique::handleServerCode()
+{
+	RtypeProtocol::Data::Code	*code;
+
+	/*if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined)))
+		return (false);
+	switch (RtypeProtocol::convertServer(reinterpret_cast<RtypeProtocol::Data::Code *>(socket.getReceivedData())->code)) {
+	case RtypeProtocol::serverCodes::ErrServerClosing:
+		//socket.setInternalError(true);
+		break;
+	case RtypeProtocol::serverCodes::GameOver:
+		// TODO QUIT THE GAME
+		break;
+	case RtypeProtocol::serverCodes::PlayerCharge:
+		// TODO Charge Player
+		break;
+	case RtypeProtocol::serverCodes::PlayerDead:
+		// TODO kill Player
+		break;
+	case RtypeProtocol::serverCodes::PlayerLeft:
+		// TODO leave Player
+		break;
+	case RtypeProtocol::serverCodes::PlayerLives:
+		// TODO set player's life
+		break;
+	case RtypeProtocol::serverCodes::PlayerScore:
+		// TODO set player' score
+		break;
+	case RtypeProtocol::serverCodes::ObjectCreate:
+		// TODO Create an object
+		break;
+	case RtypeProtocol::serverCodes::ObjectDestroy:
+		// TODO Destroy an object
+		break;
+	case RtypeProtocol::serverCodes::ObjectUpdate:
+		// TODO Update an object
+		break;
+	default:
+		break;
+	}*/
+	return (true);
+}
+
 bool	Graphique::inGameScene()
 {
 
 	if (firstTime) {
 		
+		// set limit FPS
+		window.setFramerateLimit(60);
+
+		// set Background
 		inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
 
-		mainShip.setName("Player1");
+
+		// set Var ship
+		maxspeed = 4.0f;
+		accel = 1.5f;
+		decel = 0.1f;
+		position.x = (10 * (float)window.getSize().x) / 100;
+		position.y = (40 * (float)window.getSize().y) / 100;
+		velocity.x = 0.1f;
+		velocity.y = 0.1f;
+
+
+		// set the mainShip
+		mainShip.setName("MainPlayer");
 		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
-		mainShip.setPos(100, 300);
+		mainShip.setPos(position.x, position.y);
 		inGame.addObject(mainShip);
+		std::cout << "Name : " << inGame.getObj("MainPlayer").getName() << std::endl;
+		std::cout << "pos x : " << inGame.getObj("MainPlayer").getPos().first << std::endl;
+		std::cout << "pos y : " << inGame.getObj("MainPlayer").getPos().second << std::endl;
 
+		
 
+		
 		firstTime = false;
 	}
 
+	handleServerCode();
+
+	
 	while (window.pollEvent(event))
 	{
 		switch (event.type)
@@ -490,39 +557,79 @@ bool	Graphique::inGameScene()
 		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{
-			case sf::Keyboard::Up:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second - 10);
-				break;
-			case sf::Keyboard::Z:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second - 10);
-				break;
-			case sf::Keyboard::Down:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second + 10);
-				break;
-			case sf::Keyboard::S:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first, inGame.getObj("Player1").getPos().second + 10);
-				break;
-			case sf::Keyboard::Left:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first - 10, inGame.getObj("Player1").getPos().second);
-				break;
-			case sf::Keyboard::Q:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first - 10, inGame.getObj("Player1").getPos().second);
-				break;
-			case sf::Keyboard::Right:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first + 10, inGame.getObj("Player1").getPos().second);
-				break;
-			case sf::Keyboard::D:
-				inGame.setObjPos("Player1", inGame.getObj("Player1").getPos().first + 10, inGame.getObj("Player1").getPos().second);
-				break;
 			case sf::Keyboard::Escape:
 				closeWindow();
+				break;
+			case sf::Keyboard::Space:
+				std::cout << "Charge !" << std::endl;
+
+				//
+				// TODO AXELOPETO CHARGE
+				//
+
 				break;
 			default:
 				break;
 			}
+			break;
+		case sf::Event::KeyReleased:
+			if (event.key.code == sf::Keyboard::Space) {
+				std::cout << "Shot !" << std::endl;
+
+				//
+				// TODO AXELOPETO SHOOT
+				//
+
+				std::cout << std::endl;
+			}
+			break;
 		default:
 			break;
 		}
 	}
+
+
+	// update Velocity
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+		velocity.y -= accel;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+		velocity.y += accel;
+	}
+	else {
+		velocity.y *= decel;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		velocity.x -= accel;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		velocity.x += accel;
+	}
+	else {
+		velocity.x *= decel;
+	}
+
+	// Check maximum speed
+	actualspeed = sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y));
+	if (actualspeed > maxspeed)
+	{
+		velocity *= maxspeed / actualspeed;
+	}
+
+	// set Position
+	position += velocity;
+	if (position.x < 0)
+		position.x = 0;
+	else if (position.x > (float)window.getSize().x - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().width)
+		position.x = (float)window.getSize().x - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().width;
+	if (position.y < 0)
+		position.y = 0;
+	else if (position.y > (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height)
+		position.y = (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height;
+	inGame.setObjPos("MainPlayer", position.x, position.y);
+
+
+
 	return (true);
 }

@@ -37,3 +37,12 @@ void					AComponent::setPosition(int x, int y)
 {
 	sprite.setPosSprite(x, y);
 }
+
+const sf::Vector2i		&AComponent::getPos() const
+{
+	sf::Vector2i		tmp;
+
+	tmp.x = sprite.getPosSprite().first;
+	tmp.y = sprite.getPosSprite().second;
+	return (tmp);
+}

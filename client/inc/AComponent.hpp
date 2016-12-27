@@ -15,6 +15,7 @@ public:
 	void					setSprite(const Sprite::TypeSpriteEnum &, int);
 	const int				&getId() const;
 	const Sprite			&getCSprite() const;
+	const sf::Vector2i		&getPos() const;
 
 private:
 	int						id;

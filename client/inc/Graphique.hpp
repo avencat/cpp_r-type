@@ -52,6 +52,7 @@ public:
 	Scene						&getActiveScene();
 	bool						loadNextScene();
 	bool						loadPrevScene();
+	bool						handleServerCode();
 
 private:
 	std::list<std::string>		rooms;
@@ -79,7 +80,12 @@ private:
 
 	// Scene In Game
 	Object						mainShip;
-
+	sf::Vector2f				position;
+	sf::Vector2f				velocity;
+	float						maxspeed;
+	float						accel;
+	float						decel;
+	float						actualspeed;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */
