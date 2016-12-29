@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:37 2016 Jessica VAN-DEN-ZANDE
-// Last update Mon Dec 19 18:35:31 2016 Jessica VAN-DEN-ZANDE
+// Last update Wed Dec 28 18:03:50 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef SOCKET_HPP__
@@ -22,23 +22,38 @@ private:
   int			powerup;
   int			syn;
   int			ack;
+  bool			synState;
+  bool			ackState;
 public:
   Socket();
   ~Socket();
   void			setIsReady(bool state);
   bool			getIsReady(void);
+
   void			setScore(int nb);
   int			getScore(void);
+
   void			setLives(int nb);
   int			getLives(void);
+
   void			setPowerup(int nb);
   int			getPowerup(void);
+
   void			setSyn(int syn);
   int			getSyn(void) const;
+
   void			setAck(int ack);
-  int			getAck(void) const;  
+  int			getAck(void) const;
+
+  void			setSynState(bool state);
+  bool			getSynState(void) const;
+
+  void			setAckState(bool state);
+  bool			getAckState(void) const;
+
   virtual void		setUsername(const std::string name);
   virtual std::string	getUsername(void) const;
+
   virtual void		setFdClient(int fd);
   virtual int		getFdClient(void);
 };

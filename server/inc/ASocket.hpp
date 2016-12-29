@@ -5,13 +5,14 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 00:59:15 2016 Jessica VAN-DEN-ZANDE
-// Last update Thu Dec 15 01:26:04 2016 Jessica VAN-DEN-ZANDE
+// Last update Thu Dec 29 14:45:14 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef ASOCKET_HPP__
 # define ASCKET_HPP__
 
 # include <iostream>
+# include <unistd.h>
 
 class				ASocket
 {

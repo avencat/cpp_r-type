@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:16 2016 Jessica VAN-DEN-ZANDE
-// Last update Tue Dec 20 13:16:29 2016 Jessica VAN-DEN-ZANDE
+// Last update Thu Dec 29 14:46:06 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "Socket.hpp"
@@ -16,8 +16,10 @@ Socket::Socket()
   this->score = 0;
   this->lives = 3;
   this->powerup = 0;
-  this->syn = -1;
-  this->ack = -1;
+  this->syn = 0;
+  this->ack = 0;
+  this->synState = false;
+  this->ackState = false;
 }
 
 Socket::~Socket() {}
@@ -93,4 +95,25 @@ void		Socket::setAck(int ack)
 int		Socket::getAck(void) const
 {
   return ack;
+}
+
+
+void		Socket::setSynState(bool state)
+{
+  this->synState = state;
+}
+
+bool		Socket::getSynState(void) const
+{
+  return synState;
+}
+
+void		Socket::setAckState(bool state)
+{
+  this->ackState = state;
+}
+
+bool		Socket::getAckState(void) const
+{
+  return ackState;
 }

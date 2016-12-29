@@ -5,14 +5,17 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 17:03:58 2016 Jessica VAN-DEN-ZANDE
-// Last update Mon Dec 19 18:42:57 2016 Jessica VAN-DEN-ZANDE
+// Last update Thu Dec 29 14:55:24 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef LINUXCONNECTION_HPP__
 # define LINUXCONNECTION_HPP__
 
-# include "../inc/INetwork.hpp"
-# include "../inc/Socket.hpp"
+# include "INetwork.hpp"
+# include "Socket.hpp"
+# include <cerrno>
+# include <cstring>
+# include <sstream>
 
 class Network : public INetwork
 {
@@ -24,21 +27,21 @@ private:
   fd_set			listWriteFd;
   struct timeval		timeout;
   struct sockaddr_in		serv_addr;
-  void				*msgReceived;
+  char				msgReceived[1024];
 public:
   Network();
   ~Network();
   bool				initServer(int port, int queue);
   bool				runServer(bool stateServer);
-  bool				sendMsg(int fdSocket, void *msgToSend, 
+  bool				sendMsg(int fdSocket, const char *msgToSend, 
 					const size_t &dataSize);
   bool				receiveMsg(int fdSocket, const size_t &dataSize);
   void				addSocket(void);
-  void				deleteSocket(Socket toDelete);
+  void				deleteSocket(Socket &toDelete);
   void				setReadList(void);
   void				setWriteList(void);
   void				checkActivity(void);
-  bool				securiseConnection(Socket &client);
+  bool				secureConnection(Socket &client);
 };
 
 #endif /* !LINUXCONNECTION_HPP__ */
