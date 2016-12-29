@@ -20,15 +20,21 @@ public:
 	void							addAComponent(int, const Sprite::TypeSpriteEnum &, int);
 	const AComponent				&getComponent(int) const;
 	const std::pair<int, int>		&getPos() const;
-	void							setPos(int, int);
-	void							setLife(int);
+	void							setPos(const int &, const int &);
+	void							setLife(const int &);
 	const int						&getLife() const;
-	void							setScore(int);
+	void							setScore(const int &);
 	const int						&getScore() const;
+	const long						&getLongName() const;
+	void							setLongName(const long &);
+	const int						&getId() const;
+	void							setId(const int &);
 
 private:
 	
 	std::string						name;
+	long							longName;
+	int								id;
 	int								life;
 	int								score;
 	std::list<AComponent>			components;

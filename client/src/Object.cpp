@@ -49,7 +49,7 @@ const std::pair<int, int>		&Object::getPos() const
 	return (pos);
 }
 
-void							Object::setPos(int _x, int _y)
+void							Object::setPos(const int &_x, const int &_y)
 {
 	pos.first = _x;
 	pos.second = _y;
@@ -58,7 +58,7 @@ void							Object::setPos(int _x, int _y)
 	}
 }
 
-void							Object::setLife(int _life)
+void							Object::setLife(const int &_life)
 {
 	life = _life;
 }
@@ -68,7 +68,7 @@ const int						&Object::getLife() const
 	return (life);
 }
 
-void							Object::setScore(int _score)
+void							Object::setScore(const int &_score)
 {
 	score = _score;
 }
@@ -76,4 +76,24 @@ void							Object::setScore(int _score)
 const int						&Object::getScore() const
 {
 	return (score);
+}
+
+const long &Object::getLongName() const
+{
+	return (this->longName);
+}
+
+void Object::setLongName(const long &name)
+{
+	this->longName = name;
+}
+
+const int &Object::getId() const
+{
+	return (this->id);
+}
+
+void Object::setId(const int &id)
+{
+	this->id = id;
 }
