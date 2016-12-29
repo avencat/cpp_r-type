@@ -57,3 +57,23 @@ void							Object::setPos(int _x, int _y)
 		(*i).setPosition(_x, _y);
 	}
 }
+
+void							Object::setLife(int _life)
+{
+	life = _life;
+}
+
+const int						&Object::getLife() const
+{
+	return (life);
+}
+
+void							Object::setScore(int _score)
+{
+	score = _score;
+}
+
+const int						&Object::getScore() const
+{
+	return (score);
+}

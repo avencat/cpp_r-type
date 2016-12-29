@@ -192,6 +192,16 @@ void						Scene::setObjPos(std::string _name, int _x, int _y)
 	}
 }
 
+void						Scene::setSEndGame(bool status)
+{
+	endGame = status;
+}
+
+const bool					&Scene::getEndGame() const
+{
+	return (endGame);
+}
+
 const sf::Sprite			&Scene::getBGSprite() const
 {
 	return (BGSprite);

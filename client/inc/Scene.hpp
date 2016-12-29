@@ -37,9 +37,12 @@ public:
 	void							addButs(const std::string &, const sf::Vector2f &, const sf::Vector2f &, const sf::Color &, const sf::Color &, const Button::buttonEnum &);
 	const Object					&getObj(std::string);
 	void							setObjPos(std::string, int, int);
+	void							setSEndGame(bool);
+	const bool						&getEndGame() const;
 
 private:
 	std::list<Object>				objects;
+	bool							endGame;
 
 	sf::Font						font;
 	std::string						wildString;

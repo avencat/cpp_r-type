@@ -520,6 +520,7 @@ bool	Graphique::inGameScene()
 
 
 		// set Var ship
+		chargeShoot = 0;
 		maxspeed = 4.0f;
 		accel = 1.5f;
 		decel = 0.1f;
@@ -528,15 +529,17 @@ bool	Graphique::inGameScene()
 		velocity.x = 0.1f;
 		velocity.y = 0.1f;
 
+		
+
 
 		// set the mainShip
+		mainShip.setLife(1);
+		mainShip.setScore(0);
 		mainShip.setName("MainPlayer");
 		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
 		mainShip.setPos(position.x, position.y);
+		// SEND POS
 		inGame.addObject(mainShip);
-		std::cout << "Name : " << inGame.getObj("MainPlayer").getName() << std::endl;
-		std::cout << "pos x : " << inGame.getObj("MainPlayer").getPos().first << std::endl;
-		std::cout << "pos y : " << inGame.getObj("MainPlayer").getPos().second << std::endl;
 
 		
 
@@ -552,17 +555,30 @@ bool	Graphique::inGameScene()
 		switch (event.type)
 		{
 		case sf::Event::Closed:
+			//
+			// SEND MSG SERVER LEAVE / QUIT
+			//
+
 			closeWindow();
 			break;
 		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Escape:
+				//
+				// SEND MSG SERVER LEAVE / QUIT
+				//
 				closeWindow();
+				break;
+			case sf::Keyboard::Return:
+				//
+				// SEND MSG SERVER LEAVE
+				//
+
 				break;
 			case sf::Keyboard::Space:
 				std::cout << "Charge !" << std::endl;
-
+				chargeShoot++;
 				//
 				// TODO AXELOPETO CHARGE
 				//
@@ -575,11 +591,11 @@ bool	Graphique::inGameScene()
 		case sf::Event::KeyReleased:
 			if (event.key.code == sf::Keyboard::Space) {
 				std::cout << "Shot !" << std::endl;
-
 				//
 				// TODO AXELOPETO SHOOT
 				//
 
+				chargeShoot = 0;
 				std::cout << std::endl;
 			}
 			break;
@@ -628,7 +644,9 @@ bool	Graphique::inGameScene()
 	else if (position.y > (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height)
 		position.y = (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height;
 	inGame.setObjPos("MainPlayer", position.x, position.y);
-
+	//
+	//  SEND MSG SERVER POSITION
+	//
 
 
 	return (true);

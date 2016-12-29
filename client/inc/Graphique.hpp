@@ -86,6 +86,8 @@ private:
 	float						accel;
 	float						decel;
 	float						actualspeed;
+	int							chargeShoot;
+	int							life;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */

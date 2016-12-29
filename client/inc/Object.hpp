@@ -21,10 +21,16 @@ public:
 	const AComponent				&getComponent(int) const;
 	const std::pair<int, int>		&getPos() const;
 	void							setPos(int, int);
-	
+	void							setLife(int);
+	const int						&getLife() const;
+	void							setScore(int);
+	const int						&getScore() const;
+
 private:
 	
 	std::string						name;
+	int								life;
+	int								score;
 	std::list<AComponent>			components;
 	std::pair<int, int>				pos;
 
