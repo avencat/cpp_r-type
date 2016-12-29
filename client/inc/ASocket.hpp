@@ -64,7 +64,6 @@ private:
 	short		port;
 	fd_set		readfs;
 	TIMEVAL		tv;
-	
 
 	int			sockInit();
 	int			sockQuit();

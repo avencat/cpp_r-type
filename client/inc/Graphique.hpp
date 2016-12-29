@@ -77,6 +77,7 @@ private:
 	ScenesEnum					activeScene;
 	ScenesEnum					prevScene;
 	StatusEnum					user;
+	Socket						&socket;
 
 	// Scene In Game
 	Object						mainShip;
