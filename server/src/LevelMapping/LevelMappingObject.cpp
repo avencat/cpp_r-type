@@ -10,8 +10,9 @@
 
 #include "LevelMappingObject.hh"
 
-LevelMapping::Object::Object(const mapCode &code, const std::vector<Sprite> &_sprites, const std::vector<Hitbox> &_hitboxes, const Pair vector, const StringData &ai) :
-  code(code), sprites(_sprites), hitboxes(_hitboxes), vector(vector), ai(ai)
+LevelMapping::Object::Object(const mapCode &code, const ObjectType &type, const std::vector<Sprite> &_sprites,
+                             const std::vector<Hitbox> &_hitboxes, const Pair vector, const StringData &ai, const int _waitTime) :
+  code(code), type(type), sprites(_sprites), hitboxes(_hitboxes), vector(vector), ai(ai), waitTime(_waitTime)
 {
 }
 
@@ -44,7 +45,7 @@ bool	LevelMapping::Object::operator<(LevelMapping::Object const &obj) const
   return (code < obj.code);
 }
 
-LevelMapping::mapCode	LevelMapping::Object::getCode() const
+const LevelMapping::mapCode	&LevelMapping::Object::getCode() const
 {
   return (this->code);
 }
@@ -52,6 +53,26 @@ LevelMapping::mapCode	LevelMapping::Object::getCode() const
 void	LevelMapping::Object::setCode(const LevelMapping::mapCode &_code)
 {
   this->code = _code;
+}
+
+const LevelMapping::Object::ObjectType  &LevelMapping::Object::getObjectType() const
+{
+    return (type);
+}
+
+void                                    LevelMapping::Object::setObjectType(const LevelMapping::Object::ObjectType &_t)
+{
+    type = _t;
+}
+
+int                                     LevelMapping::Object::getWaitTime() const
+{
+    return (waitTime);
+}
+
+void                                    LevelMapping::Object::setWaitTime(const int _wait)
+{
+    waitTime = _wait;
 }
 
 const std::vector<LevelMapping::Sprite>	&LevelMapping::Object::getSprites() const
@@ -227,6 +248,67 @@ void	LevelMapping::Object::setStringData(const std::string &data, LevelMapping::
   string.data = data;
 }
 
+std::ostream	                        &LevelMapping::operator<<(std::ostream &os, const LevelMapping::Object::ObjectType &type)
+{
+    LevelMapping::Object::ObjectType    _t = type;
+
+    switch (_t)
+    {
+        case LevelMapping::Object::ObjectType::PLAYER :
+            os << "Player";
+            break;
+        case LevelMapping::Object::ObjectType::ENEMY :
+            os << "Enemy";
+            break;
+        case LevelMapping::Object::ObjectType::OBSTACLE :
+            os << "Obstacle";
+            break;
+        case LevelMapping::Object::ObjectType::ENEMYBULLET :
+            os << "Enemy bullet";
+            break;
+        case LevelMapping::Object::ObjectType::PLAYERBULLET :
+            os << "Player bullet";
+            break;
+        case LevelMapping::Object::ObjectType::POWERUP :
+            os << "Power-Up";
+            break;
+        case LevelMapping::Object::ObjectType::NONE :
+            os << "None";
+            break;
+        default:
+            os << "Invalid type";
+            break;
+    }
+    return (os);
+}
+
+std::ofstream	&LevelMapping::operator<<(std::ofstream &ofs, const LevelMapping::Object::ObjectType &type)
+{
+    LevelMapping::Object::ObjectType    _t = type;
+    char                                *t = reinterpret_cast<char*>(&_t);
+
+    ofs.write(t, sizeof(_t));
+    return (ofs);
+}
+
+std::fstream	&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::Object::ObjectType &type)
+{
+    LevelMapping::Object::ObjectType    _t = type;
+    char                                *t = reinterpret_cast<char*>(&_t);
+
+    fs.write(t, sizeof(_t));
+    return (fs);
+}
+
+std::istream	&LevelMapping::operator>>(std::istream &is, LevelMapping::Object::ObjectType &type)
+{
+    LevelMapping::Object::ObjectType    _t = type;
+    char                                *t = reinterpret_cast<char*>(&_t);
+
+    is.read(t, sizeof(_t));
+    return (is);
+}
+
 std::ostream			&LevelMapping::operator<<(std::ostream &os, const LevelMapping::Object &obj)
 {
   const LevelMapping::mapCode	&code = obj.getCode();
@@ -235,6 +317,7 @@ std::ostream			&LevelMapping::operator<<(std::ostream &os, const LevelMapping::O
 
   os << "Code: " << code << std::endl;
   if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject) {
+      os << "Type: " << obj.getObjectType() << std::endl;
       if (sprites.size() > 0) {
           os << "Sprite" << (sprites.size() == 1 ? "" : "s") << ": " << std::endl;
           for (std::vector<LevelMapping::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); ++it)
@@ -248,6 +331,8 @@ std::ostream			&LevelMapping::operator<<(std::ostream &os, const LevelMapping::O
       if (code == LevelMapping::mapCode::MovingObject)
           os << "Vector: " << obj.getVector() << std::endl;
   }
+  else if (code == LevelMapping::mapCode::Wait)
+    os << "Time to wait (in ms): " << obj.getWaitTime();
   os << "AI: " << obj.getAIStruct() << std::endl;
   return (os);
 }
@@ -255,11 +340,14 @@ std::ostream			&LevelMapping::operator<<(std::ostream &os, const LevelMapping::O
 std::ofstream	&LevelMapping::operator<<(std::ofstream &ofs, const LevelMapping::Object &obj)
 {
   short		code = static_cast<short>(obj.getCode());
+  int waitTime = obj.getWaitTime();
   char		*pc = reinterpret_cast<char*>(&code);
+  LevelMapping::Object::ObjectType type = obj.getObjectType();
 
-  ofs.write(pc, sizeof(code));
+    ofs.write(pc, sizeof(code));
   if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject)
     {
+        ofs.write(reinterpret_cast<char*>(&type), sizeof(type));
         const std::vector<LevelMapping::Sprite> sprites = obj.getSprites();
         const std::vector<LevelMapping::Hitbox> hitboxes = obj.getHitboxes();
         unsigned long   sz = sprites.size();
@@ -277,13 +365,17 @@ std::ofstream	&LevelMapping::operator<<(std::ofstream &ofs, const LevelMapping::
     	    ofs << obj.getVector();
         ofs << obj.getAIStruct();
     }
+  else if (code == LevelMapping::mapCode::Wait)
+      ofs.write(reinterpret_cast<char*>(&waitTime), sizeof(waitTime));
   return (ofs);
 }
 
 std::fstream	&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::Object &obj)
 {
   short		code = static_cast<short>(obj.getCode());
+  int waitTime = obj.getWaitTime();
   char		*pc = reinterpret_cast<char*>(&code);
+  LevelMapping::Object::ObjectType type = obj.getObjectType();
 
   fs.write(pc, sizeof(code));
   if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject)
@@ -292,6 +384,7 @@ std::fstream	&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::Obj
         const std::vector<LevelMapping::Hitbox> hitboxes = obj.getHitboxes();
         unsigned long sz = sprites.size();
 
+        fs.write(reinterpret_cast<char*>(&type), sizeof(type));
         fs.write(reinterpret_cast<char*>(&sz), sizeof(sz));
         if (sz > 0)
             for (std::vector<LevelMapping::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); ++it)
@@ -305,6 +398,8 @@ std::fstream	&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::Obj
             fs << obj.getVector();
         fs << obj.getAIStruct();
     }
+  else if (code == LevelMapping::mapCode::Wait)
+      fs.write(reinterpret_cast<char*>(&waitTime), sizeof(waitTime));
   return (fs);
 }
 
@@ -316,6 +411,7 @@ std::istream			&LevelMapping::operator>>(std::istream &is, LevelMapping::Object 
   LevelMapping::StringData	data("");
   unsigned long        vecSize = 0;
   char                  *pv = reinterpret_cast<char*>(&vecSize);
+  LevelMapping::Object::ObjectType type;
 
   obj.clearSprites();
   obj.clearHitboxes();
@@ -331,6 +427,8 @@ std::istream			&LevelMapping::operator>>(std::istream &is, LevelMapping::Object 
   obj.setCode(static_cast<LevelMapping::mapCode>(code));
   if ((code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject) && !is.eof())
     {
+        is.read(reinterpret_cast<char*>(&type), sizeof(type));
+        obj.setObjectType(type);
         is.read(pv, sizeof(vecSize));
         for (unsigned int i = 0; i < vecSize; ++i)
         {
@@ -356,5 +454,11 @@ std::istream			&LevelMapping::operator>>(std::istream &is, LevelMapping::Object 
       is >> data;
       obj.setAI(data);
     }
+  else if (code == LevelMapping::mapCode::Wait)
+  {
+      int waitTime = 0;
+      is.read(reinterpret_cast<char*>(&waitTime), sizeof(waitTime));
+      obj.setWaitTime(waitTime);
+  }
   return (is);
 }

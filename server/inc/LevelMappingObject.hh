@@ -20,8 +20,20 @@ namespace LevelMapping
   class Object: public Relationnals<Object>
   {
   public:
-    Object(const mapCode &code = mapCode::None, const std::vector<Sprite> &_sprites = std::vector<Sprite>(),
-           const std::vector<Hitbox> &_hitboxes = std::vector<Hitbox>(), const Pair vector = Pair(0, 0), const StringData &ai = std::string(""));
+      enum  ObjectType
+      {
+          PLAYER,
+          ENEMY,
+          OBSTACLE,
+          ENEMYBULLET,
+          PLAYERBULLET,
+          POWERUP,
+          NONE
+      };
+
+  public:
+    Object(const mapCode &code = mapCode::None, const ObjectType &_type = ObjectType::NONE, const std::vector<Sprite> &_sprites = std::vector<Sprite>(),
+           const std::vector<Hitbox> &_hitboxes = std::vector<Hitbox>(), const Pair vector = Pair(0, 0), const StringData &ai = std::string(""), const int _waitTime = 1000);
     ~Object();
 
   public:
@@ -30,8 +42,12 @@ namespace LevelMapping
     bool	operator<(Object const &obj) const;
 
   public:
-    mapCode	getCode() const;
-    void	setCode(const mapCode &_code);
+    const mapCode	                        &getCode() const;
+    void	                                setCode(const mapCode &_code);
+    const LevelMapping::Object::ObjectType  &getObjectType() const;
+    void                                    setObjectType(const ObjectType &_t);
+    int                                     getWaitTime() const;
+    void                                    setWaitTime(const int);
 
     const std::vector<Sprite>	&getSprites() const;
     void	        addSprite(const std::string &name, const int posx, const int posy);
@@ -42,6 +58,7 @@ namespace LevelMapping
     void		removeSprite(const int x, const int y);
     void		removeSprite(const Sprite &spr);
     void        clearSprites();
+
     const std::vector<Hitbox>	&getHitboxes() const;
     void	        addHitbox(const int posx, const int posy, const int sizex, const int sizey);
     void	        addHitbox(const Pair &pos, const Pair &size);
@@ -50,9 +67,11 @@ namespace LevelMapping
     void		removeHitbox(const Pair &pos, const Pair &size);
     void		removeHitbox(const Hitbox &hb);
     void        clearHitboxes();
+
     const Pair	&getVector() const;
     void		setVector(const int x, const int y);
     void		setVector(const Pair &pair);
+
     std::string	getAI() const;
     const StringData	&getAIStruct() const;
     void		setAI(const std::string &data);
@@ -67,11 +86,18 @@ namespace LevelMapping
 
   private:
     mapCode		code;
+    ObjectType  type;
     std::vector<Sprite>	sprites;
     std::vector<Hitbox>	hitboxes;
     Pair		vector;
     StringData		ai;
+    int         waitTime;
   };
+
+  std::ostream	&operator<<(std::ostream &os, const Object::ObjectType &type);
+  std::ofstream	&operator<<(std::ofstream &ofs, const Object::ObjectType &type);
+  std::fstream	&operator<<(std::fstream &fs, const Object::ObjectType &type);
+  std::istream	&operator>>(std::istream &is, Object::ObjectType &type);
 
   std::ostream	&operator<<(std::ostream &os, const Object &obj);
   std::ofstream	&operator<<(std::ofstream &ofs, const Object &obj);
