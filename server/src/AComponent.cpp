@@ -10,7 +10,7 @@
 
 #include "AComponent.hh"
 
-AComponent::AComponent(const int id) : _id(id)
+AComponent::AComponent(const Type &id) : _id(id)
 {
 
 }
@@ -20,12 +20,12 @@ AComponent::~AComponent()
 
 }
 
-int	AComponent::getId() const
+const AComponent::Type	&AComponent::getId() const
 {
   return (this->_id);
 }
 
-void	AComponent::setId(int id)
+void	AComponent::setId(const Type &id)
 {
   this->_id = id;
 }

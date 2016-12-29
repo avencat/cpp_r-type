@@ -11,23 +11,26 @@
 #ifndef SPRITE_HH_
 # define SPRITE_HH_
 
-# include <utility>
+# include <iostream>
 # include <string>
+# include <utility>
 # include "AComponent.hh"
 
 class			Sprite : public AComponent
 {
  private:
-  std::pair<int, int>	_pos;
   std::string		_name;
+  std::pair<int, int>	_pos;
 
  public:
-  Sprite(const int id, const std::string name);
+  Sprite(const std::string &name, const int pos_x = 0, const int pos_y = 0);
   ~Sprite();
-  std::pair<int, int>	getPos() const;
-  std::string		getName() const;
-  void			setPos(int x, int y);
-  void			setName(std::string name);
+  const std::pair<int, int>	&getPos() const;
+  const std::string		&getName() const;
+  void			setPos(const int x, const int y);
+  void			setName(const std::string &name);
 };
+
+std::ostream    &operator<<(std::ostream &os, const Sprite &spr);
 
 #endif /* !SPRITE_HH_ */

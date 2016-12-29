@@ -13,14 +13,21 @@
 
 class	AComponent
 {
- private:
-  int	_id;
+public:
+    enum Type
+    {
+        SPRITE,
+        HITBOX
+    };
+
+protected:
+  Type	_id;
 
  public:
-  AComponent(const int id);
+  AComponent(const Type &id);
   virtual ~AComponent();
-  int	getId() const;
-  void	setId(int id);
+  virtual const Type	&getId() const;
+  virtual void	setId(const Type &id);
 };
 
 #endif /* !ACOMPONENT_HH_ */

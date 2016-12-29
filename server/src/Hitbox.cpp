@@ -10,22 +10,21 @@
 
 #include "Hitbox.hh"
 
-Hitbox::Hitbox(const int id, const int size) : AComponent(id), _size(size)
+Hitbox::Hitbox(const int pos_x, const int pos_y, const int size_x, const int size_y) :
+        AComponent(AComponent::HITBOX), _pos(pos_x, pos_y), _size(size_x, size_y)
 {
-
 }
 
 Hitbox::~Hitbox()
 {
-
 }
 
-std::pair<int, int>	Hitbox::getPos() const
+const std::pair<int, int>	&Hitbox::getPos() const
 {
   return (this->_pos);
 }
 
-int			Hitbox::getSize() const
+const std::pair<int, int>	&Hitbox::getSize() const
 {
   return (this->_size);
 }
@@ -37,7 +36,18 @@ void			Hitbox::setPos(int x, int y)
   this->_pos = pos;
 }
 
-void			Hitbox::setSize(int size)
+void			Hitbox::setSize(const int x, const int y)
 {
-  this->_size = size;
+  this->_size = std::pair<int, int>(x, y);
+}
+
+std::ostream    &operator<<(std::ostream &os, const Hitbox &hbx)
+{
+  std::pair<int, int> p = hbx.getPos();
+
+  os << "Type: Hitbox" << std::endl;
+  os << "Position (x;y): " << p.first << ";" << p.second << std::endl;
+  p = hbx.getSize();
+  os << "Size (x;y): " << p.first << ";" << p.second << std::endl;
+  return (os);
 }

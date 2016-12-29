@@ -11,6 +11,8 @@
 #ifndef HITBOX_HH_
 # define HITBOX_HH_
 
+# include <iostream>
+# include <string>
 # include <utility>
 # include "AComponent.hh"
 
@@ -18,15 +20,17 @@ class			Hitbox : public AComponent
 {
  private:
   std::pair<int, int>	_pos;
-  int			_size;
+  std::pair<int, int>	_size;
 
  public:
-  Hitbox(const int id, const int size);
+  Hitbox(const int pos_x = 0, const int pos_y = 0, const int size_x = 1, const int size_y = 1);
   ~Hitbox();
-  std::pair<int, int>	getPos() const;
-  int			getSize() const;
-  void			setPos(int x, int y);
-  void			setSize(int _size);
+  const std::pair<int, int>	&getPos() const;
+  const std::pair<int, int>	&getSize() const;
+  void			    setPos(const int x, const int y);
+  void			    setSize(const int x, const int y);
 };
+
+std::ostream    &operator<<(std::ostream &os, const Hitbox &hbx);
 
 #endif /* !HITBOX_HH_ */

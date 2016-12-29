@@ -10,34 +10,43 @@
 
 #include "Sprite.hh"
 
-Sprite::Sprite(const int id, const std::string name) : AComponent(id), _name(name)
+Sprite::Sprite(const std::string &name, const int pos_x, const int pos_y) :
+        AComponent(AComponent::SPRITE), _name(name), _pos(pos_x, pos_y)
 {
-
 }
 
 Sprite::~Sprite()
 {
-
 }
 
-std::pair<int, int>	Sprite::getPos() const
+const std::pair<int, int>	&Sprite::getPos() const
 {
   return (this->_pos);
 }
 
-std::string		Sprite::getName() const
+const std::string		&Sprite::getName() const
 {
   return (this->_name);
 }
 
-void			Sprite::setPos(int x , int y)
+void			Sprite::setPos(const int x , const int y)
 {
   std::pair <int, int> pos(x, y);
 
   this->_pos = pos;
 }
 
-void			Sprite::setName(std::string name)
+void			Sprite::setName(const std::string &name)
 {
   this->_name = name;
+}
+
+std::ostream    &operator<<(std::ostream &os, const Sprite &spr)
+{
+  std::pair<int, int> p = spr.getPos();
+
+  os << "Type: Sprite" << std::endl;
+  os << "Name: " << spr.getName() << std::endl;
+  os << "Position (x;y): " << p.first << ";" << p.second << std::endl;
+  return (os);
 }

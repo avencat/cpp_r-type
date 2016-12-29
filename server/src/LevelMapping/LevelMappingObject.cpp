@@ -332,7 +332,7 @@ std::ostream			&LevelMapping::operator<<(std::ostream &os, const LevelMapping::O
           os << "Vector: " << obj.getVector() << std::endl;
   }
   else if (code == LevelMapping::mapCode::Wait)
-    os << "Time to wait (in ms): " << obj.getWaitTime();
+    os << "Time to wait (in ms): " << obj.getWaitTime() << std::endl;
   os << "AI: " << obj.getAIStruct() << std::endl;
   return (os);
 }
