@@ -12,6 +12,7 @@ class Object
 
 public:
 	Object();
+	Object(const long &, const sf::Vector2i &, const sf::Vector2i &, const int &);
 	virtual ~Object();
 
 	const std::string				&getName() const;
@@ -19,7 +20,7 @@ public:
 	const std::list<AComponent>		&getComponents() const;
 	void							addAComponent(int, const Sprite::TypeSpriteEnum &, int);
 	const AComponent				&getComponent(int) const;
-	const std::pair<int, int>		&getPos() const;
+	const sf::Vector2i				&getPos() const;
 	void							setPos(const int &, const int &);
 	void							setLife(const int &);
 	const int						&getLife() const;
@@ -38,8 +39,8 @@ private:
 	int								life;
 	int								score;
 	std::list<AComponent>			components;
-	std::pair<int, int>				pos;
-
+	sf::Vector2i					pos;
+	sf::Vector2i					dir;
 };
 
 #endif /* !OBJECT_HPP_ */

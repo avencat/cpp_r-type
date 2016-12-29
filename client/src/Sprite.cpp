@@ -20,6 +20,7 @@ const Sprite::TypeSpriteEnum	&Sprite::getType() const
 
 void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, int lvl)
 {
+	texture.setSrgb(true);
 	type = _type;
 	switch (_type)
 	{	
@@ -48,16 +49,29 @@ void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, int lvl)
 		setSpriteRect(lvl * 33, 51, 33, 17);
 		break;
 	case Sprite::TypeSpriteEnum::Bullet:
-		if (!texture.loadFromFile("./assets/Sprites/r-typesheet43.gif")) {
+		if (!texture.loadFromFile("./assets/Sprites/r-typesheet1.gif")) {
 			std::cout << "Failed to load the texture Bullet" << std::endl;
 		}
-		setSpriteRect(lvl * 33, 0, 33, 17);
+		if (lvl == 1)
+			setSpriteRect(186, 170, 78, 16);
+		else if (lvl == 2)
+			setSpriteRect(198, 152, 68, 16);
+		else if (lvl == 3)
+			setSpriteRect(216, 136, 48, 14);
+		else if (lvl == 4)
+			setSpriteRect(230, 120, 36, 12);
+		break;
+	case Sprite::TypeSpriteEnum::Load:
+		if (!texture.loadFromFile("./assets/Sprites/r-typesheet1.gif")) {
+			std::cout << "Failed to load the texture Load" << std::endl;
+		}
+		setSpriteRect(198, 54, 30, 26);
 		break;
 	case Sprite::TypeSpriteEnum::Ennemies:
-		if (!texture.loadFromFile("./assets/Sprites/r-typesheet2.gif")) {
+		if (!texture.loadFromFile("./assets/Sprites/r-typesheet5.gif")) {
 			std::cout << "Failed to load the texture ennemies" << std::endl;
 		}
-		setSpriteRect(lvl * 33, 0, 33, 17);
+		setSpriteRect(lvl * 33, 0, 33, 36);
 		break;
 	default:
 		break;

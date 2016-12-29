@@ -16,6 +16,7 @@ public:
 		Player3,
 		Player4,
 		Bullet,
+		Load,
 		Ennemies,
 	};
 

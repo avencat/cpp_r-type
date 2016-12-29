@@ -184,11 +184,11 @@ const Object				&Scene::getObj(std::string _name)
 	return (objects.back());
 }
 
-void						Scene::setObjPos(std::string _name, int _x, int _y)
+void						Scene::setObjPos(const int &_id, const sf::Vector2i &_pos)
 {
 	for (std::list<Object>::iterator it = objects.begin(); it != objects.end(); it++) {
-		if ((*it).getName() == _name)
-			(*it).setPos(_x, _y);
+		if ((*it).getId() == _id)
+			(*it).setPos(_pos.x, _pos.y);
 	}
 }
 
