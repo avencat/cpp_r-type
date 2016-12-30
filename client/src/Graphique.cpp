@@ -542,7 +542,11 @@ bool	Graphique::inGameScene()
 		window.setFramerateLimit(60);
 
 		// set Background
-		inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
+		newObject.setLongName(100);
+		newObject.setId(100);
+		newObject.addAComponent(1, Sprite::TypeSpriteEnum::Background, 0);
+		inGame.refreshAnimation();
+		//inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
 
 
 		// set Var ship
@@ -568,13 +572,13 @@ bool	Graphique::inGameScene()
 		// SEND POS
 		inGame.addObject(mainShip);
 
-		
 
 		
 		firstTime = false;
 	}
 
-	handleServerCode();
+	// REMETTRE AVANT DE PUSH
+	//handleServerCode();
 
 	
 	while (window.pollEvent(event))

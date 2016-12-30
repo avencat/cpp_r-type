@@ -18,6 +18,7 @@ public:
 		Bullet,
 		Load,
 		Ennemies,
+		Background,
 	};
 
 	Sprite();

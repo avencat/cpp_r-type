@@ -218,25 +218,9 @@ const bool					&Scene::getEndGame() const
 	return (endGame);
 }
 
-const sf::Sprite			&Scene::getBGSprite() const
+const sf::Clock				&Scene::getClock() const
 {
-	return (BGSprite);
-}
-
-const sf::Texture			&Scene::getBGTexture() const
-{
-	return (BGTexture);
-}
-
-void						Scene::setBGSprite(const std::string &_path)
-{
-	setBGTexture(_path);
-	BGSprite.setTexture(BGTexture);
-}
-
-void						Scene::setBGTexture(const std::string &_path)
-{
-	BGTexture.loadFromFile(_path);
+	return (clock);
 }
 
 void						Scene::addButs(const std::string &_name, const sf::Vector2f &_pos, const sf::Vector2f &_size, const sf::Color &_clrTxt, const sf::Color &_clrBg, const Button::buttonEnum &butEnum)
@@ -255,9 +239,13 @@ bool						Scene::destroyById(const int &_id)
 	return (false);
 }
 
+void							Scene::refreshAnimation()
+{
+	animation.refresh(clock, objects);
+}
+
 void						Scene::draw(sf::RenderWindow &window) const
 {
-	window.draw(BGSprite);
 	for (std::vector<sf::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); it++) {
 		window.draw(*it);
 	}

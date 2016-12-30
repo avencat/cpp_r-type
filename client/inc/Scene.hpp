@@ -2,9 +2,12 @@
 # define SCENE_HPP_
 
 # include <list>
+# include <SFML/System.hpp>
+# include <SFML/System/Clock.hpp>
+
 # include "Object.hpp"
 # include "Button.hpp"
-//# include "Animation.hpp"
+# include "Animation.hpp"
 
 class Scene
 {
@@ -31,10 +34,10 @@ public:
 	const std::vector<sf::Text>		&getTextButton() const;
 	const std::vector<Button*>		&getButtons() const;
 	const sf::Font					&getFont() const;
-	const sf::Sprite				&getBGSprite() const;
-	const sf::Texture				&getBGTexture() const;
-	void							setBGSprite(const std::string &);
-	void							setBGTexture(const std::string &);
+	const sf::Clock					&getClock() const;
+	void							refreshAnimation();
+	
+	
 	void							addButs(const std::string &, const sf::Vector2f &, const sf::Vector2f &, const sf::Color &, const sf::Color &, const Button::buttonEnum &);
 	//Object							&getObj(const long &);
 	const Object					&getObj(long);
@@ -56,8 +59,9 @@ private:
 	std::vector<sf::Text>			button_text;
 	std::vector<sf::Text>			texts;
 	std::vector<Button*>			buttons;
-	sf::Sprite						BGSprite;
-	sf::Texture						BGTexture;
+	Animation						animation;
+	sf::Clock						clock;
+
 };
 
 #endif /* !SCENE_HPP_ */
