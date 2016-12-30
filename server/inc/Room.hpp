@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:23 2016 Maxime BOUCHER
-// Last update Thu Dec 15 15:44:08 2016 Maxime BOUCHER
+// Last update Fri Dec 30 14:32:33 2016 Maxime BOUCHER
 //
 
 #ifndef ROOM_HPP_
@@ -13,32 +13,54 @@
 
 # include <list>
 # include <iostream>
+# include "Socket.hpp"
 # include "ThreadLinux.hpp"
+
+enum		eState
+  {
+    Waiting,
+    Full,
+    inGame
+  };
 
 class		Room
 {
 private:
-  //std::list <Socket>	player;
-  //std::list <Socket>	viewer;
-  static Room			*me;
+  std::list<Socket>	player;
+  std::list<Socket>	viewer;
   int			id;
-  int			state;
+  eState		state;
   int			level;
   std::string		nameBestScore;
   int			highScore;
-  Thread		thread;
+  bool			active;
+  static Room		*me;
+  bool			end;
 
 public:
   Room();
   ~Room();
-  int			getNbPlayer();
+
+  Thread		thread;
+  size_t		getNbPlayer();
   static void		*startThread(void *data);
-  int			unlockLock();
-  int			lockLock();
-  int			endLoop();
+  int			unlockMutex();
+  int			lockMutex();
+  void			endLoop();
   void			join();
-  int			loop();
+  void			loop();
+  void			queue();
   void			setLevel(const int);
+  size_t		getNbViewer();
+  bool			addPlayer(Socket &);
+  bool			addViewer(Socket &);
+  bool			deletePlayer(Socket &);
+  bool			deleteViewer(Socket &);
+  bool			isActive();
+  void			setActive(const bool);
+  void			play();
+  void			wait();
+  void			signal();
 };
 
 #endif /* !ROOM_HPP_ */

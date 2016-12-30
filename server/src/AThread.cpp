@@ -5,10 +5,10 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Wed Dec 14 22:35:33 2016 Maxime BOUCHER
-// Last update Wed Dec 14 22:36:10 2016 Maxime BOUCHER
+// Last update Tue Dec 20 15:21:53 2016 Maxime BOUCHER
 //
 
-#include "../inc/AThread.hpp"
+#include "AThread.hpp"
 
 AThread::AThread(){}
 AThread::~AThread(){}

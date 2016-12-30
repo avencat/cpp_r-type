@@ -107,7 +107,7 @@ bool ASocket::sendTo(const std::stringstream &data, const int &flags)
 	if (mode != SockMode::UDP)
 		return (this->send(data, flags));
 #ifdef _WIN32
-	lastSentDataLength = ::sendto(sock, data.str().c_str(), data.str().length(), flags, reinterpret_cast<SOCKADDR *>(&sin), toLen);
+	lastSentDataLength = ::sendto(sock, data.str().c_str(), data.str().length(), 0, reinterpret_cast<SOCKADDR *>(&sin), toLen);
 	if (lastSentDataLength == SOCKET_ERROR) {
 		std::cerr << lastSentDataLength << " && " << WSAGetLastError() << std::endl;
 	}
@@ -168,7 +168,6 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, SOCKADDR &des
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
 	if (!blocking) {
-		std::cout << "!blocking" << std::endl;
 		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
 			perror("select()");
 			return (false);
@@ -210,7 +209,6 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &fl
 	FD_SET(sock, &readfs);
 	if (!blocking) {
 		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
-			std::cerr << "! ret = " << ret << std::endl;
 			perror("select()");
 			return (false);
 		}
@@ -220,7 +218,6 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &fl
 		}
 	} else {
 		if ((ret = select(sock, &readfs, NULL, NULL, &tv)) < 0) {
-			std::cerr << "ret = " << ret << std::endl;
 			perror("select()");
 			return (false);
 		}
@@ -250,3 +247,7 @@ const u_short &ASocket::getPort() const
 	return (this->port);
 }
 
+const SSIZE_T	&ASocket::getReceivedLength() const
+{
+	return (lastRecvDataLength);
+}
