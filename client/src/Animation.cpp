@@ -8,8 +8,18 @@ Animation::~Animation()
 {
 }
 
-void		Animation::refresh(sf::Clock clock, const std::list<Object> &objs)
+void		Animation::moveBackground(const sf::Clock &clock, Object &obj)
 {
-	(void)clock;
-	(void)objs;
+	sf::Time time = clock.getElapsedTime();
+	obj.setPos(obj.getPos().x - static_cast<int>(time.asSeconds()), 0);
+
+}
+
+void		Animation::refresh(const sf::Clock &clock, std::list<Object> &objs)
+{
+	for (std::list<Object>::iterator i = objs.begin(); i != objs.end(); i++) {
+		if ((*i).getLongName() == 100) {
+			moveBackground(clock, (*i));
+		}
+	}
 }

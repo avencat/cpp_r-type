@@ -13,7 +13,8 @@ public:
 	Animation();
 	~Animation();
 
-	void		refresh(sf::Clock, const std::list<Object> &);
+	void		refresh(const sf::Clock &, std::list<Object> &);
+	void		moveBackground(const sf::Clock &, Object &);
 
 private:
 
