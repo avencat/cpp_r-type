@@ -30,37 +30,37 @@ int ASocket::sockQuit()
 #endif
 }
 
-int ASocket::close(SOCKET sock)
+int ASocket::close(SOCKET _sock)
 {
 	int status = 0;
 
 #ifdef _WIN32
-	status = shutdown(sock, SD_BOTH);
+	status = shutdown(_sock, SD_BOTH);
 	if (status == 0) {
-		status = closesocket(sock);
+		status = closesocket(_sock);
 	}
 	return (sockQuit());
 #else
-	status = shutdown(sock, SHUT_RDWR);
+	status = shutdown(_sock, SHUT_RDWR);
 	if (status == 0) {
-		status = close(sock);
+		status = close(_sock);
 	}
 #endif
 
 	return (status);
 }
 
-bool ASocket::create(const std::string &ip, const u_short port, const ASocket::SockMode &mode)
+bool ASocket::create(const std::string &_ip, const u_short &_port, const ASocket::SockMode &_mode)
 {
 	sockInit();
-	this->mode = mode;
-	this->port = port;
-	this->ip = ip;
-	sin.sin_addr.s_addr = inet_addr(ip.c_str());
+	this->mode = _mode;
+	this->port = _port;
+	this->ip = _ip;
+	sin.sin_addr.s_addr = inet_addr(_ip.c_str());
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
+	sin.sin_port = htons(_port);
 	toLen = sizeof(sin);
-	sock = socket(AF_INET, mode == ASocket::SockMode::TCP ? SOCK_STREAM : SOCK_DGRAM, 0);
+	sock = socket(AF_INET, _mode == ASocket::SockMode::TCP ? SOCK_STREAM : SOCK_DGRAM, 0);
 	if (sock == -1)
 		return (false);
 	return (true);
@@ -90,14 +90,14 @@ bool ASocket::send(const std::stringstream &data, const int &flags)
 	return (lastSentDataLength > 0 || data.str().length() == 0);
 }
 
-bool ASocket::sendTo(const std::stringstream &data, const SOCKADDR &from, const socklen_t &fromLen, const int &flags)
+bool ASocket::sendTo(const std::stringstream &data, const SOCKADDR &from, const socklen_t &_fromLen, const int &flags)
 {
 	if (mode != SockMode::UDP)
 		return (false);
 #ifdef _WIN32
-	lastSentDataLength = ::sendto(sock, data.str().c_str(), data.str().length(), flags, reinterpret_cast<const SOCKADDR *>(&from), fromLen);
+	lastSentDataLength = ::sendto(sock, data.str().c_str(), data.str().length(), flags, reinterpret_cast<const SOCKADDR *>(&from), _fromLen);
 #else
-	lastSentDataLength = ::sendto(sock, reinterpret_cast<const void *>(data.str().c_str()), data.str().length(), flags, reinterpret_cast<const SOCKADDR *>(&from), fromLen);
+	lastSentDataLength = ::sendto(sock, reinterpret_cast<const void *>(data.str().c_str()), data.str().length(), flags, reinterpret_cast<const SOCKADDR *>(&from), _fromLen);
 #endif /* !_WIN32 */
 	return (lastSentDataLength > 0 || data.str().length() == 0);
 }

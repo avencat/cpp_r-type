@@ -21,7 +21,7 @@ const std::list<AComponent>		&Object::getComponents() const
 	return (components);
 }
 
-void							Object::addAComponent(int _id, const Sprite::TypeSpriteEnum &_type, int lvl)
+void							Object::addAComponent(const int &_id, const Sprite::TypeSpriteEnum &_type, const int &lvl)
 {
 	AComponent		tmp;
 
@@ -30,16 +30,14 @@ void							Object::addAComponent(int _id, const Sprite::TypeSpriteEnum &_type, i
 	components.back().setSprite(_type, lvl);
 }
 
-const AComponent				&Object::getComponent(int _id) const
+const AComponent				&Object::getComponent(const int &_id) const
 {
-	AComponent		tmp;
-
 	for (std::list<AComponent>::const_iterator i = components.begin(); i != components.end(); i++) {
 		if ((*i).getId() == _id) {
-			tmp = (*i);
+			return (*i);
 		}
 	}
-	return (tmp);
+	return (component);
 }
 
 const sf::Vector2i				&Object::getPos() const

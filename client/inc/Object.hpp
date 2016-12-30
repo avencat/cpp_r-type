@@ -16,8 +16,8 @@ public:
 	virtual ~Object();
 
 	const std::list<AComponent>		&getComponents() const;
-	void							addAComponent(int, const Sprite::TypeSpriteEnum &, int);
-	const AComponent				&getComponent(int) const;
+	void							addAComponent(const int &, const Sprite::TypeSpriteEnum &, const int &);
+	const AComponent				&getComponent(const int &) const;
 	const sf::Vector2i				&getPos() const;
 	void							setPos(const int &, const int &);
 	void							setLife(const int &);
@@ -38,6 +38,7 @@ private:
 	std::list<AComponent>			components;
 	sf::Vector2i					pos;
 	sf::Vector2i					dir;
+	AComponent						component;
 };
 
 #endif /* !OBJECT_HPP_ */

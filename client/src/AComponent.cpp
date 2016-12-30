@@ -18,9 +18,9 @@ void					AComponent::setId(const int &_id)
 	id = _id;
 }
 
-void					AComponent::setSprite(const Sprite::TypeSpriteEnum &type, int lvl)
+void					AComponent::setSprite(const Sprite::TypeSpriteEnum &_type, int lvl)
 {
-	sprite.setSprite(type, lvl);
+	sprite.setSprite(_type, lvl);
 }
 
 const int				&AComponent::getId() const
@@ -38,11 +38,9 @@ void					AComponent::setPosition(int x, int y)
 	sprite.setPosSprite(x, y);
 }
 
-const sf::Vector2i		&AComponent::getPos() const
+const sf::Vector2i		&AComponent::getPos()
 {
-	sf::Vector2i		tmp;
-
-	tmp.x = sprite.getPosSprite().first;
-	tmp.y = sprite.getPosSprite().second;
-	return (tmp);
+	pos.x = sprite.getPosSprite().first;
+	pos.y = sprite.getPosSprite().second;
+	return (pos);
 }

@@ -41,7 +41,13 @@ Button::Button(const Button &button)
 
 Button						&Button::operator=(const Button &button)
 {
-	return (Button(button));
+	this->text = button.text;
+	this->rect = button.rect;
+	this->colorTxt = button.colorTxt;
+	this->colorBg = button.colorBg;
+	this->rFont = button.rFont;
+	this->id = button.id;
+	return (*this);
 }
 
 bool						Button::setFont(const std::string &str)

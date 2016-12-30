@@ -5,6 +5,7 @@
 /* See http://stackoverflow.com/questions/12765743/getaddrinfo-on-win32 */
 #  include <winsock2.h>
 #  include <Ws2tcpip.h>
+#  define _WINSOCK_DEPRECATED_NO_WARNINGS
 # else
 #  include <sys/types.h>
 #  include <sys/socket.h>
@@ -35,7 +36,7 @@ public:
 	};
 
 	int				close(SOCKET sock);
-	bool			create(const std::string &ip, const u_short port, const SockMode &mode);
+	bool			create(const std::string &ip, const u_short &port, const SockMode &mode);
 	bool			bind();
 	// Use these two functions to send data through the socket
 	bool			send(const std::stringstream &data, const int &flags = 0);

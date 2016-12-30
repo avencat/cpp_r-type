@@ -91,13 +91,18 @@ bool Graphique::loadNextScene()
 		if (prevScene == ScenesEnum::getIp) {
 			activeScene = ScenesEnum::listRooms;
 			return (showRoomScene());
+		} else {
+			activeScene = ScenesEnum::getIp;
+			prevScene = ScenesEnum::null;
+			return (linkServerScene());
 		}
-		break;
 	case ScenesEnum::listRooms:
 		prevScene = activeScene;
 		activeScene = ScenesEnum::lobby;
 		return (lobbyScene());
 	default:
+		activeScene = ScenesEnum::getIp;
+		prevScene = ScenesEnum::null;
 		return (linkServerScene());
 	}
 }
@@ -180,6 +185,7 @@ bool Graphique::loadingScene()
 		loading.setTextColor(0, sf::Color::White);
 		firstTime = false;
 	}
+	return (true);
 }
 
 bool Graphique::linkServerScene()

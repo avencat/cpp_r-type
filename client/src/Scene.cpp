@@ -57,7 +57,7 @@ bool						Scene::loadFont(const std::string &fontName)
 	return (true);
 }
 
-const std::string			&Scene::getText(unsigned int id)
+const std::string			&Scene::getText(const unsigned int &id)
 {
 	wildString = "";
 	if (id > texts.size())
@@ -76,7 +76,7 @@ const sf::Font					&Scene::getFont() const
 	return (font);
 }
 
-void						Scene::addToText(unsigned int id, sf::Uint32 c)
+void						Scene::addToText(const unsigned int &id, const sf::Uint32 &c)
 {
 	std::string tmp;
 
@@ -88,7 +88,7 @@ void						Scene::addToText(unsigned int id, sf::Uint32 c)
 	}
 }
 
-void						Scene::removeBackText(unsigned int id)
+void						Scene::removeBackText(const unsigned int &id)
 {
 	std::string tmp;
 
@@ -117,19 +117,19 @@ void						Scene::addSprite(const sf::Vector2f &pos, const sf::Vector2f &size, co
 	sprites.back().setScale(winsize.x / 1920, winsize.y / 1080);
 }
 
-void						Scene::setTextColor(unsigned int id, const sf::Color &color)
+void						Scene::setTextColor(const unsigned int &id, const sf::Color &color)
 {
 	if (id <= texts.size())
 		texts[id].setColor(color);
 }
 
-void						Scene::setButtonTextColor(unsigned int id, const sf::Color &color)
+void						Scene::setButtonTextColor(const unsigned int &id, const sf::Color &color)
 {
 	if (id <= button_text.size())
 		button_text[id].setColor(color);
 }
 
-void						Scene::addText(const sf::Vector2f &pos, const std::string &str, unsigned int size)
+void						Scene::addText(const sf::Vector2f &pos, const std::string &str, const unsigned int &size)
 {
 	texts.push_back(sf::Text(str, font, size));
 	texts.back().setPosition(pos);
@@ -140,7 +140,7 @@ const std::vector<sf::Text>	&Scene::getTextButton() const
 	return (button_text);
 }
 
-void						Scene::addButton(const sf::Vector2f &pos, const std::string &str, const sf::Color &clr, unsigned int size, bool full)
+void						Scene::addButton(const sf::Vector2f &pos, const std::string &str, const sf::Color &clr, const unsigned int &size, const bool &full)
 {
 	rects.push_back(sf::RectangleShape());
 	rects.back().setPosition(pos);
@@ -151,7 +151,7 @@ void						Scene::addButton(const sf::Vector2f &pos, const std::string &str, cons
 	button_text.back().setCharacterSize(size);
 }
 
-bool						Scene::buttonEvent(unsigned int id, const sf::Vector2f &pos)
+bool						Scene::buttonEvent(const unsigned int &id, const sf::Vector2f &pos)
 {
 	sf::FloatRect fr;
 
@@ -164,7 +164,7 @@ bool						Scene::buttonEvent(unsigned int id, const sf::Vector2f &pos)
 	return (false);
 }
 
-bool						Scene::buttonClik(unsigned int id, const sf::Vector2f &pos)
+bool						Scene::buttonClik(const unsigned int &id, const sf::Vector2f &pos)
 {
 	sf::FloatRect fr;
 
@@ -190,6 +190,15 @@ const Object				&Scene::getObj(long _name)
 	}
 	return (objects.back());
 }
+//
+//Object				&Scene::getObj(const long &_name)
+//{
+//	for (std::list<Object>::iterator it = objects.begin(); it != objects.end(); it++) {
+//		if ((*it).getLongName() == _name)
+//			return ((*it));
+//	}
+//	return (objects.back());
+//}
 
 void						Scene::setObjPos(const int &_id, const sf::Vector2i &_pos)
 {
@@ -199,7 +208,7 @@ void						Scene::setObjPos(const int &_id, const sf::Vector2i &_pos)
 	}
 }
 
-void						Scene::setSEndGame(bool status)
+void						Scene::setSEndGame(const bool &status)
 {
 	endGame = status;
 }

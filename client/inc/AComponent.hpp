@@ -15,12 +15,14 @@ public:
 	void					setSprite(const Sprite::TypeSpriteEnum &, int);
 	const int				&getId() const;
 	const Sprite			&getCSprite() const;
-	const sf::Vector2i		&getPos() const;
+	// getPos ne peut être marqué const car elle modifie pos avant de return.
+	const sf::Vector2i		&getPos();
 
 private:
 	int						id;
 	Sprite					sprite;
 	Sprite::TypeSpriteEnum	type;
+	sf::Vector2i			pos;
 };
 
 #endif /* !ACOMPONENT_HPP_ */
