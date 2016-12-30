@@ -11,10 +11,10 @@ Animation::~Animation()
 void		Animation::moveBackground(Object &obj, const sf::Time &time)
 {
 	if (obj.getPos().x >= -(static_cast<int>(obj.getComponent(1).getCSprite().getSize().x))) {
-		obj.setPos(obj.getPos().x - static_cast<int>(time.asSeconds()) - 10, 0);
+		obj.setPos(obj.getPos().x - static_cast<int>(time.asSeconds()) - 1, 0);
 	}
 	else {
-		obj.setPos(static_cast<int>(obj.getComponent(1).getCSprite().getSize().x) * 2 + (obj.getPos().x + static_cast<int>(obj.getComponent(1).getCSprite().getSize().x)) - static_cast<int>(time.asSeconds()) - 10, 0);
+		obj.setPos(static_cast<int>(obj.getComponent(1).getCSprite().getSize().x) * 2 + (obj.getPos().x + static_cast<int>(obj.getComponent(1).getCSprite().getSize().x)) - static_cast<int>(time.asSeconds()) - 1, 0);
 	}
 }
 
