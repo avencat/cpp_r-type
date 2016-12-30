@@ -1,11 +1,15 @@
 #ifndef GRAPHIQUE_HPP_
 # define GRAPHIQUE_HPP_
 
+# ifdef _WIN32
+#  include <SFML/Graphics.hpp>
+# else
+#  include <SFML2.2/Graphics.hpp>
+# endif
+
 # include <string>
 # include <list>
-# include <SFML/Graphics.hpp>
 # include <iostream>
-
 # include "Scene.hpp"
 # include "RoomManager.hpp"
 

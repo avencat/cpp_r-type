@@ -1,11 +1,11 @@
 ##
 ## Makefile for Makefile in /home/van-de_j/Tek3/rendu/RType/rtype/server/src
-## 
+##
 ## Made by Jessica VAN-DEN-ZANDE
 ## Login   <van-de_j@epitech.net>
-## 
+##
 ## Started on  Mon Dec 19 18:28:51 2016 Jessica VAN-DEN-ZANDE
-## Last update Fri Dec 30 17:27:20 2016 Axel Vencatareddy
+## Last update Jun Dec 30 17:50:25 2016 Axel Vencatareddy
 ##
 
 CXX		= g++
@@ -33,7 +33,7 @@ SRC		= $(DIR_PROTO)RtypeProtocol.cpp	\
 
 OBJ		= $(SRC:.cpp=.o)
 
-CXXFLAGS	= -std=c++11 -W -Wall -Werror -Wextra -I ../common/inc/ -I ./incLinux/
+CXXFLAGS	= -std=c++11 -W -Wall -Werror -Wextra -I ../common/inc/ -I ./inc/
 
 LDFLAGS		= -L./lib/ -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 

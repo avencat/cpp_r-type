@@ -1,8 +1,12 @@
-#pragma once
 # ifndef BUTTON_H_
 # define BUTTON_H_
 
-# include <SFML/Graphics.hpp>
+# ifdef _WIN32
+#  include <SFML/Graphics.hpp>
+# else
+#  include <SFML2.2/Graphics.hpp>
+# endif
+
 # include <string>
 
 class Button

@@ -1,10 +1,15 @@
 #ifndef OBJECT_HPP_
 # define OBJECT_HPP_
 
+# ifdef _WIN32
+#  include <SFML/Graphics.hpp>
+# else
+#  include <SFML2.2/Graphics.hpp>
+# endif
+
 # include <string>
 # include <map>
 # include <list>
-# include <SFML/Graphics.hpp>
 # include "AComponent.hpp"
 
 class Object
@@ -30,7 +35,7 @@ public:
 	void							setId(const int &);
 
 private:
-	
+
 	long							longName;
 	int								id;
 	int								life;
