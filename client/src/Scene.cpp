@@ -244,6 +244,11 @@ void							Scene::refreshAnimation()
 	animation.refresh(clock, objects);
 }
 
+void							Scene::restartClock()
+{
+	clock.restart();
+}
+
 void						Scene::draw(sf::RenderWindow &window) const
 {
 	for (std::vector<sf::Sprite>::const_iterator it = sprites.begin(); it != sprites.end(); it++) {

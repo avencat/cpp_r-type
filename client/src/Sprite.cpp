@@ -18,7 +18,7 @@ const Sprite::TypeSpriteEnum	&Sprite::getType() const
 	return (type);
 }
 
-void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, int lvl)
+void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, const int &lvl)
 {
 #ifdef _WIN32
 	texture.setSrgb(true);
@@ -87,16 +87,21 @@ void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, int lvl)
 	sprite.setTexture(texture);
 }
 
-void							Sprite::setSpriteRect(int _x1, int _y1, int _x2, int _y2)
+void							Sprite::setSpriteRect(const int &_x1, const int &_y1, const int &_x2, const int &_y2)
 {
 	sprite.setTextureRect(sf::IntRect(_x1, _y1, _x2, _y2));
 }
 
-void							Sprite::setPosSprite(int _x, int _y)
+void							Sprite::setPosSprite(const int &_x, const int &_y)
 {
 	pos.first = _x;
 	pos.second = _y;
 	sprite.setPosition(sf::Vector2f(_x, _y));
+}
+
+const sf::Texture				&Sprite::getTexture() const
+{
+	return (texture);
 }
 
 const std::pair<int,int>		&Sprite::getPosSprite() const

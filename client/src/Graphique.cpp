@@ -546,6 +546,12 @@ bool	Graphique::inGameScene()
 		newObject.setId(100);
 		newObject.addAComponent(1, Sprite::TypeSpriteEnum::Background, 0);
 		inGame.addObject(newObject);
+		newObject = Object();
+		newObject.setLongName(101);
+		newObject.setId(101);
+		newObject.addAComponent(1, Sprite::TypeSpriteEnum::Background, 0);
+		newObject.setPos(static_cast<int>(newObject.getComponent(1).getCSprite().getTexture().getSize().x), 0);
+		inGame.addObject(newObject);
 		//inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
 
 
@@ -554,8 +560,8 @@ bool	Graphique::inGameScene()
 		accel = 1.5f;
 		decel = 0.1f;
 		// To delete down
-		position.x = (10 * (float)window.getSize().x) / 100;
-		position.y = (40 * (float)window.getSize().y) / 100;
+		position.x = (10 * static_cast<float>(window.getSize().x)) / 100;
+		position.y = (40 * static_cast<float>(window.getSize().y)) / 100;
 		// To delete up
 		velocity.x = 0.1f;
 		velocity.y = 0.1f;
@@ -572,12 +578,11 @@ bool	Graphique::inGameScene()
 		// SEND POS
 		inGame.addObject(mainShip);
 
-
-
 		firstTime = false;
 	}
 
 	inGame.refreshAnimation();
+	inGame.restartClock();
 
 	// REMETTRE AVANT DE PUSH
 	//handleServerCode();
@@ -667,12 +672,12 @@ bool	Graphique::inGameScene()
 	position += velocity;
 	if (position.x < 0)
 		position.x = 0;
-	else if (position.x > (float)window.getSize().x - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width)
-		position.x = (float)window.getSize().x - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width;
+	else if (position.x > static_cast<float>(window.getSize().x) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width))
+		position.x = static_cast<float>(window.getSize().x) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width);
 	if (position.y < 0)
 		position.y = 0;
-	else if (position.y > (float)window.getSize().y - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height)
-		position.y = (float)window.getSize().y - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height;
+	else if (position.y > static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height))
+		position.y = static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height);
 	inGame.setObjPos(1, sf::Vector2i(position.x, position.y));
 	//
 	//  SEND MSG SERVER POSITION

@@ -29,11 +29,12 @@ public:
 	Sprite();
 	~Sprite();
 
-	void						setSprite(const TypeSpriteEnum &,int);
-	void						setSpriteRect(int, int, int, int);
+	void						setSprite(const TypeSpriteEnum &, const int &);
+	void						setSpriteRect(const int &, const int &, const int &, const int &);
+	void                        setPosSprite(const int &, const int &);
 	const sf::Sprite			&getSprite() const;
 	const TypeSpriteEnum		&getType() const;
-	void						setPosSprite(int, int);
+	const sf::Texture			&getTexture() const;
 	const std::pair<int,int>	&getPosSprite() const;
 
 

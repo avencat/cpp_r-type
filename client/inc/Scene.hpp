@@ -41,6 +41,7 @@ public:
 	const sf::Font					&getFont() const;
 	const sf::Clock					&getClock() const;
 	void							refreshAnimation();
+	void							restartClock();
 
 
 	void							addButs(const std::string &, const sf::Vector2f &, const sf::Vector2f &, const sf::Color &, const sf::Color &, const Button::buttonEnum &);
