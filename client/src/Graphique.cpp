@@ -545,7 +545,7 @@ bool	Graphique::inGameScene()
 		newObject.setLongName(100);
 		newObject.setId(100);
 		newObject.addAComponent(1, Sprite::TypeSpriteEnum::Background, 0);
-		inGame.refreshAnimation();
+		inGame.addObject(newObject);
 		//inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
 
 
@@ -576,6 +576,8 @@ bool	Graphique::inGameScene()
 		
 		firstTime = false;
 	}
+
+	inGame.refreshAnimation();
 
 	// REMETTRE AVANT DE PUSH
 	//handleServerCode();
