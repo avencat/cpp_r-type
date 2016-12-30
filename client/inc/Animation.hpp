@@ -19,10 +19,9 @@ public:
 	~Animation();
 
 	void		refresh(const sf::Clock &, std::list<Object> &);
-	void		moveBackground(const sf::Clock &, Object &);
+	void		moveBackground(Object &, const sf::Time &);
 
 private:
-
 };
 
 #endif /* !ANIMATION_HPP_ */

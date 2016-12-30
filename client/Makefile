@@ -5,7 +5,7 @@
 ## Login   <van-de_j@epitech.net>
 ##
 ## Started on  Mon Dec 19 18:28:51 2016 Jessica VAN-DEN-ZANDE
-## Last update Jun Dec 30 17:50:25 2016 Axel Vencatareddy
+## Last update Fri Dec 30 22:18:26 2016 Axel Vencatareddy
 ##
 
 CXX		= g++
@@ -35,7 +35,7 @@ OBJ		= $(SRC:.cpp=.o)
 
 CXXFLAGS	= -std=c++11 -W -Wall -Werror -Wextra -I ../common/inc/ -I ./inc/
 
-LDFLAGS		= -L./lib/ -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+LDFLAGS		= -Wl,-rpath,./lib -L./lib/ -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 RM		= rm -rf
 
