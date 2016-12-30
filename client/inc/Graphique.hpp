@@ -84,6 +84,7 @@ private:
 	Socket						&socket;
 
 	// Scene In Game
+	unsigned short				isCharging;
 	Object						mainShip;
 	sf::Vector2f				position;
 	sf::Vector2f				velocity;

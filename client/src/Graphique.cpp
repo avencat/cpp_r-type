@@ -538,6 +538,8 @@ bool	Graphique::inGameScene()
 
 	if (firstTime) {
 
+		isCharging = 1;
+
 		// set limit FPS
 		window.setFramerateLimit(60);
 
@@ -550,7 +552,13 @@ bool	Graphique::inGameScene()
 		newObject.setLongName(101);
 		newObject.setId(101);
 		newObject.addAComponent(1, Sprite::TypeSpriteEnum::Background, 0);
-		newObject.setPos(static_cast<int>(newObject.getComponent(1).getCSprite().getTexture().getSize().x), 0);
+		newObject.setPos(static_cast<int>(newObject.getComponent(1).getCSprite().getSize().x), 0);
+		inGame.addObject(newObject);
+		newObject = Object();
+		newObject.setLongName(102);
+		newObject.setId(102);
+		newObject.addAComponent(1, Sprite::TypeSpriteEnum::Background, 0);
+		newObject.setPos(static_cast<int>(newObject.getComponent(1).getCSprite().getSize().x) * 2, 0);
 		inGame.addObject(newObject);
 		//inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
 
@@ -614,19 +622,13 @@ bool	Graphique::inGameScene()
 				//
 
 				break;
-			case sf::Keyboard::Space:
-				std::cout << "Charge !" << std::endl;
-				//
-				// TODO AXELOPETO CHARGE
-				//
-
-				break;
 			default:
 				break;
 			}
 			break;
 		case sf::Event::KeyReleased:
 			if (event.key.code == sf::Keyboard::Space) {
+				isCharging = 1;
 				std::cout << "Shot !" << std::endl << std::endl;
 				//
 				// TODO AXELOPETO SHOOT
@@ -659,6 +661,21 @@ bool	Graphique::inGameScene()
 	}
 	else {
 		velocity.x *= decel;
+	}
+
+	// Check if the player is charging
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		if (isCharging == 0) {
+			std::cout << "Charge !" << std::endl;
+			//
+			// TODO AXELOPETO CHARGE
+			//
+			isCharging++;
+		} else if (isCharging == 10) {
+			isCharging = 0;
+		} else {
+			isCharging++;
+		}
 	}
 
 	// Check maximum speed

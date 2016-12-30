@@ -76,10 +76,11 @@ void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, const int &lvl
 		setSpriteRect(lvl * 33, 0, 33, 36);
 		break;
 	case Sprite::TypeSpriteEnum::Background:
-		if (!texture.loadFromFile("./assets/Sprites/espace_background_rtype.jpg")) {
-			std::cout << "Failed to load the texture ennemies" << std::endl;
+		// if (!texture.loadFromFile("./assets/Sprites/espace_background_rtype.jpg")) {
+		if (!texture.loadFromFile("./assets/Sprites/background.jpg")) {
+			std::cout << "Failed to load the background texture" << std::endl;
 		}
-		setSpriteRect(lvl, 0, 1280, 720);
+		setSpriteRect(lvl, 0, 1024, 720);
 		break;
 	default:
 		break;
@@ -89,6 +90,8 @@ void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, const int &lvl
 
 void							Sprite::setSpriteRect(const int &_x1, const int &_y1, const int &_x2, const int &_y2)
 {
+	size.x = _x2;
+	size.y = _y2;
 	sprite.setTextureRect(sf::IntRect(_x1, _y1, _x2, _y2));
 }
 
@@ -107,4 +110,9 @@ const sf::Texture				&Sprite::getTexture() const
 const std::pair<int,int>		&Sprite::getPosSprite() const
 {
 	return (pos);
+}
+
+const sf::Vector2f		&Sprite::getSize() const
+{
+	return (size);
 }

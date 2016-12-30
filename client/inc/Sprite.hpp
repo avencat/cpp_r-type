@@ -36,6 +36,7 @@ public:
 	const TypeSpriteEnum		&getType() const;
 	const sf::Texture			&getTexture() const;
 	const std::pair<int,int>	&getPosSprite() const;
+	const sf::Vector2f		&getSize() const;
 
 
 private:
@@ -46,6 +47,7 @@ private:
 	sf::Texture			texture;
 	sf::Sprite			sprite;
 	TypeSpriteEnum		type;
+	sf::Vector2f		size;
 };
 
 #endif /* !SPRITE_HPP_ */
