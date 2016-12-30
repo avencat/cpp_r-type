@@ -5,6 +5,7 @@
 # include "RtypeProtocol.hh"
 # include "ASocket.hpp"
 # include <ctime>
+# include <sstream>
 
 class Socket
 {
@@ -16,18 +17,19 @@ public:
 	bool				closeConnection();
 	int					getStatus() const;
 	void				setStatus(int);
-	bool				send(void *dataToSend, const size_t &sizeOfData);
+	bool				send(std::stringstream &dataToSend);
 	bool				receive(const size_t &);
 	const std::string	&getUsername() const;
 	void				setInternalError(const bool &);
 	const bool			&getInternalError() const;
-	void				*getReceivedData() const;
+	std::stringstream	&getReceivedData();
 
 private:
 	int					status;
 	ASocket				socket;
 	std::string			ip;
-	void				*data;
+	std::stringstream	receivedData;
+	std::stringstream	sentData;
 	std::size_t			received;
 	std::string			username;
 	bool				internalError;

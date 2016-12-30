@@ -29,15 +29,14 @@ const Room	&RoomManager::getCurrentRoom()
 
 bool								RoomManager::ready()
 {
-	RtypeProtocol::Data::Code		*code;
+	RtypeProtocol::Data::Code		code;
 
-	code = new RtypeProtocol::Data::Code;
-	code->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomReady);
-	if (socket.send(code, sizeof(RtypeProtocol::Data::Code)) == false) {
-		delete code;
+	code.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomReady);
+	sentData.str("");
+	sentData.write(reinterpret_cast<char *>(&(code.code)), sizeof(code.code));
+	if (socket.send(sentData) == false) {
 		return (false);
 	}
-	delete code;
 	if (socket.receive(sizeof(RtypeProtocol::Data::RoomInfo)) == false)
 		return (false);
 	manageServerCodes();
@@ -46,15 +45,14 @@ bool								RoomManager::ready()
 
 bool			RoomManager::notReady()
 {
-	RtypeProtocol::Data::Code		*code;
+	RtypeProtocol::Data::Code		code;
 
-	code = new RtypeProtocol::Data::Code;
-	code->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomNotReady);
-	if (socket.send(code, sizeof(RtypeProtocol::Data::Code)) == false) {
-		delete code;
+	code.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomNotReady);
+	sentData.str("");
+	sentData.write(reinterpret_cast<char *>(&(code.code)), sizeof(code.code));
+	if (socket.send(sentData) == false) {
 		return (false);
 	}
-	delete code;
 	if (socket.receive(sizeof(RtypeProtocol::Data::RoomInfo)) == false)
 		return (false);
 	manageServerCodes();
@@ -62,62 +60,70 @@ bool			RoomManager::notReady()
 }
 
 // Only call this function once, the first time !
-const std::list<Room>	&RoomManager::roomList()
+const std::list<Room>				&RoomManager::roomList()
 {
-	RtypeProtocol::Data::Username	*username;
+	RtypeProtocol::Data::Username	username;
 	std::string						_username;
 	int								code;
-	RtypeProtocol::Data::Room		*receivedRoom;
+	RtypeProtocol::Data::Room		receivedRoom;
 
 	this->listRooms.clear();
 	if (socket.receive(sizeof(RtypeProtocol::Data::Room)) == false) {
-		username = new RtypeProtocol::Data::Username;
-		username->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::Username);
+		username.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::Username);
 		_username = socket.getUsername();
 		for (short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
-			username->username[i] = _username.c_str()[i];
-		if (socket.send(username, sizeof(RtypeProtocol::Data::Username)) == false) {
+			username.username[i] = _username.c_str()[i];
+		sentData.str("");
+		sentData.write(reinterpret_cast<char *>(&(username.code)), sizeof(username.code));
+		if (socket.send(sentData) == false) {
 			socket.setInternalError(true);
-			delete username;
 			return (this->listRooms);
 		}
-		delete username;
 		if (!socket.receive(sizeof(RtypeProtocol::Data::RoomBegin))) {
 			socket.setInternalError(true);
 			return (this->listRooms);
 		}
 	}
-	while ((code = reinterpret_cast<RtypeProtocol::Data::Room *>(socket.getReceivedData())->code) == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Room)) {
-		receivedRoom = reinterpret_cast<RtypeProtocol::Data::Room *>(socket.getReceivedData());
-		this->listRooms.push_back(Room(receivedRoom->roomID, receivedRoom->players, receivedRoom->state));
+	socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.code)), sizeof(receivedRoom.code));
+	while (receivedRoom.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Room)) {
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.players)), sizeof(receivedRoom.players));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.roomID)), sizeof(receivedRoom.roomID));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.state)), sizeof(receivedRoom.state));
+		this->listRooms.push_back(Room(receivedRoom.roomID, receivedRoom.players, receivedRoom.state));
 		socket.receive(sizeof(RtypeProtocol::Data::Room));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.code)), sizeof(receivedRoom.code));
 	}
+	if (receivedRoom.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomListEnd))
+		return (this->listRooms);
+	else
+		manageServerCodes(receivedRoom.code);
 	return (this->listRooms);
 }
 
 bool RoomManager::createRoom()
 {
 	int									biggestRoomId = 0;
-	RtypeProtocol::Data::RoomCreation	*room;
+	RtypeProtocol::Data::RoomCreation	room;
 
 	for (std::list<Room>::iterator it = listRooms.begin(); it != listRooms.end(); it++) {
 		if (it->getId() > biggestRoomId) {
 			biggestRoomId = it->getId();
 		}
 	}
-	room = new RtypeProtocol::Data::RoomCreation;
-	room->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomCreate);
-	room->id = biggestRoomId + 2;
-	if (!socket.send(room, sizeof(RtypeProtocol::Data::RoomCreation))) {
+	room.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomCreate);
+	room.id = biggestRoomId + 2;
+	sentData.str("");
+	sentData.write(reinterpret_cast<char *>(&(room.code)), sizeof(room.code));
+	sentData.write(reinterpret_cast<char *>(&(room.id)), sizeof(room.id));
+	if (!socket.send(sentData)) {
 		return (false);
 	}
-	delete room;
 	while (42) {
 		if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined))) {
 			return (false);
 		}
-		room = reinterpret_cast<RtypeProtocol::Data::RoomCreation *>(socket.getReceivedData());
-		if (room->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomCreated)) {
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(room.code)), sizeof(room.code));
+		if (room.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomCreated)) {
 			listRooms.push_back(Room(biggestRoomId, 0, RtypeProtocol::roomState::Waiting));
 			return (true);
 		} else {
@@ -130,65 +136,75 @@ bool RoomManager::createRoom()
 
 const std::list<Room> &RoomManager::refreshRoomList()
 {
-	RtypeProtocol::Data::Code	*roomList;
-	int							code;
-	RtypeProtocol::Data::Room	*receivedRoom;
+	RtypeProtocol::Data::Code	roomList;
+	RtypeProtocol::Data::Room	receivedRoom;
 
 	this->listRooms.clear();
-	roomList = new RtypeProtocol::Data::Code;
-	roomList->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::GameMenu);
-	if (socket.send(roomList, sizeof(RtypeProtocol::Data::Code)) == false) {
-		socket.setInternalError(true);
-		delete roomList;
+	roomList.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::GameMenu);
+	sentData.str("");
+	sentData.write(reinterpret_cast<char *>(roomList.code), sizeof(roomList.code));
+	if (socket.send(sentData) == false) {
 		return (this->listRooms);
 	}
 	if (!socket.receive(sizeof(RtypeProtocol::Data::RoomBegin))) {
-		socket.setInternalError(true);
 		return (this->listRooms);
 	}
-	while ((code = reinterpret_cast<RtypeProtocol::Data::Room *>(socket.getReceivedData())->code) == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Room) || code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomList)) {
-		receivedRoom = reinterpret_cast<RtypeProtocol::Data::Room *>(socket.getReceivedData());
-		this->listRooms.push_back(Room(receivedRoom->roomID, receivedRoom->players, receivedRoom->state));
+	socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.code)), sizeof(receivedRoom.code));
+	while (receivedRoom.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Room) || receivedRoom.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomList)) {
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.players)), sizeof(receivedRoom.players));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.roomID)), sizeof(receivedRoom.roomID));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.state)), sizeof(receivedRoom.state));
+		this->listRooms.push_back(Room(receivedRoom.roomID, receivedRoom.players, receivedRoom.state));
 		socket.receive(sizeof(RtypeProtocol::Data::Room));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.code)), sizeof(receivedRoom.code));
 	}
-	manageServerCodes();
+	if (receivedRoom.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomListEnd))
+		return (this->listRooms);
+	else
+		manageServerCodes(receivedRoom.code);
 	return (this->listRooms);
 }
 
 bool RoomManager::joinRoom(const Room &roomToJoin, const bool &spectator)
 {
-	RtypeProtocol::Data::RoomJoin	*roomJoin;
-	RtypeProtocol::Data::RoomJoined	*joined;
+	RtypeProtocol::Data::RoomJoin	roomJoin;
+	RtypeProtocol::Data::RoomJoined	joined;
 
-	roomJoin = new RtypeProtocol::Data::RoomJoin;
-	roomJoin->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomJoin);
-	roomJoin->id = roomToJoin.getId();
-	roomJoin->mode = spectator ? RtypeProtocol::roomJoinMode::Spectator : RtypeProtocol::roomJoinMode::Player;
-	if (!socket.send(roomJoin, sizeof(roomJoin))) {
-		delete roomJoin;
+	roomJoin.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomJoin);
+	roomJoin.id = roomToJoin.getId();
+	roomJoin.mode = spectator ? RtypeProtocol::roomJoinMode::Spectator : RtypeProtocol::roomJoinMode::Player;
+	sentData.str("");
+	sentData.write(reinterpret_cast<char *>(&(roomJoin.code)), sizeof(roomJoin.code));
+	sentData.write(reinterpret_cast<char *>(&(roomJoin.id)), sizeof(roomJoin.id));
+	sentData.write(reinterpret_cast<char *>(&(roomJoin.mode)), sizeof(roomJoin.mode));
+	if (!socket.send(sentData)) {
 		return (false);
 	}
-	delete roomJoin;
 	while (42) {
 		if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined))) {
 			return (false);
 		}
-		joined = reinterpret_cast<RtypeProtocol::Data::RoomJoined *>(socket.getReceivedData());
-		if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomJoined)) {
-			currentRoom.setId(joined->id);
-			currentRoom.setPlayer1(joined->name1);
-			currentRoom.setPlayer2(joined->name2);
-			currentRoom.setPlayer3(joined->name3);
-			currentRoom.setPlayer4(joined->name4);
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.code)), sizeof(joined.code));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.id)), sizeof(joined.id));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name1)), sizeof(joined.name1));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name2)), sizeof(joined.name2));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name3)), sizeof(joined.name3));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name4)), sizeof(joined.name4));
+		if (joined.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomJoined)) {
+			currentRoom.setId(joined.id);
+			currentRoom.setPlayer1(joined.name1);
+			currentRoom.setPlayer2(joined.name2);
+			currentRoom.setPlayer3(joined.name3);
+			currentRoom.setPlayer4(joined.name4);
 			return (true);
-		} else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrPlayerLimit)) {
+		} else if (joined.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrPlayerLimit)) {
 			std::cerr << "[Error] Already 4 players in the room." << std::endl;
 			return (false);
-		} else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrAlreadyStarted)) {
+		} else if (joined.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrAlreadyStarted)) {
 			std::cerr << "[Error] Game already started in Room " << roomToJoin.getId() << std::endl;
 			return (false);
 		} else {
-			if (manageServerCodes() == false)
+			if (manageServerCodes(joined.code) == false)
 				return (false);
 		}
 	}
@@ -197,38 +213,44 @@ bool RoomManager::joinRoom(const Room &roomToJoin, const bool &spectator)
 
 bool RoomManager::joinRoom(const int &roomToJoin, const bool &spectator)
 {
-	RtypeProtocol::Data::RoomJoin	*roomJoin;
-	RtypeProtocol::Data::RoomJoined	*joined;
+	RtypeProtocol::Data::RoomJoin	roomJoin;
+	RtypeProtocol::Data::RoomJoined	joined;
 
-	roomJoin = new RtypeProtocol::Data::RoomJoin;
-	roomJoin->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomJoin);
-	roomJoin->id = roomToJoin;
-	roomJoin->mode = spectator ? RtypeProtocol::roomJoinMode::Spectator : RtypeProtocol::roomJoinMode::Player;
-	if (!socket.send(roomJoin, sizeof(roomJoin))) {
-		delete roomJoin;
+	roomJoin.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomJoin);
+	roomJoin.id = roomToJoin;
+	roomJoin.mode = spectator ? RtypeProtocol::roomJoinMode::Spectator : RtypeProtocol::roomJoinMode::Player;
+	sentData.str("");
+	sentData.write(reinterpret_cast<char *>(&(roomJoin.code)), sizeof(roomJoin.code));
+	sentData.write(reinterpret_cast<char *>(&(roomJoin.id)), sizeof(roomJoin.id));
+	sentData.write(reinterpret_cast<char *>(&(roomJoin.mode)), sizeof(roomJoin.mode));
+	if (!socket.send(sentData)) {
 		return (false);
 	}
-	delete roomJoin;
 	while (42) {
 		if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined))) {
 			return (false);
 		}
-		joined = reinterpret_cast<RtypeProtocol::Data::RoomJoined *>(socket.getReceivedData());
-		if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomJoined)) {
-			currentRoom.setId(joined->id);
-			currentRoom.setPlayer1(joined->name1);
-			currentRoom.setPlayer2(joined->name2);
-			currentRoom.setPlayer3(joined->name3);
-			currentRoom.setPlayer4(joined->name4);
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.code)), sizeof(joined.code));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.id)), sizeof(joined.id));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name1)), sizeof(joined.name1));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name2)), sizeof(joined.name2));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name3)), sizeof(joined.name3));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name4)), sizeof(joined.name4));
+		if (joined.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomJoined)) {
+			currentRoom.setId(joined.id);
+			currentRoom.setPlayer1(joined.name1);
+			currentRoom.setPlayer2(joined.name2);
+			currentRoom.setPlayer3(joined.name3);
+			currentRoom.setPlayer4(joined.name4);
 			return (true);
-		} else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrPlayerLimit)) {
+		} else if (joined.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrPlayerLimit)) {
 			std::cerr << "[Error] Already 4 players in the room." << std::endl;
 			return (false);
-		} else if (joined->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrAlreadyStarted)) {
+		} else if (joined.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrAlreadyStarted)) {
 			std::cerr << "[Error] Game already started in Room " << roomToJoin << std::endl;
 			return (false);
 		} else {
-			if (manageServerCodes() == false)
+			if (manageServerCodes(joined.code) == false)
 				return (false);
 		}
 	}
@@ -237,23 +259,23 @@ bool RoomManager::joinRoom(const int &roomToJoin, const bool &spectator)
 
 bool								RoomManager::leaveRoom()
 {
-	RtypeProtocol::Data::Code		*leave;
-	RtypeProtocol::Data::RoomInfo	*room;
+	RtypeProtocol::Data::Code		leave;
+	RtypeProtocol::Data::RoomInfo	room;
 
-	leave = new RtypeProtocol::Data::Code;
-	leave->code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomLeave);
-	if (!socket.send(leave, sizeof(leave))) {
-		delete leave;
+	leave.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::RoomLeave);
+	sentData.str("");
+	sentData.write(reinterpret_cast<char *>(&(leave.code)), sizeof(leave.code));
+	if (!socket.send(sentData)) {
 		return (false);
 	}
-	delete leave;
 	if (!socket.receive(sizeof(RtypeProtocol::Data::RoomInfo)))
 		return (false);
-	room = reinterpret_cast<RtypeProtocol::Data::RoomInfo *>(socket.getReceivedData());
-	if (room->code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomLeft)) {
+	socket.getReceivedData().read(reinterpret_cast<char *>(&(room.code)), sizeof(room.code));
+	socket.getReceivedData().read(reinterpret_cast<char *>(&(room.name)), sizeof(room.name));
+	if (room.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomLeft) && std::string(room.name) == socket.getUsername()) {
 		return (true);
 	} else {
-		if (manageServerCodes() == false) {
+		if (manageServerCodes(room.code) == false) {
 			return (false);
 		}
 	}
@@ -278,82 +300,91 @@ void	RoomManager::setCurrentPlayerReadiness(const bool &ready)
 	}
 }
 
-bool								RoomManager::manageServerCodes()
+bool								RoomManager::manageServerCodes(const int &serverCode)
 {
-	RtypeProtocol::serverCodes		code;
-	RtypeProtocol::Data::Room		*receivedRoom;
-	RtypeProtocol::Data::RoomInfo	*roomInfo;
-	RtypeProtocol::Data::RoomBegin	*roomBegin;
-	RtypeProtocol::Data::RoomJoined	*joined;
+	RtypeProtocol::Data::Code		code;
+	RtypeProtocol::Data::Room		receivedRoom;
+	RtypeProtocol::Data::RoomInfo	roomInfo;
+	RtypeProtocol::Data::RoomBegin	roomBegin;
+	RtypeProtocol::Data::RoomJoined	joined;
 
-	code = RtypeProtocol::convertServer(reinterpret_cast<RtypeProtocol::Data::Code *>(socket.getReceivedData())->code);
-	switch (code) {
+	if (serverCode == 0)
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(code.code)), sizeof(code.code));
+	else
+		code.code = serverCode;
+	switch (RtypeProtocol::convertServer(code.code)) {
 	case RtypeProtocol::serverCodes::ErrServerClosing:
 		socket.setInternalError(true);
 		return (false);
 	case RtypeProtocol::serverCodes::Room:
-		receivedRoom = reinterpret_cast<RtypeProtocol::Data::Room *>(socket.getReceivedData());
-		listRooms.push_back(Room(receivedRoom->roomID, receivedRoom->players, receivedRoom->state));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.players)), sizeof(receivedRoom.players));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.roomID)), sizeof(receivedRoom.roomID));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(receivedRoom.state)), sizeof(receivedRoom.state));
+		listRooms.push_back(Room(receivedRoom.roomID, receivedRoom.players, receivedRoom.state));
 		break;
 	case RtypeProtocol::serverCodes::RoomLeft:
-		roomInfo = reinterpret_cast<RtypeProtocol::Data::RoomInfo *>(socket.getReceivedData());
-		if (socket.getUsername() == roomInfo->name) {
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(roomInfo.name)), sizeof(roomInfo.name));
+		if (socket.getUsername() == std::string(roomInfo.name)) {
 			currentRoom = Room();
 			return (true);
 		}
-		if (currentRoom.getPlayer1() == roomInfo->name) {
+		if (currentRoom.getPlayer1() == std::string(roomInfo.name)) {
 			currentRoom.setPlayer1("");
 			currentRoom.setNbUsers(currentRoom.getNbUsers() - 1);
-		} else if (currentRoom.getPlayer2() == roomInfo->name) {
+		} else if (currentRoom.getPlayer2() == std::string(roomInfo.name)) {
 			currentRoom.setPlayer2("");
 			currentRoom.setNbUsers(currentRoom.getNbUsers() - 1);
-		} else if (currentRoom.getPlayer3() == roomInfo->name) {
+		} else if (currentRoom.getPlayer3() == std::string(roomInfo.name)) {
 			currentRoom.setPlayer3("");
 			currentRoom.setNbUsers(currentRoom.getNbUsers() - 1);
-		} else if (currentRoom.getPlayer4() == roomInfo->name) {
+		} else if (currentRoom.getPlayer4() == std::string(roomInfo.name)) {
 			currentRoom.setPlayer4("");
 			currentRoom.setNbUsers(currentRoom.getNbUsers() - 1);
 		}
 		break;
 	case RtypeProtocol::serverCodes::RoomList:
-		roomBegin = reinterpret_cast<RtypeProtocol::Data::RoomBegin *>(socket.getReceivedData());
-		this->tickrate = roomBegin->tickrate;
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(roomBegin.tickrate)), sizeof(roomBegin.tickrate));
+		this->tickrate = roomBegin.tickrate;
 		this->listRooms.clear();
 		break;
 	case RtypeProtocol::serverCodes::RoomReady:
-		roomInfo = reinterpret_cast<RtypeProtocol::Data::RoomInfo *>(socket.getReceivedData());
-		if (currentRoom.getPlayer1() == roomInfo->name) {
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(roomInfo.name)), sizeof(roomInfo.name));
+		if (currentRoom.getPlayer1() == std::string(roomInfo.name)) {
 			currentRoom.setP1Ready(true);
-		} else if (currentRoom.getPlayer2() == roomInfo->name) {
+		} else if (currentRoom.getPlayer2() == std::string(roomInfo.name)) {
 			currentRoom.setP2Ready(true);
-		} else if (currentRoom.getPlayer3() == roomInfo->name) {
+		} else if (currentRoom.getPlayer3() == std::string(roomInfo.name)) {
 			currentRoom.setP3Ready(true);
-		} else if (currentRoom.getPlayer4() == roomInfo->name) {
+		} else if (currentRoom.getPlayer4() == std::string(roomInfo.name)) {
 			currentRoom.setP4Ready(true);
 		}
 		break;
 	case RtypeProtocol::serverCodes::RoomNotReady:
-		roomInfo = reinterpret_cast<RtypeProtocol::Data::RoomInfo *>(socket.getReceivedData());
-		if (currentRoom.getPlayer1() == roomInfo->name) {
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(roomInfo.name)), sizeof(roomInfo.name));
+		if (currentRoom.getPlayer1() == std::string(roomInfo.name)) {
 			currentRoom.setP1Ready(false);
-		} else if (currentRoom.getPlayer2() == roomInfo->name) {
+		} else if (currentRoom.getPlayer2() == std::string(roomInfo.name)) {
 			currentRoom.setP2Ready(false);
-		} else if (currentRoom.getPlayer3() == roomInfo->name) {
+		} else if (currentRoom.getPlayer3() == std::string(roomInfo.name)) {
 			currentRoom.setP3Ready(false);
-		} else if (currentRoom.getPlayer4() == roomInfo->name) {
+		} else if (currentRoom.getPlayer4() == std::string(roomInfo.name)) {
 			currentRoom.setP4Ready(false);
 		}
 		break;
 	case RtypeProtocol::serverCodes::RoomJoined:
-		joined = reinterpret_cast<RtypeProtocol::Data::RoomJoined *>(socket.getReceivedData());
-		currentRoom.setId(joined->id);
-		currentRoom.setPlayer1(joined->name1);
-		currentRoom.setPlayer2(joined->name2);
-		currentRoom.setPlayer3(joined->name3);
-		currentRoom.setPlayer4(joined->name4);
-		if (joined->name4 == "") {
-			if (joined->name3 == "") {
-				if (joined->name2 == "") {
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.id)), sizeof(joined.id));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name1)), sizeof(joined.name1));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name2)), sizeof(joined.name2));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name3)), sizeof(joined.name3));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(joined.name4)), sizeof(joined.name4));
+		currentRoom.setId(joined.id);
+		currentRoom.setPlayer1(joined.name1);
+		currentRoom.setPlayer2(joined.name2);
+		currentRoom.setPlayer3(joined.name3);
+		currentRoom.setPlayer4(joined.name4);
+		if (std::string(joined.name4) == "") {
+			if (std::string(joined.name3) == "") {
+				if (std::string(joined.name2) == "") {
 					currentRoom.setNbUsers(1);
 				} else {
 					currentRoom.setNbUsers(2);

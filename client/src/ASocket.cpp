@@ -5,6 +5,7 @@ ASocket::ASocket()
 	fromLen = sizeof(udpAddrFrom);
 	tv.tv_sec = 3;
 	tv.tv_usec = 0;
+	blocking = true;
 }
 
 ASocket::~ASocket()
@@ -49,9 +50,10 @@ int ASocket::close(SOCKET sock)
 	return (status);
 }
 
-bool ASocket::create(const std::string &ip, const short &port, const ASocket::SockMode &mode)
+bool ASocket::create(const std::string &ip, const u_short port, const ASocket::SockMode &mode)
 {
 	sockInit();
+	this->mode = mode;
 	this->port = port;
 	this->ip = ip;
 	sin.sin_addr.s_addr = inet_addr(ip.c_str());
@@ -71,53 +73,57 @@ bool ASocket::bind()
 	return (true);
 }
 
-bool ASocket::send(const void *data, const size_t &len, const int &flags)
+bool ASocket::send(const std::stringstream &data, const int &flags)
 {
 #ifdef _WIN32
 	if (mode == SockMode::TCP)
-		lastSentDataLength = ::send(sock, reinterpret_cast<const char *>(data), len, flags);
+		lastSentDataLength = ::send(sock, data.str().c_str(), data.str().length(), flags);
 	else
-		return(sendTo(data, len, flags));
+		return(sendTo(data, flags));
 #else
 	if (mode == SockMode::TCP)
-		lastSentDataLength = ::send(sock, data, len, flags);
+		lastSentDataLength = ::send(sock, reinterpret_cast<void *>(data.str().c_str()), data.str().length(), flags);
 	else
-		sendTo(data, len, flags);
+		sendTo(data, flags);
 #endif /* !_WIN32 */
 
-	return (lastSentDataLength > 0 || len == 0);
+	return (lastSentDataLength > 0 || data.str().length() == 0);
 }
 
-bool ASocket::sendTo(const void *data, const size_t &len, const SOCKADDR &from, const socklen_t &fromLen, const int &flags)
+bool ASocket::sendTo(const std::stringstream &data, const SOCKADDR &from, const socklen_t &fromLen, const int &flags)
 {
 	if (mode != SockMode::UDP)
 		return (false);
 #ifdef _WIN32
-	lastSentDataLength = ::sendto(sock, reinterpret_cast<const char *>(data), len, flags, reinterpret_cast<const SOCKADDR *>(&from), fromLen);
+	lastSentDataLength = ::sendto(sock, data.str().c_str(), data.str().length(), flags, reinterpret_cast<const SOCKADDR *>(&from), fromLen);
 #else
-	lastSentDataLength = ::sendto(sock, data, len, flags, reinterpret_cast<const SOCKADDR *>(&from), fromLen);
+	lastSentDataLength = ::sendto(sock, reinterpret_cast<const void *>(data.str().c_str()), data.str().length(), flags, reinterpret_cast<const SOCKADDR *>(&from), fromLen);
 #endif /* !_WIN32 */
-	return (lastSentDataLength > 0 || len == 0);
+	return (lastSentDataLength > 0 || data.str().length() == 0);
 }
 
-bool ASocket::sendTo(const void *data, const size_t &len, const int &flags)
+bool ASocket::sendTo(const std::stringstream &data, const int &flags)
 {
 	if (mode != SockMode::UDP)
-		return (this->send(data, len, flags));
+		return (this->send(data, flags));
 #ifdef _WIN32
-	lastSentDataLength = ::sendto(sock, reinterpret_cast<const char *>(data), len, flags, reinterpret_cast<SOCKADDR *>(&sin), toLen);
+	lastSentDataLength = ::sendto(sock, data.str().c_str(), data.str().length(), flags, reinterpret_cast<SOCKADDR *>(&sin), toLen);
+	if (lastSentDataLength == SOCKET_ERROR) {
+		std::cerr << lastSentDataLength << " && " << WSAGetLastError() << std::endl;
+	}
 #else
-	lastSentDataLength = ::sendto(sock, data, len, flags, reinterpret_cast<SOCKADDR *>(&sin), toLen);
+	lastSentDataLength = ::sendto(sock, reinterpret_cast<const void *>(data.str().c_str()), data.str().length(), flags, reinterpret_cast<SOCKADDR *>(&sin), toLen);
 #endif /* !_WIN32 */
-	return (lastSentDataLength > 0 || len == 0);
+	return (lastSentDataLength > 0 || data.str().length() == 0);
 }
 
-bool ASocket::recv(void *buf, const size_t &len, const int &flags)
+bool ASocket::recv(std::stringstream &data, const size_t &len, const int &flags)
 {
 	int		ret;
+	char	buf[100];
 
 	if (this->mode == SockMode::UDP)
-		return (this->recvFrom(buf, len, flags));
+		return (this->recvFrom(data, len, flags));
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
 	if (!blocking) {
@@ -141,18 +147,19 @@ bool ASocket::recv(void *buf, const size_t &len, const int &flags)
 	}
 	if (FD_ISSET(sock, &readfs)) {
 #ifdef _WIN32
-		lastRecvDataLength = ::recv(sock, reinterpret_cast<char *>(buf), len, flags);
-#else
 		lastRecvDataLength = ::recv(sock, buf, len, flags);
+#else
+		lastRecvDataLength = ::recv(sock, reinterpret_cast<void *>(buf), len, flags);
 #endif /* !_WIN32 */
-		return (lastRecvDataLength != -1);
 	}
+	data.str(buf);
 	return (lastRecvDataLength != -1);
 }
 
-bool ASocket::recvFrom(void *buf, const size_t &len, SOCKADDR &dest, socklen_t &destLen, const int &flags)
+bool ASocket::recvFrom(std::stringstream &data, const size_t &len, SOCKADDR &dest, socklen_t &destLen, const int &flags)
 {
 	int		ret;
+	char	buf[100];
 
 	if (mode == SockMode::TCP) {
 		std::cerr << "You can't use recvFrom with an UDP socket." << std::endl;
@@ -161,6 +168,7 @@ bool ASocket::recvFrom(void *buf, const size_t &len, SOCKADDR &dest, socklen_t &
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
 	if (!blocking) {
+		std::cout << "!blocking" << std::endl;
 		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
 			perror("select()");
 			return (false);
@@ -183,23 +191,26 @@ bool ASocket::recvFrom(void *buf, const size_t &len, SOCKADDR &dest, socklen_t &
 #ifdef _WIN32
 		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<char *>(buf), len, flags, &dest, &destLen);
 #else
-		lastRecvDataLength = ::recvfrom(sock, buf, len, flags, &dest, &destLen);
+		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<void *>(buf), len, flags, &dest, &destLen);
 #endif /* !_WIN32 */
 	}
+	data.str(buf);
 	return (lastRecvDataLength != -1);
 }
 
-bool ASocket::recvFrom(void *buf, const size_t &len, const int &flags)
+bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &flags)
 {
 	int		ret;
+	char	buf[100];
 
 	if (mode == SockMode::TCP) {
-		return (this->recv(buf, len, flags));
+		return (this->recv(data, len, flags));
 	}
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
 	if (!blocking) {
 		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
+			std::cerr << "! ret = " << ret << std::endl;
 			perror("select()");
 			return (false);
 		}
@@ -208,7 +219,8 @@ bool ASocket::recvFrom(void *buf, const size_t &len, const int &flags)
 			return (false);
 		}
 	} else {
-		if ((ret = select(sock + 1, &readfs, NULL, NULL, &tv)) < 0) {
+		if ((ret = select(sock, &readfs, NULL, NULL, &tv)) < 0) {
+			std::cerr << "ret = " << ret << std::endl;
 			perror("select()");
 			return (false);
 		}
@@ -221,9 +233,10 @@ bool ASocket::recvFrom(void *buf, const size_t &len, const int &flags)
 #ifdef _WIN32
 		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<char *>(buf), len, flags, &udpAddrFrom, &fromLen);
 #else
-		lastRecvDataLength = ::recvfrom(sock, buf, len, flags, &udpaddrfrom, &fromlen);
+		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<void *>(buf), len, flags, &udpAddrFrom, &fromlen);
 #endif /* !_WIN32 */
 	}
+	data.str(buf);
 	return (lastRecvDataLength != -1);
 }
  
@@ -232,7 +245,7 @@ void ASocket::setBlocking(const bool &block)
 	blocking = block;
 }
 
-const short & ASocket::getPort() const
+const u_short &ASocket::getPort() const
 {
 	return (this->port);
 }

@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::InGame;
+	this->activeScene = ScenesEnum::getIp;
 }
 
 Graphique::~Graphique()
@@ -466,19 +466,27 @@ bool	Graphique::lobbyScene()
 
 bool Graphique::handleServerCode()
 {
-	RtypeProtocol::Data::Code	*code;
+	RtypeProtocol::Data::Code			code;
+	RtypeProtocol::Data::PlayerCharge	charge;
+	RtypeProtocol::Data::ObjectCreate	create;
 
-	/*if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined)))
+	if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined)))
 		return (false);
-	switch (RtypeProtocol::convertServer(reinterpret_cast<RtypeProtocol::Data::Code *>(socket.getReceivedData())->code)) {
+	socket.getReceivedData().read(reinterpret_cast<char *>(&(code.code)), sizeof(code.code));
+	switch (RtypeProtocol::convertServer(code.code)) {
 	case RtypeProtocol::serverCodes::ErrServerClosing:
-		//socket.setInternalError(true);
+		socket.setInternalError(true);
 		break;
 	case RtypeProtocol::serverCodes::GameOver:
 		// TODO QUIT THE GAME
 		break;
 	case RtypeProtocol::serverCodes::PlayerCharge:
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge1)), sizeof(charge.charge1));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge2)), sizeof(charge.charge2));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge3)), sizeof(charge.charge3));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge4)), sizeof(charge.charge4));
 		// TODO Charge Player
+
 		break;
 	case RtypeProtocol::serverCodes::PlayerDead:
 		// TODO kill Player
@@ -494,6 +502,16 @@ bool Graphique::handleServerCode()
 		break;
 	case RtypeProtocol::serverCodes::ObjectCreate:
 		// TODO Create an object
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.id)), sizeof(create.id));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.posX)), sizeof(create.posX));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.posY)), sizeof(create.posY));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.vecX)), sizeof(create.vecX));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.vecY)), sizeof(create.vecY));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.name)), sizeof(create.name));
+		newObject = Object(create.name, sf::Vector2i(create.posX, create.posY), sf::Vector2i(create.vecX, create.vecY), create.id);
+		newObject.setLongName(create.name);
+		newObject.setPos(create.posX, create.posY);
+		newObject.setId(create.id);
 		break;
 	case RtypeProtocol::serverCodes::ObjectDestroy:
 		// TODO Destroy an object
@@ -503,7 +521,7 @@ bool Graphique::handleServerCode()
 		break;
 	default:
 		break;
-	}*/
+	}
 	return (true);
 }
 
@@ -520,12 +538,13 @@ bool	Graphique::inGameScene()
 
 
 		// set Var ship
-		chargeShoot = 0;
 		maxspeed = 4.0f;
 		accel = 1.5f;
 		decel = 0.1f;
+		// To delete down
 		position.x = (10 * (float)window.getSize().x) / 100;
 		position.y = (40 * (float)window.getSize().y) / 100;
+		// To delete up
 		velocity.x = 0.1f;
 		velocity.y = 0.1f;
 
@@ -578,7 +597,6 @@ bool	Graphique::inGameScene()
 				break;
 			case sf::Keyboard::Space:
 				std::cout << "Charge !" << std::endl;
-				chargeShoot++;
 				//
 				// TODO AXELOPETO CHARGE
 				//
@@ -590,13 +608,11 @@ bool	Graphique::inGameScene()
 			break;
 		case sf::Event::KeyReleased:
 			if (event.key.code == sf::Keyboard::Space) {
-				std::cout << "Shot !" << std::endl;
+				std::cout << "Shot !" << std::endl << std::endl;
 				//
 				// TODO AXELOPETO SHOOT
 				//
 
-				chargeShoot = 0;
-				std::cout << std::endl;
 			}
 			break;
 		default:
@@ -643,7 +659,8 @@ bool	Graphique::inGameScene()
 		position.y = 0;
 	else if (position.y > (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height)
 		position.y = (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height;
-	inGame.setObjPos("MainPlayer", position.x, position.y);
+	// ATTENTION ICI LOUIS
+//	inGame.setObjPos("MainPlayer", position.x, position.y);
 	//
 	//  SEND MSG SERVER POSITION
 	//

@@ -14,12 +14,13 @@
 typedef	int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef ssize_t SSIZE_T;
+typedef struct timeval	TIMEVAL;
 # endif /* !_WIN32 */
 # include <string>
 # include <iostream>
+#include <sstream>
 
 typedef struct sockaddr SOCKADDR;
-typedef struct timeval	TIMEVAL;
 
 class ASocket
 {
@@ -33,19 +34,19 @@ public:
 		TCP
 	};
 
-	int			close(SOCKET sock);
-	bool		create(const std::string &ip, const short &port, const SockMode &mode);
-	bool		bind();
+	int				close(SOCKET sock);
+	bool			create(const std::string &ip, const u_short port, const SockMode &mode);
+	bool			bind();
 	// Use these two functions to send data through the socket
-	bool		send(const void *data, const size_t &len, const int &flags = 0);
-	bool		sendTo(const void *data, const size_t &len, const SOCKADDR &from, const socklen_t &fromLen, const int &flags = 0);
-	bool		sendTo(const void *data, const size_t &len, const int &flags = 0);
+	bool			send(const std::stringstream &data, const int &flags = 0);
+	bool			sendTo(const std::stringstream &data, const SOCKADDR &from, const socklen_t &fromLen, const int &flags = 0);
+	bool			sendTo(const std::stringstream &data, const int &flags = 0);
 	// Use these two functions to receive data through the socket
-	bool		recv(void *buf, const size_t &len, const int &flags = 0);
-	bool		recvFrom(void *buf, const size_t &len, SOCKADDR &dest, socklen_t &destLen, const int &flags = 0);
-	bool		recvFrom(void *buf, const size_t &len, const int &flags = 0);
-	void		setBlocking(const bool &);
-	const short	&getPort() const;
+	bool			recv(std::stringstream &data, const size_t &len, const int &flags = 0);
+	bool			recvFrom(std::stringstream &data, const size_t &len, SOCKADDR &dest, socklen_t &destLen, const int &flags = 0);
+	bool			recvFrom(std::stringstream &data, const size_t &len, const int &flags = 0);
+	void			setBlocking(const bool &);
+	const u_short	&getPort() const;
 
 private:
 #ifdef _WIN32
@@ -61,7 +62,7 @@ private:
 	socklen_t	toLen;
 	bool		blocking;
 	std::string	ip;
-	short		port;
+	u_short		port;
 	fd_set		readfs;
 	TIMEVAL		tv;
 

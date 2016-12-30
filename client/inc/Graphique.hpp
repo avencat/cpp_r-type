@@ -87,8 +87,8 @@ private:
 	float						accel;
 	float						decel;
 	float						actualspeed;
-	int							chargeShoot;
 	int							life;
+	Object						newObject;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */

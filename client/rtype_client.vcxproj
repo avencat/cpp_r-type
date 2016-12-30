@@ -128,7 +128,6 @@
     <ClCompile Include="src\ASocket.cpp" />
     <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\Core.cpp" />
-    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Graphique.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Object.cpp" />
@@ -144,7 +143,6 @@
     <ClInclude Include="inc\ASocket.hpp" />
     <ClInclude Include="inc\Button.hpp" />
     <ClInclude Include="inc\Core.hpp" />
-    <ClInclude Include="inc\Game.hpp" />
     <ClInclude Include="inc\Graphique.hpp" />
     <ClInclude Include="inc\Object.hpp" />
     <ClInclude Include="inc\Room.hpp" />

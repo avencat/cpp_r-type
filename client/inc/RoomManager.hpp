@@ -21,18 +21,19 @@ public:
 	bool						joinRoom(const int &, const bool &spectator);
 	bool						leaveRoom();
 	const std::list<Room>		&getRooms();
-	bool						manageServerCodes();
+	bool						manageServerCodes(const int &code = 0);
 	bool						ready();
 	bool						notReady();
 	const Room					&getCurrentRoom();
 	void						setCurrentPlayerReadiness(const bool &ready);
 
 private:
-	std::list<Room>	listRooms;
-	Room			currentRoom;
-	Socket			&socket;
-	int				tickrate;
-	bool			gameStarted;
+	std::list<Room>		listRooms;
+	Room				currentRoom;
+	Socket				&socket;
+	int					tickrate;
+	bool				gameStarted;
+	std::stringstream	sentData;
 };
 
 #endif /* !ROOMMANAGER_HPP_ */
