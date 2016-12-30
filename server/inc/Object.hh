@@ -52,6 +52,8 @@ class		Object: public Relationnals<Object>
   int				getHp() const;
   const std::pair<int, int> &getMovement() const;
   void              addComponent(AComponent *component);
+  void              moveComponents();
+  void              moveComponents(const std::pair<int, int> &p);
   void				setComponents(const std::vector<AComponent*> &components);
   void              setType(const Type &type);
   void				setId(const int id);

@@ -24,13 +24,15 @@ namespace LevelMapping
 
   public:
     bool	open(const std::string &name);
-    void        close();
+    void    close();
     bool	isOpen() const;
+    bool    eof() const;
 
   public:
     bool	dump();
 
-    void        setStreamPosition(const std::streampos pos);
+    std::streampos  getStreamPosition();
+    void    setStreamPosition(const std::streampos pos);
     void	setStreamPosition(const std::streamoff off, const std::ios_base::seekdir way);
     void	clearStream();
 

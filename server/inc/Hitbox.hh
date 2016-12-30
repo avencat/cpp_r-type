@@ -28,7 +28,11 @@ class			Hitbox : public AComponent
   const std::pair<int, int>	&getPos() const;
   const std::pair<int, int>	&getSize() const;
   void			    setPos(const int x, const int y);
+  void			    setPos(const std::pair<int, int> &pos);
   void			    setSize(const int x, const int y);
+  void			    setSize(const std::pair<int, int> &size);
+
+  bool              doesCollide(const Hitbox &hb) const;
 };
 
 std::ostream    &operator<<(std::ostream &os, const Hitbox &hbx);

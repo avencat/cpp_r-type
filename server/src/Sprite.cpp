@@ -31,9 +31,14 @@ const std::string		&Sprite::getName() const
 
 void			Sprite::setPos(const int x , const int y)
 {
-  std::pair <int, int> pos(x, y);
+    std::pair <int, int> pos(x, y);
 
-  this->_pos = pos;
+    this->_pos = pos;
+}
+
+void			Sprite::setPos(const std::pair<int, int> &pos)
+{
+    this->_pos = pos;
 }
 
 void			Sprite::setName(const std::string &name)

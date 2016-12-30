@@ -28,6 +28,7 @@ class			Sprite : public AComponent
   const std::pair<int, int>	&getPos() const;
   const std::string		&getName() const;
   void			setPos(const int x, const int y);
+  void			setPos(const std::pair<int, int> &pos);
   void			setName(const std::string &name);
 };
 

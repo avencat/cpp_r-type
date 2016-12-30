@@ -45,6 +45,11 @@ bool	LevelMapping::Map::isOpen() const
   return (file.is_open());
 }
 
+bool    LevelMapping::Map::eof() const
+{
+    return (file.eof());
+}
+
 bool			LevelMapping::Map::dump()
 {
   unsigned char		buffer[20];
@@ -104,6 +109,11 @@ bool			LevelMapping::Map::dump()
   file.seekp(ppos);
   file.seekg(gpos);
   return (true);
+}
+
+std::streampos  LevelMapping::Map::getStreamPosition()
+{
+    return (file.tellg() > file.tellp() ? file.tellg() : file.tellp());
 }
 
 void	LevelMapping::Map::setStreamPosition(const std::streampos pos)

@@ -29,16 +29,41 @@ const std::pair<int, int>	&Hitbox::getSize() const
   return (this->_size);
 }
 
-void			Hitbox::setPos(int x, int y)
+void			Hitbox::setPos(const int x, const int y)
 {
-  std::pair <int, int>	pos(x, y);
+    std::pair <int, int>	pos(x, y);
 
-  this->_pos = pos;
+    this->_pos = pos;
+}
+
+void			Hitbox::setPos(const std::pair<int, int> &pos)
+{
+    this->_pos = pos;
 }
 
 void			Hitbox::setSize(const int x, const int y)
 {
-  this->_size = std::pair<int, int>(x, y);
+    this->_size = std::pair<int, int>(x, y);
+}
+
+void			Hitbox::setSize(const std::pair<int, int> &size)
+{
+    this->_size = size;
+}
+
+bool                    Hitbox::doesCollide(const Hitbox &hb) const
+{
+    std::pair<int, int> pos = hb.getPos();
+    std::pair<int, int> size = hb.getSize();
+
+    if ((pos.first < _pos.first && _pos.first < pos.first + size.first) &&
+        (pos.second < _pos.second && _pos.second < pos.second + size.second))
+        return (true);
+    else if ((pos.first < _pos.first + _size.first && _pos.first + _size.first < pos.first + size.first) &&
+             (pos.second < _pos.second + _size.second && _pos.second + _size.second < pos.second + size.second))
+        return (true);
+    return ((_pos.first < pos.first && pos.first + size.first < _pos.first + _size.first) &&
+            (_pos.second < pos.second && pos.second + size.second < _pos.second + _size.second));
 }
 
 std::ostream    &operator<<(std::ostream &os, const Hitbox &hbx)

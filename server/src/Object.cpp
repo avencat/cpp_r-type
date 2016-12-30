@@ -59,6 +59,37 @@ void			Object::setComponents(const std::vector<AComponent*> &components)
   this->_components = components;
 }
 
+void              Object::moveComponents()
+{
+    moveComponents(_movement);
+}
+
+void              Object::moveComponents(const std::pair<int, int> &p)
+{
+    std::pair<int, int> pos;
+
+    for (std::vector<AComponent*>::iterator it = _components.begin(); it != _components.end(); ++it)
+    {
+        switch ((*it)->getId())
+        {
+            case AComponent::Type::HITBOX :
+                pos = (dynamic_cast<Hitbox*>(*it))->getPos();
+                pos.first += p.first;
+                pos.second += p.second;
+                (dynamic_cast<Hitbox*>(*it))->setPos(pos);
+                break;
+            case AComponent::Type::SPRITE :
+                pos = (dynamic_cast<Sprite*>(*it))->getPos();
+                pos.first += p.first;
+                pos.second += p.second;
+                (dynamic_cast<Sprite*>(*it))->setPos(pos);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 void              Object::addComponent(AComponent *component)
 {
     this->_components.push_back(component);
