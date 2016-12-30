@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Wed Dec 14 16:26:49 2016 Maxime BOUCHER
-// Last update Thu Dec 15 15:33:56 2016 Maxime BOUCHER
+// Last update Thu Dec 29 17:19:25 2016 Maxime BOUCHER
 //
 
 #ifndef THREADLINUX_HPP_
@@ -21,18 +21,18 @@ class		Thread:public AThread
 {
 private:
   pthread_t		thread;
-  pthread_mutex_t	loop;
   pthread_mutex_t	lock;
+  pthread_cond_t	waiting;
 
 public:
   Thread();
   ~Thread();
   virtual void		createThread(Room *);
   virtual void		deleteThread();
-  int			trylockLoop();
-  int			unlockLock();
-  int			lockLock();
-  int			endLoop();
+  int			unlockMutex();
+  int			lockMutex();
+  void			wait();
+  void			signal();
   void			join();
 };
 
