@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:47:42 2016 Jessica VAN-DEN-ZANDE
-// Last update Mon Dec 19 16:12:44 2016 Jessica VAN-DEN-ZANDE
+// Last update Fri Dec 30 11:26:15 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef TEST_RTYPE_INETWORK_HPP
@@ -17,6 +17,8 @@
 # include <sys/socket.h>
 # include <string.h>
 # include <arpa/inet.h>
+# include <netinet/in.h>
+# include <netdb.h>
 # include <ctime>
 # include <stdlib.h>
 # include <sstream>
@@ -26,7 +28,7 @@ class INetwork
 {
 public:
   virtual ~INetwork() {};
-  virtual bool initServer(int port, int queue) = 0;
+  virtual bool initServer(int port) = 0;
   virtual bool runServer(bool stateServer) = 0;
 };
 

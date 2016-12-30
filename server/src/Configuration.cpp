@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 //
 // Started on  Thu Nov  3 19:40:52 2016 Theo TOUZET
-// Last update Fri Nov  4 23:54:22 2016 Theo TOUZET
+// Last update Fri Dec 30 17:48:37 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "Configuration.hh"
@@ -14,9 +14,8 @@ Configuration::Configuration(const std::string &path, const bool _silent) :
   silent(_silent)
 {
   config.insert(std::pair<std::string, std::string>("configpath", path));
-  config.insert(std::pair<std::string, std::string>("port", "4242"));
+  config.insert(std::pair<std::string, std::string>("port", "42142"));
   config.insert(std::pair<std::string, std::string>("maxclients", "10"));
-  config.insert(std::pair<std::string, std::string>("database", "spider.db"));
   readUpdateConfig();
 }
 
@@ -173,6 +172,7 @@ bool		Configuration::isAuthorizedWhite(const std::string &ip, const unsigned sho
 {
   std::string	str(ip);
 
+  
   if (whitelist.size())
     return (true);
   else if (std::find(whitelist.begin(), whitelist.end(), ip) !=

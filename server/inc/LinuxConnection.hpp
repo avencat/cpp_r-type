@@ -5,43 +5,36 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 17:03:58 2016 Jessica VAN-DEN-ZANDE
-// Last update Thu Dec 29 14:55:24 2016 Jessica VAN-DEN-ZANDE
+// Last update Fri Dec 30 18:27:21 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef LINUXCONNECTION_HPP__
 # define LINUXCONNECTION_HPP__
 
-# include "INetwork.hpp"
-# include "Socket.hpp"
 # include <cerrno>
 # include <cstring>
 # include <sstream>
+# include "INetwork.hpp"
+# include "Client.hpp"
+# include "RtypeProtocol.hh"
+# include "Configuration.hh"
 
-class Network : public INetwork
+class Network: public INetwork
 {
 private:
-  std::list<Socket>		clients;
+  std::list<Client>		clients;
   int				servSocket;
-  int				fdMax;
-  fd_set			listReadFd;
-  fd_set			listWriteFd;
-  struct timeval		timeout;
-  struct sockaddr_in		serv_addr;
+  socklen_t	       		clientLen;
+  struct sockaddr_in		servAddr;
+  struct sockaddr_in		clientAddr;
   char				msgReceived[1024];
 public:
   Network();
   ~Network();
-  bool				initServer(int port, int queue);
+  bool				initServer(int port);
   bool				runServer(bool stateServer);
-  bool				sendMsg(int fdSocket, const char *msgToSend, 
-					const size_t &dataSize);
-  bool				receiveMsg(int fdSocket, const size_t &dataSize);
-  void				addSocket(void);
-  void				deleteSocket(Socket &toDelete);
-  void				setReadList(void);
-  void				setWriteList(void);
-  void				checkActivity(void);
-  bool				secureConnection(Socket &client);
+  void				addClient(const std::string ip, const int port);
+//bool				secureConnection(Socket &client);
 };
 
 #endif /* !LINUXCONNECTION_HPP__ */
