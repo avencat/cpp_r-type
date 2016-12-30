@@ -20,10 +20,12 @@ const Sprite::TypeSpriteEnum	&Sprite::getType() const
 
 void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, int lvl)
 {
+#ifdef _WIN32
 	texture.setSrgb(true);
+#endif
 	type = _type;
 	switch (_type)
-	{	
+	{
 	case Sprite::TypeSpriteEnum::Player1:
 		if (!texture.loadFromFile("./assets/Sprites/r-typesheet42.gif")) {
 			std::cout << "Failed to load the texture Player 1" << std::endl;

@@ -2,7 +2,7 @@
 # define ROOM_HPP_
 
 # include "RtypeProtocol.hh"
-# include <String>
+# include <string>
 
 class Room
 {

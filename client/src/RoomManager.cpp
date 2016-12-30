@@ -64,14 +64,13 @@ const std::list<Room>				&RoomManager::roomList()
 {
 	RtypeProtocol::Data::Username	username;
 	std::string						_username;
-	int								code;
 	RtypeProtocol::Data::Room		receivedRoom;
 
 	this->listRooms.clear();
 	if (socket.receive(sizeof(RtypeProtocol::Data::Room)) == false) {
 		username.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::Username);
 		_username = socket.getUsername();
-		for (short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
+		for (unsigned short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
 			username.username[i] = _username.c_str()[i];
 		sentData.str("");
 		sentData.write(reinterpret_cast<char *>(&(username.code)), sizeof(username.code));
@@ -410,6 +409,8 @@ Failed to create a new room. You should try to refresh the rooms list and try ag
 		gameStarted = true;
 		std::cout << "The game has started with " << currentRoom.getNbUsers() << " players." << std::endl;
 		std::cout << "Good luck " << socket.getUsername() << "! :)" << std::endl;
+	default:
+		return (true);
 	}
 	return (true);
 }

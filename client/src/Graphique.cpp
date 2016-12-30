@@ -289,8 +289,8 @@ bool Graphique::linkServerScene()
 
 bool	Graphique::showRoomScene()
 {
-	int	j = 0;
-	int	k = 0;
+	unsigned int	j = 0;
+	unsigned int	k = 0;
 
 	if (firstTime) {
 
@@ -537,7 +537,7 @@ bool	Graphique::inGameScene()
 	}
 
 	if (firstTime) {
-		
+
 		// set limit FPS
 		window.setFramerateLimit(60);
 
@@ -560,7 +560,7 @@ bool	Graphique::inGameScene()
 		velocity.x = 0.1f;
 		velocity.y = 0.1f;
 
-		
+
 
 
 		// set the mainShip
@@ -573,7 +573,7 @@ bool	Graphique::inGameScene()
 		inGame.addObject(mainShip);
 
 
-		
+
 		firstTime = false;
 	}
 
@@ -582,7 +582,7 @@ bool	Graphique::inGameScene()
 	// REMETTRE AVANT DE PUSH
 	//handleServerCode();
 
-	
+
 	while (window.pollEvent(event))
 	{
 		switch (event.type)

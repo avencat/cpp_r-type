@@ -82,7 +82,7 @@ bool ASocket::send(const std::stringstream &data, const int &flags)
 		return(sendTo(data, flags));
 #else
 	if (mode == SockMode::TCP)
-		lastSentDataLength = ::send(sock, reinterpret_cast<void *>(data.str().c_str()), data.str().length(), flags);
+		lastSentDataLength = ::send(sock, reinterpret_cast<const void *>(data.str().c_str()), data.str().length(), flags);
 	else
 		sendTo(data, flags);
 #endif /* !_WIN32 */
@@ -230,7 +230,7 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &fl
 #ifdef _WIN32
 		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<char *>(buf), len, flags, &udpAddrFrom, &fromLen);
 #else
-		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<void *>(buf), len, flags, &udpAddrFrom, &fromlen);
+		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<void *>(buf), len, flags, &udpAddrFrom, &fromLen);
 #endif /* !_WIN32 */
 	}
 	data.str(buf);

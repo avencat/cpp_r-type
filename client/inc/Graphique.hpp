@@ -59,7 +59,6 @@ private:
 	sf::RenderWindow			window;
 	int							x;
 	int							y;
-	bool						spectator;
 	std::string					title;
 	bool						open;
 	bool						firstTime;

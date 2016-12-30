@@ -116,7 +116,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 		return (false);
 	}
 	username.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::Username);
-	for (short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
+	for (unsigned short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
 		username.username[i] = _username.c_str()[i];
 	sentData.clear();
 	sentData.write(reinterpret_cast<char *>(&(username.code)), sizeof(username.code));
