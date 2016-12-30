@@ -15,8 +15,6 @@ public:
 	Object(const long &, const sf::Vector2i &, const sf::Vector2i &, const int &);
 	virtual ~Object();
 
-	const std::string				&getName() const;
-	void							setName(const std::string &);
 	const std::list<AComponent>		&getComponents() const;
 	void							addAComponent(int, const Sprite::TypeSpriteEnum &, int);
 	const AComponent				&getComponent(int) const;
@@ -33,7 +31,6 @@ public:
 
 private:
 	
-	std::string						name;
 	long							longName;
 	int								id;
 	int								life;
