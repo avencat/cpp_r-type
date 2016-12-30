@@ -25,7 +25,7 @@ bool						Scene::deleteObject(const Object &obj)
 {
 	for (std::list<Object>::const_iterator i = objects.begin(); i != objects.end(); i++)
 	{
-		if ((*i).getName() == obj.getName()) {
+		if ((*i).getId() == obj.getId()) {
 			this->objects.erase(i);
 			return (true);
 		}
@@ -35,6 +35,13 @@ bool						Scene::deleteObject(const Object &obj)
 
 bool						Scene::updateObject(const Object &obj)
 {
+	for (std::list<Object>::iterator i = objects.begin(); i != objects.end(); i++)
+	{
+		if ((*i).getId() == obj.getId()) {
+			(*i) = obj;
+			return (true);
+		}
+	}
 	return (false);
 }
 
@@ -175,10 +182,10 @@ const std::vector<Button*>	&Scene::getButtons() const
 	return (buttons);
 }
 
-const Object				&Scene::getObj(std::string _name)
+const Object				&Scene::getObj(long _name)
 {
 	for (std::list<Object>::const_iterator it = objects.begin(); it != objects.end(); it++) {
-		if ((*it).getName() == _name)
+		if ((*it).getLongName() == _name)
 			return ((*it));
 	}
 	return (objects.back());
@@ -226,6 +233,17 @@ void						Scene::setBGTexture(const std::string &_path)
 void						Scene::addButs(const std::string &_name, const sf::Vector2f &_pos, const sf::Vector2f &_size, const sf::Color &_clrTxt, const sf::Color &_clrBg, const Button::buttonEnum &butEnum)
 {
 	buttons.push_back(new Button(font, _name, _pos, _size, _clrTxt, _clrBg, butEnum));
+}
+
+bool						Scene::destroyById(const int &_id)
+{
+	for (std::list<Object>::iterator i = objects.begin(); i != objects.end(); i++) {
+		if ((*i).getId() == _id) {
+			this->objects.erase(i);
+			return (true);
+		}
+	}
+	return (false);
 }
 
 void						Scene::draw(sf::RenderWindow &window) const

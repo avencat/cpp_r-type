@@ -4,6 +4,7 @@
 # include <list>
 # include "Object.hpp"
 # include "Button.hpp"
+//# include "Animation.hpp"
 
 class Scene
 {
@@ -35,10 +36,11 @@ public:
 	void							setBGSprite(const std::string &);
 	void							setBGTexture(const std::string &);
 	void							addButs(const std::string &, const sf::Vector2f &, const sf::Vector2f &, const sf::Color &, const sf::Color &, const Button::buttonEnum &);
-	const Object					&getObj(std::string);
+	const Object					&getObj(long);
 	void							setObjPos(const int &, const sf::Vector2i &);
 	void							setSEndGame(bool);
 	const bool						&getEndGame() const;
+	bool							destroyById(const int &);
 
 private:
 	std::list<Object>				objects;

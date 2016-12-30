@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::getIp;
+	this->activeScene = ScenesEnum::InGame;
 }
 
 Graphique::~Graphique()
@@ -528,6 +528,10 @@ bool Graphique::handleServerCode()
 bool	Graphique::inGameScene()
 {
 
+	if (user == Spectator) {
+		return (true);
+	}
+
 	if (firstTime) {
 		
 		// set limit FPS
@@ -554,7 +558,7 @@ bool	Graphique::inGameScene()
 		// set the mainShip
 		mainShip.setLife(1);
 		mainShip.setScore(0);
-		mainShip.setName("MainPlayer");
+		mainShip.setId(1);
 		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
 		mainShip.setPos(position.x, position.y);
 		// SEND POS
@@ -653,14 +657,13 @@ bool	Graphique::inGameScene()
 	position += velocity;
 	if (position.x < 0)
 		position.x = 0;
-	else if (position.x > (float)window.getSize().x - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().width)
-		position.x = (float)window.getSize().x - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().width;
+	else if (position.x > (float)window.getSize().x - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width)
+		position.x = (float)window.getSize().x - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width;
 	if (position.y < 0)
 		position.y = 0;
-	else if (position.y > (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height)
-		position.y = (float)window.getSize().y - (float)inGame.getObj("MainPlayer").getComponent(1).getCSprite().getSprite().getGlobalBounds().height;
-	// ATTENTION ICI LOUIS
-//	inGame.setObjPos("MainPlayer", position.x, position.y);
+	else if (position.y > (float)window.getSize().y - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height)
+		position.y = (float)window.getSize().y - (float)inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height;
+	inGame.setObjPos(1, sf::Vector2i(position.x, position.y));
 	//
 	//  SEND MSG SERVER POSITION
 	//
