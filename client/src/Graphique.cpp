@@ -515,9 +515,7 @@ bool Graphique::handleServerCode()
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.vecY)), sizeof(create.vecY));
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.name)), sizeof(create.name));
 		newObject = Object(create.name, sf::Vector2i(create.posX, create.posY), sf::Vector2i(create.vecX, create.vecY), create.id);
-		newObject.setLongName(create.name);
-		newObject.setPos(create.posX, create.posY);
-		newObject.setId(create.id);
+		inGame.addObject(newObject);
 		break;
 	case RtypeProtocol::serverCodes::ObjectDestroy:
 		// TODO Destroy an object
