@@ -30,7 +30,6 @@ private:
 	std::string			ip;
 	std::stringstream	receivedData;
 	std::stringstream	sentData;
-	std::size_t			received;
 	std::string			username;
 	bool				internalError;
 };

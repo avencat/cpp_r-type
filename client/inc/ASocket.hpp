@@ -48,6 +48,7 @@ public:
 	bool			recvFrom(std::stringstream &data, const size_t &len, const int &flags = 0);
 	void			setBlocking(const bool &);
 	const u_short	&getPort() const;
+	const SSIZE_T	&getReceivedLength() const;
 
 private:
 #ifdef _WIN32
