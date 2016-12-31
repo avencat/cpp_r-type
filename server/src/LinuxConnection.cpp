@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 12:26:42 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 16:00:08 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "LinuxConnection.hpp"
@@ -14,16 +14,26 @@ Network::Network() {}
 
 Network::~Network() {}
 
-void				Network::addClient(const std::string ip, const int port)
+void				Network::deleteClient(const AClient &toDelete)
 {
-  Client			newClient;
+  std::list<AClient>::iterator	it;
+
+  if ((it = std::find(clients.begin(), clients.end(), toDelete)) != clients.end())
+    clients.erase(it);
+}
+
+void				Network::addClient(const std::string &ip, const int port,
+						   struct sockaddr_in &clientAddr)
+{
+  AClient			newClient;
 
   newClient.setIp(ip);
   newClient.setPort(port);
+  newClient.setclientAddr(clientAddr);
   clients.push_back(newClient);
 }
 
-bool				Network::initServer(int port)
+bool				Network::initServer(const int port)
 {
   this->servSocket = socket(AF_INET, SOCK_DGRAM, 0);
   bzero((char *) &servAddr, sizeof(servAddr));
@@ -39,33 +49,53 @@ bool				Network::initServer(int port)
   return true;
 }
 
+bool					Network::sendMsg(const std::string &msgToSend, 
+							 struct sockaddr_in &clientAddr)
+{
+  int					rv;
+  size_t				clientAddrSize;
+
+  clientAddrSize = sizeof(clientAddr);
+  rv = sendto(this->servSocket, msgToSend.c_str(), msgToSend.length(), 0,
+	 (struct sockaddr *)&clientAddr, clientAddrSize);
+  if (rv == -1)
+    {
+      std::cerr << "sendMsg() failed" << std::endl;
+      return false;
+    }
+  return true;
+}
+
 bool					Network::runServer(bool stateServer, 
 							   Configuration &config)
 {
   std::stringstream			ss;
   int					clientPort;
-  std::list<Client>::iterator		it;
+  int					rv;
 
   clientLen = sizeof(clientAddr);
   while (stateServer == true)
     {
       bzero(this->msgReceived, 1024);
       clientLen = sizeof(clientAddr);
-      if (recvfrom(this->servSocket, this->msgReceived, 1024, 0,
-		   (struct sockaddr *)&clientAddr, &clientLen) < 0)
-	std::cerr << "Error in recvfrom" << std::endl;
+      rv = recvfrom(this->servSocket, this->msgReceived, 1024, 0,
+		    (struct sockaddr *)&clientAddr, &clientLen);
+      if (rv < 0)
+	std::cerr << "Error in recvfrom()" << std::endl;
+      else if (rv == 0)
+	std::cout << "client quit." << std::endl;
       clientPort = ntohs(clientAddr.sin_port);
       std::string clientIp(inet_ntoa(clientAddr.sin_addr));
-      std::cout << "client ip : "<< clientIp << std::endl;
+      std::cout << "client ip : "<< clientIp << " , port : " << clientPort << std::endl;
       if (std::find(clients.begin(), clients.end(), clientIp) == clients.end())	
 	{
-	  addClient(clientIp, clientPort);
+	  addClient(clientIp, clientPort, clientAddr);
 	  config.addToWhitelist(clientIp);
 	  std::cout << "add to client list and whitelist" << std::endl;
 	}
+      sendMsg("Test.", clients.back().getclientAddr());
+      //check si joueur n'est pas en game.
       analyzeMsg();
-      sendto(this->servSocket, "coucou\n", strlen("coucou\n"), 0, 
-	     (struct sockaddr *)&clientAddr, clientLen);
     }
   return (false);
 }
@@ -93,15 +123,6 @@ void					Network::analyzeMsg()
     case RtypeProtocol::clientCodes::Ping:
       std::cout << "Ping" << std::endl;
       break;
-    case RtypeProtocol::clientCodes::RoomReady:
-      std::cout << "RoomReady" << std::endl;
-      break;
-    case RtypeProtocol::clientCodes::RoomNotReady:
-      std::cout << "RoomNotReady" << std::endl;
-      break;
-    case RtypeProtocol::clientCodes::PlayerLeave:
-      std::cout << "PlayerLeave" << std::endl;
-      break;
     case RtypeProtocol::clientCodes::Username:
       std::cout << "Username" << std::endl;
       break;
@@ -111,25 +132,6 @@ void					Network::analyzeMsg()
     case RtypeProtocol::clientCodes::RoomCreate:
       std::cout << "RoomCreate" << std::endl;
       break;
-    case RtypeProtocol::clientCodes::RoomLeave:
-      std::cout << "RoomLeave" << std::endl;
-      break;
-    case RtypeProtocol::clientCodes::PlayerMove:
-      std::cout << "PlayerMove" << std::endl;
-      break;
-    case RtypeProtocol::clientCodes::PlayerShoot:
-      std::cout << "PlayerShoot" << std::endl;
-      break;
-    case RtypeProtocol::clientCodes::PlayerCharge:
-      std::cout << "PlayerCharge" << std::endl;
-      break;
-    case RtypeProtocol::clientCodes::GameNext:
-      std::cout << "GameNext" << std::endl;
-      break;
-    case RtypeProtocol::clientCodes::GameMenu:
-      std::cout << "GameMenu" << std::endl;
-      break;
-
     default:
       std::cout << "Uknow client code" << std::endl;
     }

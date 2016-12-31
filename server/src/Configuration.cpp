@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 //
 // Started on  Thu Nov  3 19:40:52 2016 Theo TOUZET
-// Last update Fri Dec 30 17:48:37 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 13:44:38 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "Configuration.hh"
@@ -16,6 +16,7 @@ Configuration::Configuration(const std::string &path, const bool _silent) :
   config.insert(std::pair<std::string, std::string>("configpath", path));
   config.insert(std::pair<std::string, std::string>("port", "42142"));
   config.insert(std::pair<std::string, std::string>("maxclients", "10"));
+  config.insert(std::pair<std::string, std::string>("tickrate", "60"));
   readUpdateConfig();
 }
 

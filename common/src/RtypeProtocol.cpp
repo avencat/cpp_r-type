@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Fri Dec  2 16:56:04 2016 Theo TOUZET
-// Last update Tue Dec 20 13:15:33 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 13:51:54 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "RtypeProtocol.hh"
@@ -91,6 +91,9 @@ std::ostream  &RtypeProtocol::operator<<(std::ostream &os, const RtypeProtocol::
       break;
     case RtypeProtocol::serverCodes::ErrIDConflict :
       os << "ErrIDConflict";
+      break;
+    case RtypeProtocol::serverCodes::ErrNotFound :
+      os << "ErrNotFound";
       break;
     case RtypeProtocol::serverCodes::ErrServerClosing :
       os << "ErrServerClosing";
