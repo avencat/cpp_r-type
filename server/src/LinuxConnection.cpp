@@ -5,21 +5,18 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Fri Dec 30 18:48:50 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 12:06:55 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "LinuxConnection.hpp"
-#include "Configuration.hh"
 
 Network::Network() {}
 
 Network::~Network() {}
 
-
 void				Network::addClient(const std::string ip, const int port)
 {
   Client			newClient;
-  std::list<Client>::iterator	it;
 
   newClient.setIp(ip);
   newClient.setPort(port);
@@ -33,7 +30,7 @@ bool				Network::initServer(int port)
   this->servAddr.sin_family = AF_INET;
   this->servAddr.sin_port = htons(port);
   this->servAddr.sin_addr.s_addr = INADDR_ANY;
-  if (bind(this->servSocket, (struct sockaddr *) &(this->servAddr),
+  if (bind(this->servSocket, (struct sockaddr *)&(this->servAddr),
 	   sizeof(this->servAddr)) == -1)
     {
       std::cerr << "Error on binding." << std::endl;
@@ -42,9 +39,9 @@ bool				Network::initServer(int port)
   return true;
 }
 
-bool					Network::runServer(bool stateServer)
+bool					Network::runServer(bool stateServer, 
+							   Configuration config)
 {
-  Configuration				config("config.ini", false);
   std::stringstream			ss;
   int					clientPort;
   std::list<Client>::iterator		it;
@@ -63,13 +60,79 @@ bool					Network::runServer(bool stateServer)
       if (std::find(clients.begin(), clients.end(), clientIp) == clients.end())	
 	{
 	  addClient(clientIp, clientPort);
-	  config.addToWhitelist(clientIp);
+	  config2.addToWhitelist(clientIp);
 	  std::cout << "add to client list and whitelist" << std::endl;
 	}
+      analyzeMsg();
       sendto(this->servSocket, "coucou\n", strlen("coucou\n"), 0, 
 	     (struct sockaddr *)&clientAddr, clientLen);
     }
   return (false);
+}
+
+void					Network::analyzeMsg()
+{
+  RtypeProtocol::Data::Code		code_send;
+  unsigned long				size = sizeof(code_send.code);
+  std::stringstream			ss;
+  RtypeProtocol::clientCodes	       	code;
+
+  ss.clear();
+  ss.write(this->msgReceived, size);
+  ss.read(reinterpret_cast<char*>(&(code_send.code)), sizeof(code_send.code));
+  std::cout << "code is : " << code_send.code << std::endl;
+  code = RtypeProtocol::convertClient(code_send.code);
+  switch(code)
+    {
+    case RtypeProtocol::clientCodes::SYN:
+      std::cout << "code handshake : SYN part" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::ACK:
+      std::cout << "code handshake : ACK part" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::Ping:
+      std::cout << "Ping" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::RoomReady:
+      std::cout << "RoomReady" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::RoomNotReady:
+      std::cout << "RoomNotReady" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::PlayerLeave:
+      std::cout << "PlayerLeave" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::Username:
+      std::cout << "Username" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::RoomJoin:
+      std::cout << "RoomJoin" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::RoomCreate:
+      std::cout << "RoomCreate" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::RoomLeave:
+      std::cout << "RoomLeave" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::PlayerMove:
+      std::cout << "PlayerMove" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::PlayerShoot:
+      std::cout << "PlayerShoot" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::PlayerCharge:
+      std::cout << "PlayerCharge" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::GameNext:
+      std::cout << "GameNext" << std::endl;
+      break;
+    case RtypeProtocol::clientCodes::GameMenu:
+      std::cout << "GameMenu" << std::endl;
+      break;
+
+    default:
+      std::cout << "Uknow client code" << std::endl;
+    }
 }
 
 // bool						Network::secureConnection(Socket &client)

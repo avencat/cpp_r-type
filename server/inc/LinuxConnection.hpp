@@ -5,14 +5,15 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 17:03:58 2016 Jessica VAN-DEN-ZANDE
-// Last update Fri Dec 30 18:27:21 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 11:19:44 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef LINUXCONNECTION_HPP__
 # define LINUXCONNECTION_HPP__
 
 # include <cerrno>
-# include <cstring>
+#include <iostream>
+# include <string>
 # include <sstream>
 # include "INetwork.hpp"
 # include "Client.hpp"
@@ -32,8 +33,9 @@ public:
   Network();
   ~Network();
   bool				initServer(int port);
-  bool				runServer(bool stateServer);
+  bool				runServer(bool stateServer, Configuration config);
   void				addClient(const std::string ip, const int port);
+  void				analyzeMsg();
 //bool				secureConnection(Socket &client);
 };
 

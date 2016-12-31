@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:47:42 2016 Jessica VAN-DEN-ZANDE
-// Last update Fri Dec 30 11:26:15 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 11:06:42 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef TEST_RTYPE_INETWORK_HPP
@@ -23,13 +23,15 @@
 # include <stdlib.h>
 # include <sstream>
 # include <string>
+# include "Configuration.hh"
 
 class INetwork
 {
 public:
   virtual ~INetwork() {};
   virtual bool initServer(int port) = 0;
-  virtual bool runServer(bool stateServer) = 0;
+  virtual bool runServer(bool stateServer, 
+			 Configuration config) = 0;
 };
 
 #endif /* TEST_RTYPE_INETWORK_HPP */
