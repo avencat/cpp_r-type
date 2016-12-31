@@ -723,7 +723,10 @@ bool	Graphique::inGameScene()
 		position.y = 0;
 	else if (position.y > static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height))
 		position.y = static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height);
-	inGame.setObjPos(1, sf::Vector2i(position.x, position.y));
+	if (static_cast<int>(position.x - inGame.getObj(1).getPos().x) != 0 || static_cast<int>(position.y - inGame.getObj(1).getPos().y) != 0) {
+		link.move(inGame.getObj(1).getPos().x - position.x, inGame.getObj(1).getPos().y - position.y);
+		inGame.setObjPos(1, sf::Vector2i(position.x, position.y));
+	}
 	//
 	//  SEND MSG SERVER POSITION
 	//
