@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Fri Dec  2 16:56:04 2016 Theo TOUZET
-// Last update Sat Dec 31 13:51:54 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 21:33:11 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "RtypeProtocol.hh"
@@ -94,6 +94,15 @@ std::ostream  &RtypeProtocol::operator<<(std::ostream &os, const RtypeProtocol::
       break;
     case RtypeProtocol::serverCodes::ErrNotFound :
       os << "ErrNotFound";
+      break;
+    case RtypeProtocol::serverCodes::ErrConnectionFailure :
+      os << "ErrConnectionFailure";
+      break;
+    case RtypeProtocol::serverCodes::ErrNotAuthenticated :
+      os << "ErrNotAuthenticated";
+      break;
+    case RtypeProtocol::serverCodes::ErrAlreadyAuthenticated :
+      os << "ErrAlreadyAuthenticated";
       break;
     case RtypeProtocol::serverCodes::ErrServerClosing :
       os << "ErrServerClosing";
@@ -189,4 +198,20 @@ RtypeProtocol::serverCodes	RtypeProtocol::convertServer(const RtypeProtocol::cli
 RtypeProtocol::serverCodes	RtypeProtocol::convertServer(const short a)
 {
   return (static_cast<RtypeProtocol::serverCodes>(a));
+}
+
+RtypeProtocol::Data::Code::Code()
+{
+}
+
+RtypeProtocol::Data::Code::Code(const short &c) : code(c)
+{
+}
+
+RtypeProtocol::Data::Code::Code(const serverCodes &c) : code(static_cast<short>(c))
+{
+}
+
+RtypeProtocol::Data::Code::Code(const clientCodes &c) : code(static_cast<short>(c))
+{
 }

@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 00:59:15 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 15:45:47 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 21:58:36 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef ASOCKET_HPP__
@@ -13,19 +13,30 @@
 
 # include <iostream>
 # include <unistd.h>
+# include <arpa/inet.h>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <vector>
 
 class				AClient
 {
+public:
+  enum				State
+    {
+      NEW = 0,
+      SYN,
+      ACK,
+      USERNAME,
+    };
 protected:
   std::string    		ip;
   int				port;
   std::string			username;
   struct sockaddr_in		clientAddr;
+  bool				isInRoom;
   std::vector<std::string>	msgQueue;
 private:
+  State				state;
   int				syn;
   int				ack;
   bool				synState;
@@ -48,10 +59,16 @@ public:
   bool 			getSynState(void) const;
   void 			setAckState(bool state);
   bool 			getAckState(void) const;
+  void			setState(const State &state);
+  const State  		&getState() const;
   void			setclientAddr(struct sockaddr_in &clientAddr);
   struct sockaddr_in    &getclientAddr(void);
+  void			setIsInRoom(bool state);
+  bool			getIsInRoom();
+  void			addMsgInQueue(const std::string &msg);
   bool 			operator==(const AClient&);
   bool 			operator==(const std::string &);
+  bool			operator==(const struct sockaddr_in &client);
 };
 
 

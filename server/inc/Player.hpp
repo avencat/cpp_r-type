@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:37 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 15:01:54 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 16:39:56 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef PLAYER_HPP__
@@ -16,7 +16,6 @@
 class			Player : public AClient
 {
 private:
-  bool			isInRoom;
   bool			isReady;
   int			score;
   int			lives;

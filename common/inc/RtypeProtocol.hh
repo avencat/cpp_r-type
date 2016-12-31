@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Fri Dec  2 16:33:06 2016 Theo TOUZET
-// Last update Sat Dec 31 13:52:15 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 21:32:39 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef RTYPEPROTOCOL_HH_
@@ -47,6 +47,9 @@ namespace RtypeProtocol
     ErrAlreadyStarted,
     ErrIDConflict,
     ErrNotFound,
+    ErrConnectionFailure,
+    ErrNotAuthenticated,
+    ErrAlreadyAuthenticated,
     ErrServerClosing = 500
   };
 
@@ -117,6 +120,10 @@ namespace RtypeProtocol
   namespace Data {
     struct	Code
     {
+      Code();
+      Code(const short&);
+      Code(const serverCodes&);
+      Code(const clientCodes&);
       short	code;
     };
 
