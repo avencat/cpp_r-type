@@ -208,7 +208,7 @@ void						Scene::setObjPos(const int &_id, const sf::Vector2i &_pos)
 	}
 }
 
-void 						Scene::setChargeobj(const long &_name, const bool &status)
+void 						Scene::setChargeObj(const long &_name, const bool &status)
 {
 	for (std::list<Object>::iterator i = objects.begin(); i != objects.end(); i++) {
 		if (i->getLongName() == _name)

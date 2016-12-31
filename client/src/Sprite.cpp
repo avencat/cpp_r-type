@@ -67,7 +67,7 @@ void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, const int &lvl
 		if (!texture.loadFromFile("./assets/Sprites/r-typesheet1.gif")) {
 			std::cout << "Failed to load the texture Load" << std::endl;
 		}
-		setSpriteRect(198, 54, 30, 26);
+		setSpriteRect(lvl * 30, 54, 30, 26);
 		break;
 	case Sprite::TypeSpriteEnum::Ennemies:
 		if (!texture.loadFromFile("./assets/Sprites/r-typesheet5.gif")) {

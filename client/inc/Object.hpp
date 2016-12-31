@@ -33,6 +33,9 @@ public:
 	void							setLongName(const long &);
 	const int						&getId() const;
 	void							setId(const int &);
+	const bool						&getChargeShot() const;
+	void							setChargeShot(const bool &);
+	void							setRectCharge(const int &, const Sprite::TypeSpriteEnum &, const int &);
 
 private:
 
@@ -44,6 +47,7 @@ private:
 	sf::Vector2i					pos;
 	sf::Vector2i					dir;
 	AComponent						component;
+	bool							chargeShot;
 };
 
 #endif /* !OBJECT_HPP_ */

@@ -2,6 +2,7 @@
 
 Object::Object()
 {
+	chargeShot = false;
 }
 
 Object::Object(const long &_longName, const sf::Vector2i &_pos, const sf::Vector2i &_dir, const int &_id)
@@ -10,6 +11,7 @@ Object::Object(const long &_longName, const sf::Vector2i &_pos, const sf::Vector
 	pos = _pos;
 	dir = _dir;
 	id = _id;
+	chargeShot = false;
 }
 
 Object::~Object()
@@ -28,6 +30,15 @@ void							Object::addAComponent(const int &_id, const Sprite::TypeSpriteEnum &_
 	components.push_back(tmp);
 	components.back().setId(_id);
 	components.back().setSprite(_type, lvl);
+}
+
+void							Object::setRectCharge(const int &_id, const Sprite::TypeSpriteEnum &_type, const int &_lvl)
+{
+	for (std::list<AComponent>::iterator i = components.begin(); i != components.end(); i++) {
+		if ((*i).getId() == _id) {
+			(*i).setSprite(_type, _lvl);
+		}
+	}
 }
 
 const AComponent				&Object::getComponent(const int &_id) const
@@ -74,22 +85,32 @@ const int						&Object::getScore() const
 	return (score);
 }
 
-const long &Object::getLongName() const
+const long						&Object::getLongName() const
 {
 	return (this->longName);
 }
 
-void Object::setLongName(const long &name)
+void							Object::setLongName(const long &name)
 {
 	this->longName = name;
 }
 
-const int &Object::getId() const
+const int						&Object::getId() const
 {
 	return (this->id);
 }
 
-void Object::setId(const int &id)
+void							Object::setId(const int &id)
 {
 	this->id = id;
+}
+
+const bool						&Object::getChargeShot() const
+{
+	return (chargeShot);
+}
+
+void							Object::setChargeShot(const bool &status)
+{
+	chargeShot = status;
 }

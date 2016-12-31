@@ -18,10 +18,12 @@ public:
 	Animation();
 	~Animation();
 
-	void		refresh(const sf::Clock &, std::list<Object> &);
 	void		moveBackground(Object &, const sf::Time &);
-
+	void		isCharging(Object &, const sf::Time &);
+	void		refresh(const sf::Clock &, std::list<Object> &);
+	
 private:
+	int			aCharge;
 };
 
 #endif /* !ANIMATION_HPP_ */
