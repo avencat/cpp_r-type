@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 12:06:55 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 12:26:42 2016 Jessica VAN-DEN-ZANDE
 //
 
 #include "LinuxConnection.hpp"
@@ -40,7 +40,7 @@ bool				Network::initServer(int port)
 }
 
 bool					Network::runServer(bool stateServer, 
-							   Configuration config)
+							   Configuration &config)
 {
   std::stringstream			ss;
   int					clientPort;
@@ -60,7 +60,7 @@ bool					Network::runServer(bool stateServer,
       if (std::find(clients.begin(), clients.end(), clientIp) == clients.end())	
 	{
 	  addClient(clientIp, clientPort);
-	  config2.addToWhitelist(clientIp);
+	  config.addToWhitelist(clientIp);
 	  std::cout << "add to client list and whitelist" << std::endl;
 	}
       analyzeMsg();

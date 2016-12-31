@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:47:42 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 11:06:42 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 12:27:01 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef TEST_RTYPE_INETWORK_HPP
@@ -31,7 +31,7 @@ public:
   virtual ~INetwork() {};
   virtual bool initServer(int port) = 0;
   virtual bool runServer(bool stateServer, 
-			 Configuration config) = 0;
+			 Configuration &config) = 0;
 };
 
 #endif /* TEST_RTYPE_INETWORK_HPP */
