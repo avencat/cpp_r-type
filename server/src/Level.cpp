@@ -22,6 +22,8 @@ Level::~Level()
         delete objects[0];
         objects.erase(objects.begin());
     }
+    if (fileMap.isOpen())
+        fileMap.close();
 }
 
 const std::string	&Level::getFileName() const
@@ -314,9 +316,23 @@ bool        Level::loopGame()
     return (checkAlive());
 }
 
-void      Level::dump() const
+void                            Level::dump() const
 {
+    Object::Type                type;
+    std::map<Object::Type, int> map;
+
     std::cout << "Dumping all objects in Level:" << std::endl;
     for (std::vector<Object*>::const_iterator it = objects.begin(); it != objects.end(); ++it)
+    {
         std::cout << *(*it) << std::endl;
+        type = (*it)->getType();
+        if (map.find(type) != map.end())
+            map[type] += 1;
+        else
+            map.insert(std::pair<Object::Type, int>(type, 1));
+    }
+    std::cout << "Total number of Objects: " << objects.size() << "." << std::endl;
+    std::cout << "Detail:" << std::endl;
+    for (std::map<Object::Type, int>::const_iterator it = map.begin(); it != map.end(); ++it)
+        std::cout << "\t- " << it->first << ": " << it->second << " occurrence" << (it->second > 1 ? "s" : "") << std::endl;
 }
