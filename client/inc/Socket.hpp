@@ -32,6 +32,7 @@ private:
 	std::stringstream	sentData;
 	std::string			username;
 	bool				internalError;
+	bool				isInit;
 };
 
 #endif /* !SOCKET_HPP_ */

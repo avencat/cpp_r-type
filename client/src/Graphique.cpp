@@ -1,6 +1,6 @@
 #include "Graphique.hpp"
 
-Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::string &_title) : window(sf::VideoMode(_x, _y), _title), roomManager(socket), socket(socket)
+Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::string &_title) : window(sf::VideoMode(_x, _y), _title), roomManager(socket), socket(socket), link(socket)
 {
 	this->x = _x;
 	this->y = _y;
@@ -75,6 +75,37 @@ Scene	&Graphique::getActiveScene()
 		return (inGame);
 	default:
 		return (linkServer);
+	}
+}
+
+bool	Graphique::loadScene(const ScenesEnum sceneToLoad)
+{
+	firstTime = true;
+	switch (sceneToLoad) {
+	case ScenesEnum::getIp:
+		prevScene = activeScene;
+		activeScene = sceneToLoad;
+		return (linkServerScene());
+	case ScenesEnum::listRooms:
+		prevScene = activeScene;
+		activeScene = sceneToLoad;
+		return (showRoomScene());
+	case ScenesEnum::loading:
+		prevScene = activeScene;
+		activeScene = sceneToLoad;
+		return (loadingScene());
+	case ScenesEnum::lobby:
+		prevScene = activeScene;
+		activeScene = sceneToLoad;
+		return (lobbyScene());
+	case ScenesEnum::InGame:
+		prevScene = activeScene;
+		activeScene = sceneToLoad;
+		return (inGameScene());
+	default:
+		prevScene = activeScene;
+		activeScene = sceneToLoad;
+		return (linkServerScene());
 	}
 }
 
@@ -334,7 +365,7 @@ bool	Graphique::showRoomScene()
 						if (roomManager.joinRoom(l->getId(), user == Player ? false : true)) {
 							return (loadNextScene());
 						}
-						// To delete once the connection with the server is correctly established or the demo is finished
+						// To delete (else) once the connection with the server is correctly established or the demo is finished
 						else {
 							return (loadNextScene());
 						}
@@ -475,6 +506,10 @@ bool Graphique::handleServerCode()
 	RtypeProtocol::Data::Code			code;
 	RtypeProtocol::Data::PlayerCharge	charge;
 	RtypeProtocol::Data::ObjectCreate	create;
+	RtypeProtocol::Data::ObjectUpdate	update;
+	RtypeProtocol::Data::ObjectDestroy	destroy;
+	RtypeProtocol::Data::PlayerInfo		info;
+	RtypeProtocol::Data::PlayerScore	score;
 
 	if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined)))
 		return (false);
@@ -484,7 +519,7 @@ bool Graphique::handleServerCode()
 		socket.setInternalError(true);
 		break;
 	case RtypeProtocol::serverCodes::GameOver:
-		// TODO QUIT THE GAME
+		inGame.setEndGame(true);
 		break;
 	case RtypeProtocol::serverCodes::PlayerCharge:
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge1)), sizeof(charge.charge1));
@@ -501,13 +536,14 @@ bool Graphique::handleServerCode()
 		// TODO leave Player
 		break;
 	case RtypeProtocol::serverCodes::PlayerLives:
-		// TODO set player's life
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(info.info)), sizeof(info.info));
+		this->life = info.info;
 		break;
 	case RtypeProtocol::serverCodes::PlayerScore:
-		// TODO set player' score
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(score.score)), sizeof(score.score));
+		this->score = score.score;
 		break;
 	case RtypeProtocol::serverCodes::ObjectCreate:
-		// TODO Create an object
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.id)), sizeof(create.id));
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.posX)), sizeof(create.posX));
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(create.posY)), sizeof(create.posY));
@@ -518,10 +554,13 @@ bool Graphique::handleServerCode()
 		inGame.addObject(newObject);
 		break;
 	case RtypeProtocol::serverCodes::ObjectDestroy:
-		// TODO Destroy an object
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(destroy.id)), sizeof(destroy.id));
 		break;
 	case RtypeProtocol::serverCodes::ObjectUpdate:
-		// TODO Update an object
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(update.id)), sizeof(update.id));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(update.posX)), sizeof(update.posX));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(update.posY)), sizeof(update.posY));
+		inGame.setObjPos(update.id, sf::Vector2i(update.posX, update.posY));
 		break;
 	default:
 		break;
@@ -531,11 +570,6 @@ bool Graphique::handleServerCode()
 
 bool	Graphique::inGameScene()
 {
-
-	if (user == Spectator) {
-		return (true);
-	}
-
 	if (firstTime) {
 
 		isCharging = 1;
@@ -560,7 +594,6 @@ bool	Graphique::inGameScene()
 		newObject.addAComponent(1, Sprite::TypeSpriteEnum::Background, 0);
 		newObject.setPos(static_cast<int>(newObject.getComponent(1).getCSprite().getSize().x) * 2, 0);
 		inGame.addObject(newObject);
-		//inGame.setBGSprite("./assets/Sprites/espace_background_rtype.jpg");
 
 
 		// set Var ship
@@ -581,6 +614,7 @@ bool	Graphique::inGameScene()
 		mainShip.setLife(1);
 		mainShip.setScore(0);
 		mainShip.setId(1);
+		mainShip.setLongName(1);
 		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
 		mainShip.setPos(position.x, position.y);
 		// SEND POS
@@ -595,45 +629,36 @@ bool	Graphique::inGameScene()
 	// REMETTRE AVANT DE PUSH
 	//handleServerCode();
 
-
+	event = sf::Event();
 	while (window.pollEvent(event))
 	{
 		switch (event.type)
 		{
 		case sf::Event::Closed:
-			//
-			// SEND MSG SERVER LEAVE / QUIT
-			//
-
+			link.leave();
 			closeWindow();
 			break;
 		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Escape:
-				//
-				// SEND MSG SERVER LEAVE / QUIT
-				//
+				link.leave();
 				closeWindow();
 				break;
 			case sf::Keyboard::Return:
-				//
-				// SEND MSG SERVER LEAVE
-				//
-
+				link.leave();
+				loadScene(ScenesEnum::listRooms);
 				break;
 			default:
 				break;
 			}
 			break;
 		case sf::Event::KeyReleased:
-			if (event.key.code == sf::Keyboard::Space) {
+			if (event.key.code == sf::Keyboard::Space && user != StatusEnum::Spectator) {
 				isCharging = 1;
 				std::cout << "Shot !" << std::endl << std::endl;
-				//
-				// TODO AXELOPETO SHOOT
-				//
-
+				link.shoot();
+				inGame.setChargeObj(1, false);
 			}
 			break;
 		default:
@@ -641,6 +666,10 @@ bool	Graphique::inGameScene()
 		}
 	}
 
+
+	if (user == Spectator) {
+		return (true);
+	}
 
 	// update Velocity
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
@@ -667,9 +696,8 @@ bool	Graphique::inGameScene()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 		if (isCharging == 0) {
 			std::cout << "Charge !" << std::endl;
-			//
-			// TODO AXELOPETO CHARGE
-			//
+			link.charge();
+			inGame.setChargeObj(1, false);
 			isCharging++;
 		} else if (isCharging == 10) {
 			isCharging = 0;

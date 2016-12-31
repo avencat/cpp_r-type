@@ -5,6 +5,7 @@ Socket::Socket()
 {
 	this->internalError = false;
 	this->status = 0;
+	isInit = false;
 }
 
 Socket::~Socket()
@@ -18,6 +19,10 @@ std::stringstream	&Socket::getReceivedData()
 
 bool Socket::send(std::stringstream &dataToSend)
 {
+	if (!isInit) {
+		std::cerr << "[Socket Error] You must init the socket before send anything through it!" << std::endl;
+		return (false);
+	}
 	if (!socket.sendTo(dataToSend)) {
 		RtypeProtocol::Data::Code	code;
 
@@ -60,6 +65,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	RtypeProtocol::Data::Username	username;
 
 	socket.create(_ip, 42142, ASocket::SockMode::UDP);
+	isInit = true;
 	this->username = _username;
 	this->ip = _ip;
 	this->status = 1;
@@ -118,7 +124,7 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	username.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::Username);
 	for (unsigned short i = 0; i < (_username.length() < 12 ? _username.length() : 12); i++)
 		username.username[i] = _username.c_str()[i];
-	sentData.clear();
+	sentData.str("");
 	sentData.write(reinterpret_cast<char *>(&(username.code)), sizeof(username.code));
 	sentData.write(reinterpret_cast<char *>(&(username.username)), sizeof(username.username));
 	if (socket.sendTo(sentData))

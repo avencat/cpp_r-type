@@ -12,6 +12,7 @@
 # include <iostream>
 # include "Scene.hpp"
 # include "RoomManager.hpp"
+# include "PlayerLink.hpp"
 
 enum ScenesEnum
 {
@@ -57,6 +58,7 @@ public:
 	bool						loadNextScene();
 	bool						loadPrevScene();
 	bool						handleServerCode();
+	bool						loadScene(const ScenesEnum);
 
 private:
 	std::list<std::string>		rooms;
@@ -92,8 +94,10 @@ private:
 	float						accel;
 	float						decel;
 	float						actualspeed;
-	int							life;
+	char							life;
 	Object						newObject;
+	long							score;
+	PlayerLink				link;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */

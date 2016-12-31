@@ -48,9 +48,10 @@ public:
 	//Object							&getObj(const long &);
 	const Object					&getObj(long);
 	void							setObjPos(const int &, const sf::Vector2i &);
-	void							setSEndGame(const bool &);
+	void							setEndGame(const bool &);
 	const bool						&getEndGame() const;
 	bool							destroyById(const int &);
+	void 							setChargeObj(const long &, const bool &);
 
 private:
 	std::list<Object>				objects;

@@ -5,7 +5,7 @@
 ## Login   <van-de_j@epitech.net>
 ##
 ## Started on  Mon Dec 19 18:28:51 2016 Jessica VAN-DEN-ZANDE
-## Last update Fri Dec 30 22:18:26 2016 Axel Vencatareddy
+## Last update Sat Dec 31 15:24:00 2016 Axel Vencatareddy
 ##
 
 CXX		= g++
@@ -29,6 +29,7 @@ SRC		= $(DIR_PROTO)RtypeProtocol.cpp	\
 		  $(DIR)Scene.cpp		\
 		  $(DIR)Sprite.cpp		\
 		  $(DIR)Animation.cpp		\
+		  $(DIR)PlayerLink.cpp		\
 		  $(DIR)Socket.cpp
 
 OBJ		= $(SRC:.cpp=.o)
