@@ -5,25 +5,25 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 17:03:58 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 12:27:03 2016 Jessica VAN-DEN-ZANDE
+// Last update Sat Dec 31 15:58:39 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef LINUXCONNECTION_HPP__
 # define LINUXCONNECTION_HPP__
 
 # include <cerrno>
-#include <iostream>
+# include <iostream>
 # include <string>
 # include <sstream>
 # include "INetwork.hpp"
-# include "Client.hpp"
+# include "Player.hpp"
 # include "RtypeProtocol.hh"
 # include "Configuration.hh"
 
 class Network: public INetwork
 {
 private:
-  std::list<Client>		clients;
+  std::list<AClient>		clients;
   int				servSocket;
   socklen_t	       		clientLen;
   struct sockaddr_in		servAddr;
@@ -32,9 +32,13 @@ private:
 public:
   Network();
   ~Network();
-  bool				initServer(int port);
+  bool				initServer(const int port);
   bool				runServer(bool stateServer, Configuration &config);
-  void				addClient(const std::string ip, const int port);
+  void				addClient(const std::string &ip, const int port, 
+					  struct sockaddr_in &clientAddr);
+  void				deleteClient(const AClient &toDelete);
+  bool				sendMsg(const std::string &msg,
+					struct sockaddr_in &clientAddr);
   void				analyzeMsg();
 //bool				secureConnection(Socket &client);
 };

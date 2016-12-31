@@ -5,7 +5,7 @@
 // Login   <touzet_t@epitech.net>
 // 
 // Started on  Fri Dec  2 16:33:06 2016 Theo TOUZET
-// Last update Fri Dec  2 17:10:23 2016 Theo TOUZET
+// Last update Sat Dec 31 13:52:15 2016 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef RTYPEPROTOCOL_HH_
@@ -46,6 +46,7 @@ namespace RtypeProtocol
     ErrPlayerLimit,
     ErrAlreadyStarted,
     ErrIDConflict,
+    ErrNotFound,
     ErrServerClosing = 500
   };
 

@@ -6,6 +6,10 @@
 client/client
 server/server
 cmake-build-debug/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+build/
 .clang_complete
 
 ## Ignore Visual Studio temporary files, build results, and
