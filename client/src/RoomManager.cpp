@@ -423,3 +423,8 @@ Failed to create a new room. You should try to refresh the rooms list and try ag
 	}
 	return (true);
 }
+
+const bool		&RoomManager::getGameStarted() const
+{
+	return (gameStarted);
+}

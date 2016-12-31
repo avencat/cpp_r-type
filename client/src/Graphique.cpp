@@ -439,6 +439,13 @@ bool	Graphique::lobbyScene()
 		firstTime = false;
 	}
 
+	if (roomManager.getGameStarted()) {
+		loadNextScene();
+	}
+
+	socket.receive(1000);
+	roomManager.manageServerCodes();
+
 	while (window.pollEvent(event))
 	{
 		switch (event.type)
@@ -576,7 +583,7 @@ bool Graphique::handleServerCode()
 bool	Graphique::inGameScene()
 {
 	if (firstTime) {
-
+		mainShipId = getMainShipId();
 		isCharging = 1;
 
 		// set limit FPS
@@ -744,4 +751,18 @@ bool	Graphique::inGameScene()
 	}
 
 	return (true);
+}
+
+short		Graphique::getMainShipId()
+{
+	if (socket.getUsername() == roomManager.getCurrentRoom().getPlayer1()) {
+		return (0);
+	} else if (socket.getUsername() == roomManager.getCurrentRoom().getPlayer2()) {
+		return (1);
+	} else if (socket.getUsername() == roomManager.getCurrentRoom().getPlayer3()) {
+		return (2);
+	} else if (socket.getUsername() == roomManager.getCurrentRoom().getPlayer4()) {
+		return (3);
+	}
+	return (1);
 }

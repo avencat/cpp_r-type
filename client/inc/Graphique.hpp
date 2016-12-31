@@ -59,6 +59,7 @@ public:
 	bool						loadPrevScene();
 	bool						handleServerCode();
 	bool						loadScene(const ScenesEnum);
+	short						getMainShipId();
 
 private:
 	std::list<std::string>		rooms;
