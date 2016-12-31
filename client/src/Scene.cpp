@@ -277,7 +277,8 @@ void						Scene::draw(sf::RenderWindow &window) const
 	}
 	for (std::list<Object>::const_iterator it = objects.begin(); it != objects.end(); it++) {
 		for (std::list<AComponent>::const_iterator i = it->getComponents().begin(); i != it->getComponents().end(); i++) {
-			window.draw((*i).getCSprite().getSprite());
+			if (i->getVisible() == true)
+				window.draw((*i).getCSprite().getSprite());
 		}
 	}
 }

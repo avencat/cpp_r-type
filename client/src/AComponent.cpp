@@ -2,6 +2,7 @@
 
 AComponent::AComponent()
 {
+	visible = true;
 }
 
 AComponent::AComponent(int _id)
@@ -20,7 +21,12 @@ void					AComponent::setId(const int &_id)
 
 void					AComponent::setSprite(const Sprite::TypeSpriteEnum &_type, int lvl)
 {
-	sprite.setSprite(_type, lvl);
+	if (_type == Sprite::TypeSpriteEnum::Null) {
+		sprite.setSpriteRect(lvl * 30, 54, 30, 26);
+	}
+	else {
+		sprite.setSprite(_type, lvl);
+	}
 }
 
 const int				&AComponent::getId() const
@@ -35,7 +41,10 @@ const Sprite			&AComponent::getCSprite() const
 
 void					AComponent::setPosition(int x, int y)
 {
-	sprite.setPosSprite(x, y);
+	if (type == Sprite::Load)
+		sprite.setPosSprite(x + 20, y);
+	else
+		sprite.setPosSprite(x, y);
 }
 
 const sf::Vector2i		&AComponent::getPos()
@@ -43,4 +52,14 @@ const sf::Vector2i		&AComponent::getPos()
 	pos.x = sprite.getPosSprite().first;
 	pos.y = sprite.getPosSprite().second;
 	return (pos);
+}
+
+const bool & AComponent::getVisible() const
+{
+	return (visible);
+}
+
+void AComponent::setVisible(const bool &_visible)
+{
+	visible = _visible;
 }

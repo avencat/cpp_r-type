@@ -18,6 +18,11 @@ Object::~Object()
 {
 }
 
+void		Object::setLoadVisible(const bool &visible)
+{
+	components.back().setVisible(visible);
+}
+
 const std::list<AComponent>		&Object::getComponents() const
 {
 	return (components);
@@ -30,6 +35,7 @@ void							Object::addAComponent(const int &_id, const Sprite::TypeSpriteEnum &_
 	components.push_back(tmp);
 	components.back().setId(_id);
 	components.back().setSprite(_type, lvl);
+
 }
 
 void							Object::setRectCharge(const int &_id, const Sprite::TypeSpriteEnum &_type, const int &_lvl)
@@ -61,7 +67,10 @@ void							Object::setPos(const int &_x, const int &_y)
 	pos.x = _x;
 	pos.y = _y;
 	for (std::list<AComponent>::iterator i = components.begin(); i != components.end(); i++) {
-		(*i).setPosition(_x, _y);
+		if (i->getCSprite().getType() == Sprite::TypeSpriteEnum::Load)
+			i->setPosition(_x + components.begin()->getCSprite().getSize().x, _y);
+		else
+			(*i).setPosition(_x, _y);
 	}
 }
 

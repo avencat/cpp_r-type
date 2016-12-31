@@ -601,8 +601,8 @@ bool	Graphique::inGameScene()
 		accel = 1.5f;
 		decel = 0.1f;
 		// To delete down
-		position.x = (10 * static_cast<float>(window.getSize().x)) / 100;
-		position.y = (40 * static_cast<float>(window.getSize().y)) / 100;
+		position.x = (50 * static_cast<float>(window.getSize().x)) / 100;
+		position.y = (100 * static_cast<float>(window.getSize().y)) / 100;
 		// To delete up
 		velocity.x = 0.1f;
 		velocity.y = 0.1f;
@@ -616,6 +616,7 @@ bool	Graphique::inGameScene()
 		mainShip.setId(1);
 		mainShip.setLongName(1);
 		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
+		mainShip.addAComponent(2, Sprite::TypeSpriteEnum::Load, 0);
 		mainShip.setPos(position.x, position.y);
 		// SEND POS
 		inGame.addObject(mainShip);
@@ -659,6 +660,7 @@ bool	Graphique::inGameScene()
 				std::cout << "Shot !" << std::endl << std::endl;
 				link.shoot();
 				inGame.setChargeObj(1, false);
+				
 			}
 			break;
 		default:
@@ -697,7 +699,7 @@ bool	Graphique::inGameScene()
 		if (isCharging == 0) {
 			std::cout << "Charge !" << std::endl;
 			link.charge();
-			inGame.setChargeObj(1, false);
+			inGame.setChargeObj(1, true);
 			isCharging++;
 		} else if (isCharging == 10) {
 			isCharging = 0;

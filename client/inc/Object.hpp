@@ -36,6 +36,7 @@ public:
 	const bool						&getChargeShot() const;
 	void							setChargeShot(const bool &);
 	void							setRectCharge(const int &, const Sprite::TypeSpriteEnum &, const int &);
+	void							setLoadVisible(const bool &);
 
 private:
 

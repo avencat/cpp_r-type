@@ -17,12 +17,15 @@ public:
 	const Sprite			&getCSprite() const;
 	// getPos ne peut être marqué const car elle modifie pos avant de return.
 	const sf::Vector2i		&getPos();
+	const bool				&getVisible() const;
+	void					setVisible(const bool &);
 
 private:
 	int						id;
 	Sprite					sprite;
 	Sprite::TypeSpriteEnum	type;
 	sf::Vector2i			pos;
+	bool				visible;
 };
 
 #endif /* !ACOMPONENT_HPP_ */

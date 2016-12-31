@@ -21,11 +21,11 @@ void		Animation::moveBackground(Object &obj, const sf::Time &time)
 
 void		Animation::isCharging(Object &obj, const sf::Time &time)
 {
-		obj.setRectCharge(1, Sprite::Load, aCharge);
+	obj.setLoadVisible(true);
+	obj.setRectCharge(2, Sprite::TypeSpriteEnum::Null, aCharge);
 
 	if (aCharge < 9) {
 		aCharge += time.asSeconds() + 1;
-		std::cout << "ACharge : " << time.asSeconds() << std::endl;
 	}
 	else if (aCharge == 9) {
 		aCharge = 0;
@@ -39,8 +39,13 @@ void		Animation::refresh(const sf::Clock &clock, std::list<Object> &objs)
 		if ((*i).getLongName() >= 100 && (*i).getLongName() <= 102) {
 			moveBackground((*i), time);
 		}
-		else if ((*i).getChargeShot() == true) {
+		if ((*i).getChargeShot() == true) {
 			isCharging((*i), time);
 		}
+		else if (i->getComponent(1).getCSprite().getType() == Sprite::TypeSpriteEnum::Player1 ||
+				 i->getComponent(1).getCSprite().getType() == Sprite::TypeSpriteEnum::Player2 ||
+				 i->getComponent(1).getCSprite().getType() == Sprite::TypeSpriteEnum::Player3 ||
+				 i->getComponent(1).getCSprite().getType() == Sprite::TypeSpriteEnum::Player4)
+			i->setLoadVisible(false);
 	}
 }
