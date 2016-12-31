@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:10 2016 Maxime BOUCHER
-// Last update Fri Dec 30 13:55:56 2016 Maxime BOUCHER
+// Last update Fri Dec 30 15:50:25 2016 Maxime BOUCHER
 //
 
 #ifndef CORE_HPP_
@@ -27,6 +27,7 @@ public:
   void			checkRooms();
   bool			activateRoom();
   size_t		sizeActivate();
+  void			endAll();
 };
 
 #endif /* !CORE_HPP_ */

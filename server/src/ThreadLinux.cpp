@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Wed Dec 14 17:01:58 2016 Maxime BOUCHER
-// Last update Fri Dec 30 14:09:05 2016 Maxime BOUCHER
+// Last update Fri Dec 30 16:56:48 2016 Maxime BOUCHER
 //
 
 #include "ThreadLinux.hpp"
@@ -34,13 +34,13 @@ int	Thread::lockMutex()
 void	Thread::wait()
 {
   pthread_mutex_lock(&lock);
-  std::cout << pthread_cond_wait(&waiting, &lock) << std::endl;
+  pthread_cond_wait(&waiting, &lock);
   pthread_mutex_unlock(&lock);
 }
 
 void	Thread::signal()
 {
-  std::cout << pthread_cond_broadcast(&waiting) << std::endl;
+  pthread_cond_broadcast(&waiting);
 }
 
 int	Thread::unlockMutex()

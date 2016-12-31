@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Fri Dec 30 14:51:25 2016 Maxime BOUCHER
+// Last update Sat Dec 31 10:53:12 2016 Maxime BOUCHER
 //
 
 #include <unistd.h>
@@ -33,7 +33,6 @@ void	*Room::startThread(void *data)
 {
   me = (Room *)data;
   me->loop();
-  std::cout << "thread fini" << std::endl;
   return NULL;
 }
 
@@ -45,7 +44,7 @@ void	Room::loop()
 
 void	Room::queue()
 {
-  std::list<Socket>::iterator	it;
+  std::list<Client>::iterator	it;
   size_t			count;
   bool				start;
   std::chrono::seconds					sec(10);
@@ -54,9 +53,9 @@ void	Room::queue()
  
   this->thread = me->thread;
   start = false;
-  sleep(1);
-  me->wait();
-  chg = false;
+  if (!active)
+    me->wait();
+  chg = true;
   while (start == false && active == true && end == false)
     {
       if (player.size() == 4)
@@ -85,7 +84,10 @@ void	Room::queue()
 	  chg = false;
 	}
       if (start == true)
-	play();
+	{
+	  play();
+	  active = false;
+	}
     }
 }
 
@@ -143,7 +145,7 @@ size_t	Room::getNbPlayer()
   return (player.size());
 }
 
-bool	Room::addPlayer(Socket &newPlayer)
+bool	Room::addPlayer(Client &newPlayer)
 {
   if (getNbPlayer() >= 4)
     return false;
@@ -151,21 +153,21 @@ bool	Room::addPlayer(Socket &newPlayer)
   return true;
 }
 
-bool	Room::addViewer(Socket &newViewer)
+bool	Room::addViewer(Client &newViewer)
 {
   viewer.push_back(newViewer);
   return true;
 }
 
-bool	Room::deletePlayer(Socket &delPlayer)
+bool	Room::deletePlayer(Client &delPlayer)
 {
-  std::list<Socket>::iterator	it;
+  std::list<Client>::iterator	it;
 
   if (getNbPlayer() == 0)
     return false;
   for (it = player.begin(); it != player.end(); it++)
     {
-      if (it->getFdClient() == delPlayer.getFdClient())
+      if (it->getIp() == delPlayer.getIp() && it->getPort() == delPlayer.getPort())
 	{
 	  player.erase(it);
 	  return true;
@@ -174,15 +176,15 @@ bool	Room::deletePlayer(Socket &delPlayer)
   return false;
 }
 
-bool	Room::deleteViewer(Socket &delViewer)
+bool	Room::deleteViewer(Client &delViewer)
 {
-  std::list<Socket>::iterator	it;
+  std::list<Client>::iterator	it;
 
   if (getNbPlayer() == 0)
     return false;
   for (it = player.begin(); it != player.end(); it++)
     {
-      if (it->getFdClient() == delViewer.getFdClient())
+      if (it->getIp() == delViewer.getIp() && it->getPort() == delViewer.getPort())
 	{
 	  player.erase(it);
 	  return true;

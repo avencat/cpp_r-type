@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:23 2016 Maxime BOUCHER
-// Last update Fri Dec 30 14:32:33 2016 Maxime BOUCHER
+// Last update Sat Dec 31 10:51:28 2016 Maxime BOUCHER
 //
 
 #ifndef ROOM_HPP_
@@ -14,6 +14,7 @@
 # include <list>
 # include <iostream>
 # include "Socket.hpp"
+# include "Client.hpp"
 # include "ThreadLinux.hpp"
 
 enum		eState
@@ -26,8 +27,8 @@ enum		eState
 class		Room
 {
 private:
-  std::list<Socket>	player;
-  std::list<Socket>	viewer;
+  std::list<Client>	player;
+  std::list<Client>	viewer;
   int			id;
   eState		state;
   int			level;
@@ -35,13 +36,13 @@ private:
   int			highScore;
   bool			active;
   static Room		*me;
+  Thread		thread;
   bool			end;
 
 public:
   Room();
   ~Room();
 
-  Thread		thread;
   size_t		getNbPlayer();
   static void		*startThread(void *data);
   int			unlockMutex();
@@ -52,10 +53,10 @@ public:
   void			queue();
   void			setLevel(const int);
   size_t		getNbViewer();
-  bool			addPlayer(Socket &);
-  bool			addViewer(Socket &);
-  bool			deletePlayer(Socket &);
-  bool			deleteViewer(Socket &);
+  bool			addPlayer(Client &);
+  bool			addViewer(Client &);
+  bool			deletePlayer(Client &);
+  bool			deleteViewer(Client &);
   bool			isActive();
   void			setActive(const bool);
   void			play();
