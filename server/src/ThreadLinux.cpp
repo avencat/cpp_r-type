@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Wed Dec 14 17:01:58 2016 Maxime BOUCHER
-// Last update Fri Dec 30 16:56:48 2016 Maxime BOUCHER
+// Last update Sat Dec 31 15:36:03 2016 Maxime BOUCHER
 //
 
 #include "ThreadLinux.hpp"

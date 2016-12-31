@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Fri Dec 30 16:05:31 2016 Maxime BOUCHER
+// Last update Sat Dec 31 19:38:28 2016 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -15,8 +15,26 @@ Core::~Core(){}
 
 void		Core::initRooms()
 {
-  for (int i = 0; i < 1; ++i)
+  for (int i = 0; i < 8; ++i)
     waiting_rooms.push_back(new Room);
+}
+
+bool		Core::lockPlayerRoom(const AClient player, const bool lock)
+{
+  std::list<Room*>::iterator	it;
+
+  for (it = waiting_rooms.begin(); it != waiting_rooms.end(); it++)
+    {
+      if ((*it)->findPlayer(player) == true)
+	{
+	  if (lock == true)
+	    (*it)->lockMutex();
+	  else
+	    (*it)->unlockMutex();
+	  return true;
+	}
+    }
+  return false;
 }
 
 void		Core::checkRooms()
@@ -53,10 +71,10 @@ void		Core::endAll()
   std::list<Room*>::iterator	it;
 
   while (!waiting_rooms.empty())
-    activateRoom();
-  for (it = active_rooms.begin(); it != active_rooms.end(); it++)
     {
+      activateRoom();
+      it = active_rooms.begin();
       (*it)->endLoop();
-      (*it)->join();
+      (*it)->join();      
     }
 }

@@ -5,15 +5,12 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Sat Dec 31 10:53:12 2016 Maxime BOUCHER
+// Last update Sat Dec 31 20:09:20 2016 Maxime BOUCHER
 //
 
 #include <unistd.h>
 #include <chrono>
-#include <ctime>
 #include "Room.hpp"
-
-Room	*Room::me = NULL;
 
 void	Room::setLevel(const int lvl)
 {
@@ -22,15 +19,16 @@ void	Room::setLevel(const int lvl)
 
 Room::Room()
 {
-  me = this;
-  this->thread.createThread(me);
   end = false;
   active = false;
+  this->thread.createThread(this);
 }
 Room::~Room(){}
 
 void	*Room::startThread(void *data)
 {
+  Room	*me;
+
   me = (Room *)data;
   me->loop();
   return NULL;
@@ -44,17 +42,16 @@ void	Room::loop()
 
 void	Room::queue()
 {
-  std::list<Client>::iterator	it;
-  size_t			count;
-  bool				start;
+  std::list<Player*>::iterator				it;
+  size_t						count;
+  bool							start;
   std::chrono::seconds					sec(10);
   std::chrono::time_point<std::chrono::system_clock>	lap;
   bool							chg;
- 
-  this->thread = me->thread;
+
   start = false;
   if (!active)
-    me->wait();
+    wait();
   chg = true;
   while (start == false && active == true && end == false)
     {
@@ -66,13 +63,12 @@ void	Room::queue()
 	{
 	  chg = true;
 	  it = player.begin();
-	  for (count = 1; count <= player.size(); count++)
+	  for (count = 1; count <= player.size(); count++, it++)
 	    {
 	      if (count == 1)
 		start = true;
-	      if (it->getIsReady() == false)
+	      if ((*it)->getIsReady() == false)
 		start = false;
-	      it++;
 	    }
 	}
       else
@@ -94,7 +90,7 @@ void	Room::queue()
 void	Room::play()
 {
   state = inGame;
-  while (state == inGame)
+  while (end == false)
     {
       
     }
@@ -130,6 +126,11 @@ void	Room::join()
   thread.join();
 }
 
+Thread	&Room::getThread()
+{
+  return (thread);
+}
+
 void	Room::setActive(const bool state)
 {
   active = state;
@@ -145,7 +146,7 @@ size_t	Room::getNbPlayer()
   return (player.size());
 }
 
-bool	Room::addPlayer(Client &newPlayer)
+bool	Room::addPlayer(Player *newPlayer)
 {
   if (getNbPlayer() >= 4)
     return false;
@@ -153,21 +154,21 @@ bool	Room::addPlayer(Client &newPlayer)
   return true;
 }
 
-bool	Room::addViewer(Client &newViewer)
+bool	Room::addViewer(Player *newViewer)
 {
   viewer.push_back(newViewer);
   return true;
 }
 
-bool	Room::deletePlayer(Client &delPlayer)
+bool	Room::deletePlayer(Player *delPlayer)
 {
-  std::list<Client>::iterator	it;
+  std::list<Player*>::iterator	it;
 
   if (getNbPlayer() == 0)
     return false;
   for (it = player.begin(); it != player.end(); it++)
     {
-      if (it->getIp() == delPlayer.getIp() && it->getPort() == delPlayer.getPort())
+      if ((*it)->getIp() == delPlayer->getIp() && (*it)->getPort() == delPlayer->getPort())
 	{
 	  player.erase(it);
 	  return true;
@@ -176,19 +177,31 @@ bool	Room::deletePlayer(Client &delPlayer)
   return false;
 }
 
-bool	Room::deleteViewer(Client &delViewer)
+bool	Room::deleteViewer(Player *delViewer)
 {
-  std::list<Client>::iterator	it;
+  std::list<Player*>::iterator	it;
 
   if (getNbPlayer() == 0)
     return false;
   for (it = player.begin(); it != player.end(); it++)
     {
-      if (it->getIp() == delViewer.getIp() && it->getPort() == delViewer.getPort())
+      if ((*it)->getIp() == delViewer->getIp() && (*it)->getPort() == delViewer->getPort())
 	{
 	  player.erase(it);
 	  return true;
 	}
+    }
+  return false;
+}
+
+bool	Room::findPlayer(const AClient &playerToFind)
+{
+  std::list<Player*>::iterator	it;
+
+  for (it = player.begin(); it != player.end(); it++)
+    {
+      if (playerToFind.getIp() == (*it)->getIp())
+	return true;
     }
   return false;
 }
