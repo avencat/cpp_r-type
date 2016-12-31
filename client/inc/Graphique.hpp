@@ -98,6 +98,11 @@ private:
 	Object						newObject;
 	long							score;
 	PlayerLink				link;
+	short						newX;
+	short						newY;
+	short						oldX;
+	short						oldY;
+	short						mainShipId;
 };
 
 #endif /* !GRAPHIQUE_HPP_ */

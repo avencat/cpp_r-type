@@ -12,7 +12,7 @@ public:
 
 	bool		isUp() const;
 	bool		joinServer(const std::string &ip, const std::string &username);
-	bool		run();
+	bool		run(const bool &);
 
 private:
 	Graphique	graphique;

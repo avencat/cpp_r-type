@@ -19,8 +19,11 @@ bool Core::joinServer(const std::string &ip, const std::string &username)
 	return (socket.connectServ(ip, username));
 }
 
-bool Core::run()
+bool Core::run(const bool &debug)
 {
+	if (debug) {
+		graphique.loadScene(ScenesEnum::InGame);
+	}
 	while (this->graphique.isOpen() && !this->socket.getInternalError())
 	{
 		if (graphique.getIp().length() > 0 && graphique.getUsername().length() > 0 && socket.getStatus() == 0) {

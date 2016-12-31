@@ -10,7 +10,8 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::InGame;
+	this->activeScene = ScenesEnum::getIp;
+	mainShipId = 1;
 }
 
 Graphique::~Graphique()
@@ -526,14 +527,18 @@ bool Graphique::handleServerCode()
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge2)), sizeof(charge.charge2));
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge3)), sizeof(charge.charge3));
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(charge.charge4)), sizeof(charge.charge4));
-		// TODO Charge Player
-
+		inGame.setChargeObj(0, charge.charge1 > 0 ? true : false);
+		inGame.setChargeObj(1, charge.charge1 > 0 ? true : false);
+		inGame.setChargeObj(2, charge.charge1 > 0 ? true : false);
+		inGame.setChargeObj(3, charge.charge1 > 0 ? true : false);
 		break;
 	case RtypeProtocol::serverCodes::PlayerDead:
-		// TODO kill Player
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(info.info)), sizeof(info.info));
+		inGame.destroyById(info.info);
 		break;
 	case RtypeProtocol::serverCodes::PlayerLeft:
-		// TODO leave Player
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(info.info)), sizeof(info.info));
+		inGame.destroyById(info.info);
 		break;
 	case RtypeProtocol::serverCodes::PlayerLives:
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(info.info)), sizeof(info.info));
@@ -595,26 +600,22 @@ bool	Graphique::inGameScene()
 		newObject.setPos(static_cast<int>(newObject.getComponent(1).getCSprite().getSize().x) * 2, 0);
 		inGame.addObject(newObject);
 
-
 		// set Var ship
 		maxspeed = 4.0f;
 		accel = 1.5f;
 		decel = 0.1f;
 		// To delete down
-		position.x = (50 * static_cast<float>(window.getSize().x)) / 100;
-		position.y = (100 * static_cast<float>(window.getSize().y)) / 100;
+		position.x = (10 * static_cast<float>(window.getSize().x)) / 100;
+		position.y = (40 * static_cast<float>(window.getSize().y)) / 100;
 		// To delete up
 		velocity.x = 0.1f;
 		velocity.y = 0.1f;
 
-
-
-
 		// set the mainShip
 		mainShip.setLife(1);
 		mainShip.setScore(0);
-		mainShip.setId(1);
-		mainShip.setLongName(1);
+		mainShip.setId(mainShipId);
+		mainShip.setLongName(mainShipId);
 		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
 		mainShip.addAComponent(2, Sprite::TypeSpriteEnum::Load, 0);
 		mainShip.setPos(position.x, position.y);
@@ -627,8 +628,7 @@ bool	Graphique::inGameScene()
 	inGame.refreshAnimation();
 	inGame.restartClock();
 
-	// REMETTRE AVANT DE PUSH
-	//handleServerCode();
+	handleServerCode();
 
 	event = sf::Event();
 	while (window.pollEvent(event))
@@ -659,8 +659,7 @@ bool	Graphique::inGameScene()
 				isCharging = 1;
 				std::cout << "Shot !" << std::endl << std::endl;
 				link.shoot();
-				inGame.setChargeObj(1, false);
-				
+				inGame.setChargeObj(mainShipId, false);
 			}
 			break;
 		default:
@@ -699,12 +698,10 @@ bool	Graphique::inGameScene()
 		if (isCharging == 0) {
 			std::cout << "Charge !" << std::endl;
 			link.charge();
-			inGame.setChargeObj(1, true);
-			isCharging++;
-		} else if (isCharging == 10) {
+			inGame.setChargeObj(mainShipId, true);
+			isCharging = 2;
+		} else if (isCharging == 1) {
 			isCharging = 0;
-		} else {
-			isCharging++;
 		}
 	}
 
@@ -719,20 +716,32 @@ bool	Graphique::inGameScene()
 	position += velocity;
 	if (position.x < 0)
 		position.x = 0;
-	else if (position.x > static_cast<float>(window.getSize().x) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width))
-		position.x = static_cast<float>(window.getSize().x) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().width);
+	else if (position.x > static_cast<float>(window.getSize().x) - static_cast<float>(inGame.getObj(mainShipId).getComponent(1).getCSprite().getSprite().getGlobalBounds().width))
+		position.x = static_cast<float>(window.getSize().x) - static_cast<float>(inGame.getObj(mainShipId).getComponent(1).getCSprite().getSprite().getGlobalBounds().width);
 	if (position.y < 0)
 		position.y = 0;
-	else if (position.y > static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height))
-		position.y = static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(1).getComponent(1).getCSprite().getSprite().getGlobalBounds().height);
-	if (static_cast<int>(position.x - inGame.getObj(1).getPos().x) != 0 || static_cast<int>(position.y - inGame.getObj(1).getPos().y) != 0) {
-		link.move(inGame.getObj(1).getPos().x - position.x, inGame.getObj(1).getPos().y - position.y);
-		inGame.setObjPos(1, sf::Vector2i(position.x, position.y));
+	else if (position.y > static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(mainShipId).getComponent(1).getCSprite().getSprite().getGlobalBounds().height))
+		position.y = static_cast<float>(window.getSize().y) - static_cast<float>(inGame.getObj(mainShipId).getComponent(1).getCSprite().getSprite().getGlobalBounds().height);
+	if (static_cast<int>(position.x - inGame.getObj(mainShipId).getPos().x) > 0)
+		newX = 1;
+	else if (static_cast<int>(position.x - inGame.getObj(mainShipId).getPos().x) < 0)
+		newX = -1;
+	else
+		newX = 0;
+	if (static_cast<int>(position.y - inGame.getObj(mainShipId).getPos().y) > 0)
+		newY = 1;
+	else if (static_cast<int>(position.y - inGame.getObj(mainShipId).getPos().y) < 0)
+		newY = -1;
+	else
+		newY = 0;
+	if (newX != oldX || newY != oldY) {
+		oldX = newX;
+		oldY = newY;
+		link.move(inGame.getObj(mainShipId).getPos().x - position.x, inGame.getObj(mainShipId).getPos().y - position.y);
 	}
-	//
-	//  SEND MSG SERVER POSITION
-	//
-
+	if (static_cast<int>(position.x - inGame.getObj(mainShipId).getPos().x) != 0 || static_cast<int>(position.y - inGame.getObj(mainShipId).getPos().y) != 0) {
+		inGame.setObjPos(mainShipId, sf::Vector2i(position.x, position.y));
+	}
 
 	return (true);
 }

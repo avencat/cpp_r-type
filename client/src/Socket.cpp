@@ -35,6 +35,10 @@ bool Socket::send(std::stringstream &dataToSend)
 
 bool Socket::receive(const size_t &sizeToReceive)
 {
+	if (!isInit) {
+		std::cerr << "[Socket Error] You must init the socket before send anything through it!" << std::endl;
+		return (false);
+	}
 	receivedData.str("");
 	if (!this->socket.recvFrom(receivedData, sizeToReceive))
 	{

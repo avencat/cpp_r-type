@@ -9,7 +9,7 @@ RoomManager::RoomManager(Socket &socket) : socket(socket)
 	listRooms.push_back(Room(12, 3, RtypeProtocol::roomState::Waiting));
 	currentRoom = listRooms.front();
 	currentRoom.setNbUsers(3);
-	currentRoom.setPlayer1("Théo");
+	currentRoom.setPlayer1("Thï¿½o");
 	currentRoom.setPlayer2("Louis");
 	currentRoom.setPlayer3("Axel");
 	currentRoom.setP1Ready(true);
@@ -306,6 +306,7 @@ bool								RoomManager::manageServerCodes(const int &serverCode)
 	RtypeProtocol::Data::RoomInfo	roomInfo;
 	RtypeProtocol::Data::RoomBegin	roomBegin;
 	RtypeProtocol::Data::RoomJoined	joined;
+	RtypeProtocol::Data::GameStart	start;
 
 	if (serverCode == 0)
 		socket.getReceivedData().read(reinterpret_cast<char *>(&(code.code)), sizeof(code.code));
@@ -407,6 +408,14 @@ Failed to create a new room. You should try to refresh the rooms list and try ag
 		return (false);
 	case RtypeProtocol::serverCodes::GameStart:
 		gameStarted = true;
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(start.name1)), sizeof(start.name1));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(start.name2)), sizeof(start.name2));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(start.name3)), sizeof(start.name3));
+		socket.getReceivedData().read(reinterpret_cast<char *>(&(start.name4)), sizeof(start.name4));
+		currentRoom.setPlayer1(start.name1);
+		currentRoom.setPlayer2(start.name2);
+		currentRoom.setPlayer3(start.name3);
+		currentRoom.setPlayer4(start.name4);
 		std::cout << "The game has started with " << currentRoom.getNbUsers() << " players." << std::endl;
 		std::cout << "Good luck " << socket.getUsername() << "! :)" << std::endl;
 	default:
