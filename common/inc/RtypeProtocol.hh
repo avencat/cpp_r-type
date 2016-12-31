@@ -11,6 +11,9 @@
 #ifndef RTYPEPROTOCOL_HH_
 # define RTYPEPROTOCOL_HH_
 
+# include <iostream>
+# include <string>
+
 namespace RtypeProtocol
 {
   // Codes
@@ -46,6 +49,8 @@ namespace RtypeProtocol
     ErrServerClosing = 500
   };
 
+    std::ostream  &operator<<(std::ostream &os, const serverCodes &code);
+
   // Client codes
   enum class clientCodes: short
   {
@@ -66,6 +71,8 @@ namespace RtypeProtocol
     GameMenu
   };
   // !Codes
+
+  std::ostream  &operator<<(std::ostream &os, const clientCodes &code);
 
   // Conversion functions
   short		convertShort(const clientCodes a);
