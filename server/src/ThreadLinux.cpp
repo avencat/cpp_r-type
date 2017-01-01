@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Wed Dec 14 17:01:58 2016 Maxime BOUCHER
-// Last update Sat Dec 31 15:36:03 2016 Maxime BOUCHER
+// Last update Sun Jan  1 16:03:22 2017 Maxime BOUCHER
 //
 
 #include "ThreadLinux.hpp"
@@ -31,6 +31,12 @@ int	Thread::lockMutex()
   return (0);
 }
 
+int	Thread::lockPlayer()
+{
+  pthread_mutex_lock(&player);
+  return (0);
+}
+
 void	Thread::wait()
 {
   pthread_mutex_lock(&lock);
@@ -46,6 +52,11 @@ void	Thread::signal()
 int	Thread::unlockMutex()
 {
   return (pthread_mutex_unlock(&lock));
+}
+
+int	Thread::unlockPlayer()
+{
+  return (pthread_mutex_unlock(&player));
 }
 
 void	Thread::join()

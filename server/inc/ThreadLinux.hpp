@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Wed Dec 14 16:26:49 2016 Maxime BOUCHER
-// Last update Thu Dec 29 17:19:25 2016 Maxime BOUCHER
+// Last update Sun Jan  1 16:01:54 2017 Maxime BOUCHER
 //
 
 #ifndef THREADLINUX_HPP_
@@ -22,6 +22,7 @@ class		Thread:public AThread
 private:
   pthread_t		thread;
   pthread_mutex_t	lock;
+  pthread_mutex_t	player;
   pthread_cond_t	waiting;
 
 public:
@@ -31,6 +32,8 @@ public:
   virtual void		deleteThread();
   int			unlockMutex();
   int			lockMutex();
+  int			unlockPlayer();
+  int			lockPlayer();
   void			wait();
   void			signal();
   void			join();
