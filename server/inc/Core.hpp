@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:10 2016 Maxime BOUCHER
-// Last update Sun Jan  1 15:32:51 2017 Maxime BOUCHER
+// Last update Sun Jan  1 16:38:22 2017 Maxime BOUCHER
 //
 
 #ifndef CORE_HPP_
@@ -23,6 +23,7 @@ public:
   Core();
   ~Core();
 
+  bool				addPlayerInRoom(AClient &, const int);
   bool				lockPlayerRoom(const AClient, const bool);
   void				initRooms(int);
   void				checkRooms();

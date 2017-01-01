@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 15:36:23 2017 Maxime BOUCHER
+// Last update Sun Jan  1 17:03:08 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -15,7 +15,7 @@ Core::~Core(){}
 
 void		Core::initRooms(int tic)
 {
-  for (int i = 0; i < 8; ++i)
+  for (int i = 0; i < 3; ++i)
     waiting_rooms.push_back(new Room(tic, i));
 }
 
@@ -57,6 +57,21 @@ void		Core::checkRooms()
     }
 }
 
+bool		Core::addPlayerInRoom(AClient &client,const int id)
+{
+  Player	player(client);
+
+  for (std::list<Room *>::iterator it = active_rooms.begin(); it != active_rooms.end(); it++)
+    {
+      if ((*it)->getId() == id)
+	{
+	  (*it)->addPlayer(&player);
+	  return true;
+	}
+    }
+  return false;
+}
+
 int		Core::activateRoom(const int id)
 {
 
@@ -84,6 +99,7 @@ void		Core::endAll()
   std::list<Room*>::iterator	it;
   int				i;
 
+  std::cout << "end all" << std::endl;
   i = 0;
   while (!waiting_rooms.empty())
     {

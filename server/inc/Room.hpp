@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:23 2016 Maxime BOUCHER
-// Last update Sun Jan  1 15:32:05 2017 Maxime BOUCHER
+// Last update Sun Jan  1 16:00:38 2017 Maxime BOUCHER
 //
 
 #ifndef ROOM_HPP_
@@ -49,6 +49,8 @@ public:
   static void			*startThread(void *data);
   int				unlockMutex();
   int				lockMutex();
+  int				lockPlayer();
+  int				unlockPlayer();
   void				endLoop();
   void				join();
   void				loop();

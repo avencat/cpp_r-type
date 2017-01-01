@@ -5,13 +5,14 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:16 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 15:01:15 2016 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 17:01:11 2017 Maxime BOUCHER
 //
 
 #include "Player.hpp"
 
-Player::Player(const AClient &client) : AClient(client)
+Player::Player(AClient &client) : AClient(client)
 {
+  msg = client.getMsgQueue();
   this->isInRoom = false;
   this->isReady = false;
   this->score = 0;
