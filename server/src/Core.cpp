@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 17:03:08 2017 Maxime BOUCHER
+// Last update Sun Jan  1 20:06:43 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include "Core.hpp"
@@ -61,6 +61,7 @@ bool		Core::addPlayerInRoom(AClient &client,const int id)
 {
   Player	player(client);
 
+  std::cout << std::boolalpha << "player state is : " << (player.getIsReady()) << std::endl;
   for (std::list<Room *>::iterator it = active_rooms.begin(); it != active_rooms.end(); it++)
     {
       if ((*it)->getId() == id)
@@ -81,6 +82,7 @@ int		Core::activateRoom(const int id)
   waiting_rooms.front()->signal();
   waiting_rooms.front()->setActive(true);
   active_rooms.splice(active_rooms.end(),waiting_rooms, waiting_rooms.begin());
+  std::cout << "room activated" << std::endl;
   return id;
 }
 

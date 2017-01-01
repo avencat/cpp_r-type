@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Sun Jan  1 16:29:56 2017 Maxime BOUCHER
+// Last update Sun Jan  1 20:07:17 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include <unistd.h>
@@ -67,6 +67,7 @@ void	Room::queue()
   bool							chg;
 
   start = false;
+  std::cout << &thread;
   if (!active)
     wait();
   chg = true;
@@ -107,12 +108,15 @@ void	Room::queue()
 	}
       if (start == true)
 	{
+	  std::cout << "Room started." << std::endl;
 	  play();
 	  active = false;
 	}
       lockMutex();
     }
   unlockMutex();
+  std::cout << "Boucle terminée." << std::endl;
+  std::cout << "start = " << start << ", active = " << active << ", end = " << end << std::endl;
 }
 
 void	Room::play()
@@ -231,6 +235,7 @@ int	Room::getId()
 {
   int	tmp;
 
+  std::cout << "id thread" << &thread << std::endl;
   lockMutex();
   tmp = id;
   unlockMutex();

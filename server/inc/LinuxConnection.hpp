@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 17:03:58 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 11:09:56 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 18:42:06 2017 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef LINUXCONNECTION_HPP__
@@ -18,19 +18,18 @@
 # include <exception>
 # include <stdexcept>
 # include "INetwork.hpp"
-# include "Player.hpp"
-# include "RtypeProtocol.hh"
-# include "Configuration.hh"
 
 class Network: public INetwork
 {
 private:
+  Core				core;
   std::list<AClient>		clients;
   int				servSocket;
   socklen_t	       		clientLen;
   struct sockaddr_in		servAddr; // use to identifiate the client
   struct sockaddr_in		clientAddr;
   int				rv;
+  int				tickrate;
   char				msgReceived[1024];
 public:
   Network();
@@ -49,9 +48,12 @@ public:
   void				checkSyn(AClient &client);
   void				checkAck(AClient &client);
   void				checkUsername(AClient &client);
-  void				checkJoinRoom(AClient &client);
+  void				sendRoomList(AClient &client);
+  void				checkJoinRoom(AClient &client, bool avoid);
+  bool				checkRoomAvaibility(AClient &client, Room *room);
+  void				createRoom(AClient &client, int id);
+  void				checkCreateRoom(AClient &client);
   void				doPong(AClient &client);
-//bool				secureConnection(Socket &client);
 };
 
 class	ClientNotFoundException : public std::runtime_error

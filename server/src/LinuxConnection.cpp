@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 11:23:36 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 19:42:53 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include "LinuxConnection.hpp"
@@ -76,8 +76,8 @@ bool					Network::sendMsg(const std::string &msgToSend,
   clientAddrSize = sizeof(clientAddr);
 
   for (size_t i = 0; i < msgToSend.length(); ++i)
-    std::cout << "Msg[" << i << "]: " << static_cast<int>(static_cast<unsigned char>(msgToSend[i])) << std::endl;
-
+    std::cout << "MsgServer[" << i << "]: " << static_cast<int>(static_cast<unsigned char>(msgToSend[i])) << std::endl;
+  std::cout << std::endl;
   rv = sendto(this->servSocket, msgToSend.c_str(), msgToSend.length(), 0,
 	      (struct sockaddr *)&clientAddr, clientAddrSize);
   if (rv == -1)
@@ -110,11 +110,14 @@ bool					Network::runServer(bool stateServer,
   int					clientPort;
   std::list<AClient>::iterator		it;
 
+  this->tickrate = std::stoi(config.getConfigKey("tickrate"), nullptr, 0);
+  core.initRooms(this->tickrate);
   clientLen = sizeof(clientAddr);
   while (stateServer == true)
     {
       bzero(this->msgReceived, 1024);
       clientLen = sizeof(clientAddr);
+      core.checkRooms();
       rv = recvfrom(this->servSocket, this->msgReceived, 1024, 0,
 		    (struct sockaddr *)&clientAddr, &clientLen);
       if (rv < 0)
@@ -123,17 +126,21 @@ bool					Network::runServer(bool stateServer,
 	std::cout << "client quit." << std::endl;
       clientPort = ntohs(clientAddr.sin_port);
       std::string clientIp(inet_ntoa(clientAddr.sin_addr));
-      std::cout << "client ip : "<< clientIp << " , port : " << clientPort << std::endl;
+      std::cout << "/////// client ip : "<< clientIp
+		<< " , port : " << clientPort << "\\\\\\ "<< std::endl;
       if (std::find(clients.begin(), clients.end(), clientAddr) == clients.end())	
 	{
 	  addClient(clientIp, clientPort, clientAddr);
 	  config.addToWhitelist(clientIp);
-	  std::cout << "add to client list and whitelist" << std::endl;
+	  //std::cout << "add to client list and whitelist" << std::endl;
 	}
       try
 	{
         if (checkClientState(clientAddr) == true) {
           analyzeMsg(clientAddr);
+	  std::list<Room *> room;
+	  room = core.getListRoom();
+	  std::cout << "size room fin createRoom :" << room.size() << std::endl;
       }
     }
       catch (ClientNotFoundException &e)
@@ -165,21 +172,16 @@ void					Network::checkSyn(AClient &client)
   ss.read(reinterpret_cast<char*>(&(syn_ack.ack)), sizeof(syn_ack.ack));
   client.setSyn(syn_ack.syn);
   client.setState(AClient::State::SYN);
-  std::cout << "syn : " << syn_ack.syn << std::endl;
   syn_ack.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::SYN_ACK);
   ++syn_ack.syn;
   srand(time(NULL));
   syn_ack.ack = rand() % 1000;
-  std::cout << "syn + 1 : " << syn_ack.syn << std::endl;
-  std::cout << "ack : " << syn_ack.ack << std::endl;
   client.setAck(syn_ack.ack);
   ss.clear();
   ss.str("");
   ss.write(reinterpret_cast<char*>(&(syn_ack.code)), sizeof(syn_ack.code));
   ss.write(reinterpret_cast<char*>(&(syn_ack.syn)), sizeof(syn_ack.syn));
   ss.write(reinterpret_cast<char*>(&(syn_ack.ack)), sizeof(syn_ack.ack));
-  std::cout << "code renvoyé : " << syn_ack.code << "\nsyn renvoyé : " << syn_ack.syn 
-	    << "\nack renvoyé : " << syn_ack.ack <<std::endl;
   sendMsg(ss.str(), client.getclientAddr());
 }
 
@@ -204,15 +206,12 @@ void					Network::checkAck(AClient &client)
   ss.read(reinterpret_cast<char*>(&(syn_ack.ack)), sizeof(syn_ack.ack));
   if (syn_ack.ack != client.getAck() + 1)
     {
-      std::cout << "stored ack: " << client.getAck() << std::endl;
-      std::cout << "syn_ack.ack send by client: " << syn_ack.ack << std::endl;
-      std::cerr << "Handshake failed..." << std::endl;
+      sendCode(RtypeProtocol::serverCodes::ErrConnectionFailure, client);
       deleteClient(client);
       return;
     }
   client.setAck(syn_ack.ack);
   client.setState(AClient::State::ACK);
-  std::cout << "Send validation to client.\n" << std::endl;
   sendCode(RtypeProtocol::serverCodes::Accepted, client);
   std::cout << "Connection securised.\n" << std::endl;
 }
@@ -227,6 +226,36 @@ void					Network::doPong(AClient &client)
   sendCode(RtypeProtocol::serverCodes::Pong, client);
 }
 
+void					Network::sendRoomList(AClient &client)
+{
+  std::list<Room *>::iterator  		it;
+  std::stringstream			ss;
+  RtypeProtocol::Data::RoomBegin	roomBegin;
+  RtypeProtocol::Data::Room		room;
+  ss.clear();
+  ss.str("");
+  roomBegin.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomList);
+  roomBegin.tickrate = tickrate;
+  ss.write(reinterpret_cast<char*>(&(roomBegin.code)), sizeof(roomBegin.code));
+  ss.write(reinterpret_cast<char*>(&(roomBegin.tickrate)), sizeof(roomBegin.tickrate));  
+  sendMsg(ss.str(), client.getclientAddr());
+  for (it = core.getListRoom().begin(); it != core.getListRoom().end(); it++)
+    {
+      ss.clear();
+      ss.str("");
+      room.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Room);
+      room.roomID = (*it)->getId();
+      room.players = static_cast<char>((*it)->getNbPlayer());
+      room.state = static_cast<RtypeProtocol::roomState>((*it)->getState());
+      ss.write(reinterpret_cast<char*>(&(room.code)), sizeof(room.code));
+      ss.write(reinterpret_cast<char*>(&(room.roomID)), sizeof(room.roomID));
+      ss.write(reinterpret_cast<char*>(&(room.players)), sizeof(room.players));
+      ss.write(reinterpret_cast<char*>(&(room.state)), sizeof(room.state));
+      sendMsg(ss.str(), client.getclientAddr());
+    }
+  sendCode(RtypeProtocol::serverCodes::RoomListEnd, client);
+}
+
 void					Network::checkUsername(AClient &client)
 {
   std::stringstream			ss;
@@ -234,7 +263,10 @@ void					Network::checkUsername(AClient &client)
   RtypeProtocol::Data::Username		username;
   unsigned long				size = sizeof(username.code) + sizeof(username.username);
   std::string	       			name;
+  std::list<Room *>			room;
 
+  room = core.getListRoom();
+  std::cout << "size room dans checkUsername : " << room.size() << std::endl;
   if (static_cast<unsigned long>(rv) != size)
     {
       sendCode(RtypeProtocol::serverCodes::ErrInvalidName, client);
@@ -247,25 +279,99 @@ void					Network::checkUsername(AClient &client)
   ss.read(reinterpret_cast<char*>(&(username.code)), sizeof(username.code));
   ss.read(reinterpret_cast<char*>(&(username.username)), sizeof(username.username));
   name = username.username;
-  if (name.length() < 2)
+  std::cout << "~~~~~  username is : " << name << "~~~~~" << std::endl;
+  if (name.length() < 2 || name.length() > 12)
     {
       sendCode(RtypeProtocol::serverCodes::ErrInvalidName, client);
       deleteClient(client);
       return;
     }
   client.setState(AClient::State::USERNAME);
-  //function return tickrate + list room (one by one) + code end list
-  sendCode(RtypeProtocol::serverCodes::Accepted, client);
+  sendRoomList(client);
+  }
+
+bool					Network::checkRoomAvaibility(AClient &client, 
+								     Room *room)
+{
+  std::stringstream			ss;
+  RtypeProtocol::Data::Code		code;
+
+  if (room->getState() == inGame)
+    {
+      sendCode(RtypeProtocol::serverCodes::ErrAlreadyStarted, client);
+      return false;
+    }
+  if (room->getNbPlayer() == 4)
+    {
+      sendCode(RtypeProtocol::serverCodes::ErrPlayerLimit, client);
+      return false;
+    }
+  return true;
 }
 
-void					Network::checkJoinRoom(AClient &client)
+void					Network::createRoom(AClient &client, int id)
 {
+  std::list<Room *>::iterator		it;
+  std::stringstream			ss;
+  RtypeProtocol::Data::RoomCreation    	newRoom;
+  std::list<Room *>			room;
+
+  ss.clear();
+  ss.str("");
+  newRoom.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::RoomCreated);
+  newRoom.id = core.activateRoom(id);
+  ss.write(reinterpret_cast<char*>(&(newRoom.code)), sizeof(newRoom.code));
+  ss.write(reinterpret_cast<char*>(&(newRoom.id)), sizeof(newRoom.id));  
+  sendMsg(ss.str(), client.getclientAddr());
+  checkJoinRoom(client, true);
+  room = core.getListRoom();
+  std::cout << "size room fin createRoom :" << room.size() << std::endl;
+}
+
+void					Network::checkCreateRoom(AClient &client)
+{
+  std::list<Room *>::iterator		it;
+  std::stringstream			ss;
+  RtypeProtocol::Data::RoomCreation    	newRoom;
+  unsigned long				size = sizeof(newRoom.code) + sizeof(newRoom.id);
+  std::list<Room *>			room;
+
+  if (static_cast<unsigned long>(rv) != size)
+    {
+      sendCode(RtypeProtocol::serverCodes::ErrIDConflict, client);
+      deleteClient(client);
+      return;
+    }
+  ss.clear();
+  ss.str("");
+  ss.write(this->msgReceived, size);
+  ss.read(reinterpret_cast<char*>(&(newRoom.code)), sizeof(newRoom.code));
+  ss.read(reinterpret_cast<char*>(&(newRoom.id)), sizeof(newRoom.id));
+  //std::cout << "--- Id new room is : " << newRoom.id << "---" << std::endl;
+  for (it = core.getListRoom().begin(); it != core.getListRoom().end(); it++)
+    {
+      if ((*it)->getId() == newRoom.id)
+	{
+	  sendCode(RtypeProtocol::serverCodes::ErrIDConflict, client);
+	  std::cout << "room : " << newRoom.id << "already exists" << std::cout;
+	  return;
+	}
+    }
+  createRoom(client, newRoom.id);
+  room = core.getListRoom();
+  std::cout << "size room fin checkcreateRoom :" << room.size() << std::endl;
+}
+
+void					Network::checkJoinRoom(AClient &client, bool avoid)
+{
+  std::list<Room *>			room;
+  std::list<Room *>::iterator		it;
   std::stringstream			ss;
   RtypeProtocol::Data::Code		code;
   RtypeProtocol::Data::RoomJoin		roomJoin;
   unsigned long				size = sizeof(roomJoin.code) + sizeof(roomJoin.id) + sizeof(roomJoin.mode);
 
-  if (static_cast<unsigned long>(rv) != size)
+  if (static_cast<unsigned long>(rv) != size && avoid == false)
     {
       sendCode(RtypeProtocol::serverCodes::ErrIDConflict, client);
       deleteClient(client);
@@ -277,6 +383,22 @@ void					Network::checkJoinRoom(AClient &client)
   ss.read(reinterpret_cast<char*>(&(roomJoin.code)), sizeof(roomJoin.code));
   ss.read(reinterpret_cast<char*>(&(roomJoin.id)), sizeof(roomJoin.id));  
   ss.read(reinterpret_cast<char*>(&(roomJoin.mode)), sizeof(roomJoin.mode));
+  for (it = core.getListRoom().begin(); it != core.getListRoom().end(); it++)
+    {
+      if ((*it)->getId() == roomJoin.id)
+	{
+	  std::cout << "(*it)->getId() : " << (*it)->getId() << std::endl;
+	  if (checkRoomAvaibility(client, *it) == true)
+	    {
+	      core.addPlayerInRoom(client, roomJoin.id);
+	      room = core.getListRoom();
+	      std::cout << "nbplayer in Room : " << (*it)->getNbPlayer() << std::endl;
+	      std::cout << "je verifie la taille :  " << room.size() << std::endl;
+	      return;
+	    }
+	}
+    }
+  createRoom(client, roomJoin.id);
 }
 
 void					Network::sendCode(const RtypeProtocol::Data::Code &code, AClient &client)
@@ -288,9 +410,7 @@ void					Network::sendCode(const RtypeProtocol::Data::Code &code, AClient &clien
   ss.clear();
   ss.str("");
   ss.write(reinterpret_cast<char*>(&(c)), sizeof(c));
-  std::cout << "sendCode() = " << code.code << std::endl;
   sendMsg(ss.str(), client.getclientAddr());
-  std::cout << "code sent" << std::endl;
 }
 
 void					Network::analyzeMsg(const struct sockaddr_in &client)
@@ -300,12 +420,15 @@ void					Network::analyzeMsg(const struct sockaddr_in &client)
   std::stringstream			ss;
   RtypeProtocol::clientCodes	       	code;
   std::list<AClient>::iterator		it;
+  std::list<Room *>			room;
 
+  room = core.getListRoom();
+  std::cout << "size room dans analyzeMsg :" << room.size() << std::endl;
   it = std::find(clients.begin(), clients.end(), client);
   ss.clear();
   ss.write(this->msgReceived, size);
   ss.read(reinterpret_cast<char*>(&(code_send.code)), sizeof(code_send.code));
-  std::cout << "code is : " << code_send.code << std::endl;
+  std::cout << "----- code is : " << code_send.code << "-----" << std::endl;
   code = RtypeProtocol::convertClient(code_send.code);
   switch(it->getState())
     {
@@ -344,16 +467,21 @@ void					Network::analyzeMsg(const struct sockaddr_in &client)
 	    doPong(*it);
 	    break;
 	  case RtypeProtocol::clientCodes::RoomJoin:
-	    std::cout << "RoomJoin" << std::endl;
+	    checkJoinRoom(*it, false);
 	    break;
 	  case RtypeProtocol::clientCodes::RoomCreate:
-	    std::cout << "RoomCreate" << std::endl;
+	    {
+	    checkCreateRoom(*it);
+	    std::list<Room *> room;
+	    room = core.getListRoom();
+	    std::cout << "size room fin createRoom :" << room.size() << std::endl;
+	    }
 	    break;
 	  default:
 	    {
 	      ss.clear();
 	      ss.str("");
-	      std::cout << "Code [: " << code << "] not found" << std::endl;
+	      std::cout << "-----Code : [" << code << "] not found-----" << std::endl;
 	      sendCode(RtypeProtocol::serverCodes::ErrNotFound, *it);
 	    }
 	    

@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:37 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 17:01:05 2017 Maxime BOUCHER
+// Last update Sun Jan  1 19:59:47 2017 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef PLAYER_HPP__
@@ -16,17 +16,17 @@
 class			Player : public AClient
 {
 private:
-  bool			isReady;
   int			score;
   int			lives;
   int			powerup;
+  bool			isReady;
   std::vector<std::string>	msg;	
 
 public:
   Player(AClient &);
   ~Player();
-  void				setIsReady(bool state);
-  bool				getIsReady(void);
+  void				setIsReady(const bool state);
+  bool				getIsReady(void) const;
   void				setScore(int nb);
   int				getScore(void);
   void				setLives(int nb);

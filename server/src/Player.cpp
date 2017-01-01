@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:16 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 17:01:11 2017 Maxime BOUCHER
+// Last update Sun Jan  1 19:59:55 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include "Player.hpp"
@@ -22,11 +22,11 @@ Player::Player(AClient &client) : AClient(client)
 
 Player::~Player() {}
 
-void			Player::setIsReady(bool state)
+void			Player::setIsReady(const bool state)
 {
   this->isReady = state;
 }
-bool			Player::getIsReady(void)
+bool			Player::getIsReady(void) const
 {
   return this->isReady;
 }
