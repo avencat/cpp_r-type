@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:23 2016 Maxime BOUCHER
-// Last update Sun Jan  1 14:29:15 2017 Maxime BOUCHER
+// Last update Sun Jan  1 15:32:05 2017 Maxime BOUCHER
 //
 
 #ifndef ROOM_HPP_
@@ -62,6 +62,7 @@ public:
   bool				deletePlayer(Player *);
   bool				deleteViewer(Player *);
   bool				isActive();
+  void				setId(const int);
   void				setActive(const bool);
   void				play();
   void				wait();

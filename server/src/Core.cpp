@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 15:22:27 2017 Maxime BOUCHER
+// Last update Sun Jan  1 15:36:23 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -57,13 +57,12 @@ void		Core::checkRooms()
     }
 }
 
-int		Core::activateRoom()
+int		Core::activateRoom(const int id)
 {
-  int		id;
 
   if (waiting_rooms.empty())
     return -1;
-  id =   waiting_rooms.front()->getId();
+  waiting_rooms.front()->setId(id);
   waiting_rooms.front()->signal();
   waiting_rooms.front()->setActive(true);
   active_rooms.splice(active_rooms.end(),waiting_rooms, waiting_rooms.begin());
@@ -83,10 +82,13 @@ size_t		Core::sizeActivate()
 void		Core::endAll()
 {
   std::list<Room*>::iterator	it;
+  int				i;
 
+  i = 0;
   while (!waiting_rooms.empty())
     {
-      activateRoom();
+      i++;
+      activateRoom(i);
       it = active_rooms.begin();
       (*it)->endLoop();
       (*it)->join();      

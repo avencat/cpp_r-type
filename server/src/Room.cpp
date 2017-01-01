@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Sun Jan  1 14:29:48 2017 Maxime BOUCHER
+// Last update Sun Jan  1 15:31:49 2017 Maxime BOUCHER
 //
 
 #include <unistd.h>
@@ -107,6 +107,11 @@ void	Room::play()
     {
       
     }
+}
+
+void	Room::setId(const int newid)
+{
+  id = newid;
 }
 
 void	Room::wait()
