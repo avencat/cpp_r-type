@@ -57,6 +57,16 @@ bool						Scene::loadFont(const std::string &fontName)
 	return (true);
 }
 
+void						Scene::setScore(const int &_score)
+{
+	score.push_back(_score);
+}
+
+const std::vector<int>		&Scene::getScore() const
+{
+	return (score);
+}
+
 const std::string			&Scene::getText(const unsigned int &id)
 {
 	wildString = "";

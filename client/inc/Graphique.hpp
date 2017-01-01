@@ -21,6 +21,7 @@ enum ScenesEnum
 	listRooms,
 	lobby,
 	InGame,
+	GameScore,
 	null,
 };
 
@@ -47,6 +48,7 @@ public:
 	bool						showRoomScene();
 	bool						lobbyScene();
 	bool						inGameScene();
+	bool						GameScoreScene();
 
 	const std::string			&getUsername() const;
 	const std::string			&getIp() const;
@@ -78,6 +80,7 @@ private:
 	Scene						listRooms;
 	Scene						lobby;
 	Scene						inGame;
+	Scene						gameScore;
 	sf::Event					event;
 	sf::Vector2f				pos;
 	char						focus;

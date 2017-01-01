@@ -69,14 +69,19 @@ void							Sprite::setSprite(const Sprite::TypeSpriteEnum &_type, const int &lvl
 		}
 		setSpriteRect(lvl * 30, 54, 30, 26);
 		break;
-	case Sprite::TypeSpriteEnum::Ennemies:
+	case Sprite::TypeSpriteEnum::RedShip:
 		if (!texture.loadFromFile("./assets/Sprites/r-typesheet5.gif")) {
 			std::cout << "Failed to load the texture ennemies" << std::endl;
 		}
 		setSpriteRect(lvl * 33, 0, 33, 36);
 		break;
+	case Sprite::TypeSpriteEnum::BrownSoldier:
+		if (!texture.loadFromFile("./assets/Sprites/r-typesheet7.gif")) {
+			std::cout << "Failed to load the texture ennemies" << std::endl;
+		}
+		setSpriteRect(0, 0, 33, 33);
+		break;
 	case Sprite::TypeSpriteEnum::Background:
-		// if (!texture.loadFromFile("./assets/Sprites/espace_background_rtype.jpg")) {
 		if (!texture.loadFromFile("./assets/Sprites/background.jpg")) {
 			std::cout << "Failed to load the background texture" << std::endl;
 		}

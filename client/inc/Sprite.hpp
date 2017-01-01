@@ -22,7 +22,8 @@ public:
 		Player4,
 		Bullet,
 		Load,
-		Ennemies,
+		RedShip,
+		BrownSoldier,
 		Background,
 		Null,
 	};

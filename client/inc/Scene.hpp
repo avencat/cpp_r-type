@@ -52,6 +52,8 @@ public:
 	const bool						&getEndGame() const;
 	bool							destroyById(const int &);
 	void 							setChargeObj(const long &, const bool &);
+	void							setScore(const int &);
+	const std::vector<int>			&getScore() const;
 
 private:
 	std::list<Object>				objects;
@@ -66,6 +68,7 @@ private:
 	std::vector<sf::Text>			button_text;
 	std::vector<sf::Text>			texts;
 	std::vector<Button*>			buttons;
+	std::vector<int>				score;
 	Animation						animation;
 	sf::Clock						clock;
 

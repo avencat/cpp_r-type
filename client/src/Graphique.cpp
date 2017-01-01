@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::getIp;
+	this->activeScene = ScenesEnum::InGame;
 	mainShipId = 1;
 }
 
@@ -55,6 +55,8 @@ bool Graphique::loadCurrentScene()
 		return (lobbyScene());
 	case ScenesEnum::InGame:
 		return (inGameScene());
+	case ScenesEnum::GameScore:
+		return (GameScoreScene());
 	default:
 		return (linkServerScene());
 	}
@@ -74,6 +76,8 @@ Scene	&Graphique::getActiveScene()
 		return (lobby);
 	case ScenesEnum::InGame:
 		return (inGame);
+	case ScenesEnum::GameScore:
+		return (gameScore);
 	default:
 		return (linkServer);
 	}
@@ -103,6 +107,10 @@ bool	Graphique::loadScene(const ScenesEnum sceneToLoad)
 		prevScene = activeScene;
 		activeScene = sceneToLoad;
 		return (inGameScene());
+	case ScenesEnum::GameScore:
+		prevScene = activeScene;
+		activeScene = sceneToLoad;
+		return (GameScoreScene());
 	default:
 		prevScene = activeScene;
 		activeScene = sceneToLoad;
@@ -623,7 +631,7 @@ bool	Graphique::inGameScene()
 		mainShip.setScore(0);
 		mainShip.setId(mainShipId);
 		mainShip.setLongName(mainShipId);
-		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
+		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::BrownSoldier, 0);
 		mainShip.addAComponent(2, Sprite::TypeSpriteEnum::Load, 0);
 		mainShip.setPos(position.x, position.y);
 		// SEND POS
@@ -765,4 +773,59 @@ short		Graphique::getMainShipId()
 		return (3);
 	}
 	return (1);
+}
+
+bool		Graphique::GameScoreScene()
+{
+	if (firstTime) {
+
+		if (!gameScore.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
+			return (false);
+		
+		gameScore.addText(sf::Vector2f(100 * static_cast<float>(window.getSize().x) / 1920, 100 * static_cast<float>(window.getSize().y) / 1080), "Score", 48);
+		gameScore.setTextColor(0, sf::Color::Yellow);
+
+		for (std::vector<int>::const_iterator i = gameScore.getScore().begin(); i != gameScore.getScore().end(); i++) {
+
+		}
+
+		gameScore.addButs("Menu", sf::Vector2f(100, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Ready);
+		gameScore.addButs("Quit", sf::Vector2f(350, 600), sf::Vector2f(160, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::NotReady);
+		firstTime = false;
+	}
+
+	if (roomManager.getGameStarted()) {
+		loadNextScene();
+	}
+
+	socket.receive(1000);
+	roomManager.manageServerCodes();
+
+	while (window.pollEvent(event))
+	{
+		switch (event.type)
+		{
+		case sf::Event::Closed:
+			closeWindow();
+			break;
+		case sf::Event::MouseButtonPressed:
+			pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			for (std::vector<Button *>::const_iterator i = gameScore.getButtons().begin(); i != gameScore.getButtons().end(); i++) {
+				
+			}
+			break;
+		case sf::Event::KeyPressed:
+			switch (event.key.code)
+			{
+			case sf::Keyboard::Escape:
+				closeWindow();
+				break;
+			default:
+				break;
+			}
+		default:
+			break;
+		}
+	}
+	return (true);
 }

@@ -12,6 +12,50 @@ Object::Object(const long &_longName, const sf::Vector2i &_pos, const sf::Vector
 	dir = _dir;
 	id = _id;
 	chargeShot = false;
+	switch (_longName)
+	{
+	case 40:
+		switch (_id)
+		{
+		case 0:
+			addAComponent(_id, Sprite::TypeSpriteEnum::Player1, 0);
+			break;
+		case 1:
+			addAComponent(_id, Sprite::TypeSpriteEnum::Player2, 0);
+			break;
+		case 2:
+			addAComponent(_id, Sprite::TypeSpriteEnum::Player3, 0);
+			break;
+		case 3:
+			addAComponent(_id, Sprite::TypeSpriteEnum::Player4, 0);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 1:
+		switch (_id)
+		{
+		case 2:
+			addAComponent(_id, Sprite::TypeSpriteEnum::Load, 0);
+			break;
+		case 3:
+			addAComponent(_id, Sprite::TypeSpriteEnum::Bullet, 0);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 4:
+		addAComponent(_id, Sprite::TypeSpriteEnum::RedShip, 0);
+		break;
+	case 5:
+		addAComponent(_id, Sprite::TypeSpriteEnum::BrownSoldier, 0);
+		break;
+	default:
+		break;
+	} 
+		
 }
 
 Object::~Object()
