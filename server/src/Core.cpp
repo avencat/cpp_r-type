@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 11:55:04 2017 Maxime BOUCHER
+// Last update Sun Jan  1 12:06:30 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -40,14 +40,20 @@ bool		Core::lockPlayerRoom(const AClient player, const bool lock)
 void		Core::checkRooms()
 {
   std::list<Room*>::iterator	it;
+  std::list<Room*>::iterator	tmp;
 
-  for (it = active_rooms.begin(); it != active_rooms.end(); it++)
+  it = active_rooms.begin();
+  while (it != active_rooms.end())
     {
       if ((*it)->isActive() == false)
 	{
 	  waiting_rooms.push_back(*it);
-	  active_rooms.erase(it);
+	  tmp = it;
+	  it++;
+	  active_rooms.erase(tmp);
 	}
+      else
+	it++;
     }
 }
 
