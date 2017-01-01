@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 00:59:15 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 10:40:11 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 16:55:39 2017 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef ACLIENT_HPP__
@@ -55,6 +55,7 @@ public:
   int  			getAck(void) const;
   void			setState(const State &state);
   const State  		&getState() const;
+  std::vector<std::string>	&getMsgQueue();
   void			setclientAddr(struct sockaddr_in &clientAddr);
   struct sockaddr_in    &getclientAddr(void);
   void			setIsInRoom(bool state);

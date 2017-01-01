@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 00:59:07 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 10:39:09 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 16:55:53 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include "AClient.hpp"
@@ -80,11 +80,15 @@ void			AClient::setState(const AClient::State &state)
 {
   this->state = state;
 }
-const AClient::State			&AClient::getState() const
+const AClient::State  	&AClient::getState() const
 {
   return this->state;
 }
 
+std::vector<std::string>	&AClient::getMsgQueue()
+{
+  return this->msgQueue;
+}
 
 void			AClient::setclientAddr(struct sockaddr_in &clientAddr)
 {
