@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 20:06:43 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 23:01:15 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -57,17 +57,18 @@ void		Core::checkRooms()
     }
 }
 
-bool		Core::addPlayerInRoom(AClient &client,const int id)
+std::vector<std::string>	Core::addPlayerInRoom(AClient &client,const int id)
 {
+  std::vector<std::string>	vec;
+
   for (std::list<Room *>::iterator it = active_rooms.begin(); it != active_rooms.end(); it++)
     {
       if ((*it)->getId() == id)
 	{
-	  (*it)->addPlayer(client);
-	  return true;
+	  return (*it)->addPlayer(client);
 	}
     }
-  return false;
+  return vec;
 }
 
 int		Core::activateRoom(const int id)
