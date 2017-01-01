@@ -12,6 +12,11 @@ Socket::~Socket()
 {
 }
 
+void 			Socket::setBlocking(const bool &blocking)
+{
+	socket.setBlocking(blocking);
+}
+
 std::stringstream	&Socket::getReceivedData()
 {
 	return (this->receivedData);
@@ -33,16 +38,18 @@ bool Socket::send(std::stringstream &dataToSend)
 	return (true);
 }
 
-bool Socket::receive(const size_t &sizeToReceive)
+bool Socket::receive(const size_t &sizeToReceive, const bool &showError)
 {
 	if (!isInit) {
-		std::cerr << "[Socket Error] You must init the socket before send anything through it!" << std::endl;
+		if (showError)
+			std::cerr << "[Socket Error] You must init the socket before send anything through it!" << std::endl;
 		return (false);
 	}
 	receivedData.str("");
 	if (!this->socket.recvFrom(receivedData, sizeToReceive))
 	{
-		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
+		if (showError)
+			std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
 	return (true);
@@ -67,9 +74,11 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 {
 	RtypeProtocol::Data::Handshake	syn;
 	RtypeProtocol::Data::Username	username;
+	std::stringstream		receivedCpy;
 
 	socket.create(_ip, 42142, ASocket::SockMode::UDP);
 	isInit = true;
+	socket.bind();
 	this->username = _username;
 	this->ip = _ip;
 	this->status = 1;
@@ -87,20 +96,20 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"SYN\" to " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
-	std::cout << "Sent message to " << this->ip << ":" << socket.getPort() << std::endl;
-	if (!socket.recvFrom(receivedData, sizeof(RtypeProtocol::Data::Handshake)))
+	if (!socket.recvFrom(receivedData, sizeof(syn.code) + sizeof(syn.syn) + sizeof(syn.ack)))
 	{
 		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
+	syn.code = 0;
+	syn.ack = 0;
+	syn.syn = 0;
 	receivedData.read(reinterpret_cast<char *>(&(syn.code)), sizeof(syn.code));
-	std::cout << "Received " << socket.getReceivedLength() << " bytes from " << ip << " on port " << socket.getPort() << " (" << syn.code << ")" << std::endl;
 	if (syn.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::SYN_ACK)) {
 		syn.code = RtypeProtocol::convertShort(RtypeProtocol::clientCodes::ACK);
 		receivedData.read(reinterpret_cast<char *>(&(syn.syn)), sizeof(syn.syn));
 		receivedData.read(reinterpret_cast<char *>(&(syn.ack)), sizeof(syn.ack));
 		syn.ack += 1;
-		syn.syn += 1;
 	} else {
 		std::cerr << "Server didn't accept you." << std::endl;
 		return (false);
@@ -114,13 +123,12 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"SYN\" to " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
-	if (!this->socket.recvFrom(receivedData, sizeof(RtypeProtocol::Data::Handshake)))
+	if (!this->socket.recvFrom(receivedData, sizeof(syn.code) + sizeof(syn.syn) + sizeof(syn.ack)))
 	{
 		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
 	receivedData.read(reinterpret_cast<char *>(&(syn.code)), sizeof(syn.code));
-	std::cout << "Received " << socket.getReceivedLength() << " bytes from " << ip << " on port " << socket.getPort() << " (" << syn.code << ")" << std::endl;
 	if (syn.code != RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Accepted)) {
 		std::cerr << "Server didn't accept you." << std::endl;
 		return (false);
@@ -131,25 +139,26 @@ bool Socket::connectServ(const std::string &_ip, const std::string &_username)
 	sentData.str("");
 	sentData.write(reinterpret_cast<char *>(&(username.code)), sizeof(username.code));
 	sentData.write(reinterpret_cast<char *>(&(username.username)), sizeof(username.username));
-	if (socket.sendTo(sentData))
+	if (!socket.sendTo(sentData))
 	{
 		std::cerr << "[INTERNAL ERROR] Couldn't send message :\"USERNAME\" to " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
-	if (socket.recvFrom(receivedData, sizeof(RtypeProtocol::Data::Username)))
+	if (!socket.recvFrom(receivedData, sizeof(RtypeProtocol::Data::Room::code) + sizeof(RtypeProtocol::Data::Room::players) +
+		       sizeof(RtypeProtocol::Data::Room::roomID) + sizeof(RtypeProtocol::Data::Room::state)))
 	{
 		std::cerr << "[TIMEOUT] Couldn't receive message from " << ip << ":" << socket.getPort() << std::endl;
 		return (false);
 	}
-	receivedData.read(reinterpret_cast<char *>(&(username.code)), sizeof(username.code));
-	std::cout << username.code << std::endl;
-	std::cout << "Received " << socket.getReceivedLength() << " bytes from " << ip << " on port " << socket.getPort() << " (" << username.code << ")" << std::endl;
+	receivedCpy.str(receivedData.str());
+	receivedCpy.read(reinterpret_cast<char *>(&(username.code)), sizeof(username.code));
 	if (username.code == RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrInvalidName)) {
 		std::cerr << "Server didn't accept you. (Bad Username)" << std::endl;
 		return (false);
 	}
 	this->status = 2;
 	socket.setBlocking(false);
+	code = username.code;
 	return (true);
 }
 

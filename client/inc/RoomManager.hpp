@@ -27,6 +27,12 @@ public:
 	const Room					&getCurrentRoom();
 	void						setCurrentPlayerReadiness(const bool &ready);
 	const bool					&getGameStarted() const;
+	const bool					&getRoomJoined() const;
+	void 						setRoomJoined(const bool &);
+	void							setP1Ready(const bool &);
+	void							setP2Ready(const bool &);
+	void							setP3Ready(const bool &);
+	void							setP4Ready(const bool &);
 
 private:
 	std::list<Room>		listRooms;
@@ -34,6 +40,7 @@ private:
 	Socket				&socket;
 	int					tickrate;
 	bool				gameStarted;
+	bool				roomJoined;
 	std::stringstream	sentData;
 };
 

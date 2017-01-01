@@ -22,6 +22,7 @@ public:
 		Ready,
 		NotReady,
 		Leave,
+		Refresh,
 	};
 
 	Button();

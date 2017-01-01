@@ -44,7 +44,6 @@ public:
 private:
 	std::pair<int, int>	pos;
 	std::string			name;
-	int					level;
 
 	sf::Texture			texture;
 	sf::Sprite			sprite;

@@ -161,6 +161,7 @@ bool Graphique::loadPrevScene()
 		return (linkServerScene());
 	case ScenesEnum::listRooms:
 		activeScene = prevScene;
+		prevScene = ScenesEnum::getIp;
 		return (showRoomScene());
 	default:
 		activeScene = ScenesEnum::getIp;
@@ -217,6 +218,11 @@ bool Graphique::isOpen() const
 bool Graphique::loadingScene()
 {
 	if (firstTime) {
+		loading = Scene();
+
+		background.loadFromFile("./assets/Sprites/background_menu.jpg");
+		loading.addSpriteInVector(sf::Sprite(background));
+
 		if (!loading.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
 			return (false);
 
@@ -233,12 +239,11 @@ bool Graphique::linkServerScene()
 	if (firstTime) {
 		focus = 0;
 
-		background.loadFromFile("./assets/Sprites/background_menu.jpg");
-		linkServer.addSpriteInVector(sf::Sprite(background));
-
 		if (!linkServer.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
 			return (false);
 
+		background.loadFromFile("./assets/Sprites/background_menu.jpg");
+		linkServer.addSpriteInVector(sf::Sprite(background));
 
 		// IP
 		linkServer.addText(sf::Vector2f(50 * static_cast<float>(window.getSize().x) / 1920, 315 * static_cast<float>(window.getSize().y) / 1080), "Ip:");
@@ -337,8 +342,12 @@ bool	Graphique::showRoomScene()
 
 	if (firstTime) {
 
+		listRooms = Scene();
+
 		background.loadFromFile("./assets/Sprites/background_menu.jpg");
 		listRooms.addSpriteInVector(sf::Sprite(background));
+
+		roomManager.setRoomJoined(false);
 
 		if (!listRooms.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
 			return (false);
@@ -346,21 +355,35 @@ bool	Graphique::showRoomScene()
 		listRooms.addText(sf::Vector2f(100 * static_cast<float>(window.getSize().x) / 1920, 100 * static_cast<float>(window.getSize().y) / 1080), "List of Room", 48);
 		listRooms.setTextColor(0, sf::Color::Blue);
 
-		//roomManager.roomList();
+		roomManager.roomList();
 		for (std::list<Room>::const_iterator i = roomManager.getRooms().begin(); i != roomManager.getRooms().end(); i++) {
 			if (i->getState() == RtypeProtocol::roomState::Waiting)
-				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(400, 40), sf::Color::Green, sf::Color::Transparent, Button::buttonEnum::Room);
+				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(420, 40), sf::Color::Green, sf::Color::Transparent, Button::buttonEnum::Room);
 			else if (i->getState() == RtypeProtocol::roomState::Full)
-				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(400, 50), sf::Color::Yellow, sf::Color::Transparent, Button::buttonEnum::Room);
+				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(420, 50), sf::Color::Yellow, sf::Color::Transparent, Button::buttonEnum::Room);
 			else
-				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(400, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Room);
+				listRooms.addButs(i->getText(), sf::Vector2f(50, j * 50 + 150), sf::Vector2f(420, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Room);
 			j++;
 		}
-		listRooms.addButs("Player", sf::Vector2f(100, 600), sf::Vector2f(100, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Player);
+		listRooms.addButs("Player", sf::Vector2f(100, 600), sf::Vector2f(160, 50), sf::Color::Red, sf::Color::Transparent, Button::buttonEnum::Player);
 		listRooms.addButs("Spectator", sf::Vector2f(300, 600), sf::Vector2f(160, 50), sf::Color::White, sf::Color::Transparent, Button::buttonEnum::Spectat);
-		listRooms.addButs("Create", sf::Vector2f(500, 600), sf::Vector2f(100, 50), sf::Color(204, 51, 102), sf::Color::Transparent, Button::buttonEnum::Create);
+		listRooms.addButs("Create", sf::Vector2f(500, 600), sf::Vector2f(160, 50), sf::Color(204, 51, 102), sf::Color::Transparent, Button::buttonEnum::Create);
+		listRooms.addButs("Refresh", sf::Vector2f(700, 600), sf::Vector2f(160, 50), sf::Color::Blue, sf::Color::Transparent, Button::buttonEnum::Refresh);
 		firstTime = false;
 	}
+
+	if (roomManager.getRoomJoined()) {
+		return (loadNextScene());
+	}
+
+	socket.setBlocking(false);
+	if (socket.receive(sizeof(RtypeProtocol::Data::RoomJoined::code) +
+	    sizeof(RtypeProtocol::Data::RoomJoined::id) +
+	    sizeof(RtypeProtocol::Data::RoomJoined::name1)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name2)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name3)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name4), false))
+	roomManager.manageServerCodes(0);
 
 	while (window.pollEvent(event))
 	{
@@ -376,12 +399,13 @@ bool	Graphique::showRoomScene()
 					if (k < roomManager.getRooms().size() && l->getState() == RtypeProtocol::roomState::Waiting) {
 						user == Player ?
 						std::cout << "You're joining the room as Player" << std::endl :
-						std::cout << "You're joining the room as spectator" << std::endl;
+						std::cout << "You're joining the room as Spectator" << std::endl;
+						activeScene = ScenesEnum::loading;
+						window.clear(sf::Color::Black);
+						drawObject();
+						window.display();
+						activeScene = ScenesEnum::listRooms;
 						if (roomManager.joinRoom(l->getId(), user == Player ? false : true)) {
-							return (loadNextScene());
-						}
-						// To delete (else) once the connection with the server is correctly established or the demo is finished
-						else {
 							return (loadNextScene());
 						}
 					}
@@ -391,18 +415,38 @@ bool	Graphique::showRoomScene()
 			k = 0;
 			for (std::vector<Button *>::const_iterator i = listRooms.getButtons().begin(); i != listRooms.getButtons().end(); i++) {
 				if (listRooms.buttonClik(k, pos)) {
-					if ((*i)->getId() == Button::buttonEnum::Player) {
-						setStatusUser(Player);
-						listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
-						listRooms.getButtons()[k + 1]->setTxtColor(sf::Color::White);
-					}
-					else if ((*i)->getId() == Button::buttonEnum::Spectat) {
-						setStatusUser(Spectator);
-						listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
-						listRooms.getButtons()[k - 1]->setTxtColor(sf::Color::White);
-					}
-					else if ((*i)->getId() == Button::buttonEnum::Room) {
-						// create room
+					switch ((*i)->getId()) {
+						case Button::buttonEnum::Player:
+							setStatusUser(Player);
+							listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
+							listRooms.getButtons()[k + 1]->setTxtColor(sf::Color::White);
+							break;
+						case Button::buttonEnum::Spectat:
+							setStatusUser(Spectator);
+							listRooms.getButtons()[k]->setTxtColor(sf::Color::Red);
+							listRooms.getButtons()[k - 1]->setTxtColor(sf::Color::White);
+							break;
+						case Button::buttonEnum::Create:
+							socket.setBlocking(true);
+							activeScene = ScenesEnum::loading;
+							window.clear(sf::Color::Black);
+							drawObject();
+							window.display();
+							activeScene = ScenesEnum::listRooms;
+							if (roomManager.createRoom())
+								return (loadNextScene());
+							break;
+						case Button::buttonEnum::Refresh:
+							socket.setBlocking(true);
+							activeScene = ScenesEnum::loading;
+							window.clear(sf::Color::Black);
+							drawObject();
+							window.display();
+							activeScene = ScenesEnum::listRooms;
+							roomManager.refreshRoomList();
+							break;
+						default:
+							break;
 					}
 				}
 				k++;
@@ -422,6 +466,7 @@ bool	Graphique::showRoomScene()
 			break;
 		}
 	}
+
 	return (true);
 }
 
@@ -430,7 +475,10 @@ bool	Graphique::lobbyScene()
 	int			k = 0;
 	std::string	room_str;
 
+	socket.setBlocking(false);
 	if (firstTime) {
+
+		lobby = Scene();
 
 		background.loadFromFile("./assets/Sprites/background_menu.jpg");
 		lobby.addSpriteInVector(sf::Sprite(background));
@@ -460,8 +508,13 @@ bool	Graphique::lobbyScene()
 		loadNextScene();
 	}
 
-	socket.receive(1000);
-	roomManager.manageServerCodes();
+	if (socket.receive(sizeof(RtypeProtocol::Data::RoomJoined::code) +
+	    sizeof(RtypeProtocol::Data::RoomJoined::id) +
+	    sizeof(RtypeProtocol::Data::RoomJoined::name1)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name2)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name3)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name4), false))
+	roomManager.manageServerCodes(0);
 
 	while (window.pollEvent(event))
 	{
@@ -479,29 +532,31 @@ bool	Graphique::lobbyScene()
 					case Button::buttonEnum::Ready:
 						roomManager.setCurrentPlayerReadiness(true);
 						std::cout << "READY !" << std::endl;
-						/*if (username == roomManager.getCurrentRoom().getPlayer1())
-							roomManager.getCurrentRoom().setP1Ready(true);
+						if (username == roomManager.getCurrentRoom().getPlayer1())
+							roomManager.setP1Ready(true);
 						else if (username == roomManager.getCurrentRoom().getPlayer2())
-							roomManager.getCurrentRoom().setP2Ready(true);
+							roomManager.setP2Ready(true);
 						else if (username == roomManager.getCurrentRoom().getPlayer3())
-							roomManager.getCurrentRoom().setP3Ready(true);
+							roomManager.setP3Ready(true);
 						else if (username == roomManager.getCurrentRoom().getPlayer4())
-							roomManager.getCurrentRoom().setP4Ready(true);*/
+							roomManager.setP4Ready(true);
 						break;
 					case Button::buttonEnum::NotReady:
 						roomManager.setCurrentPlayerReadiness(false);
 						std::cout << "NOT READY !" << std::endl;
-						/*if (username == roomManager.getCurrentRoom().getPlayer1())
-							roomManager.getCurrentRoom().setP1Ready(false);
+						if (username == roomManager.getCurrentRoom().getPlayer1())
+							roomManager.setP1Ready(false);
 						else if (username == roomManager.getCurrentRoom().getPlayer2())
-							roomManager.getCurrentRoom().setP2Ready(false);
+							roomManager.setP2Ready(false);
 						else if (username == roomManager.getCurrentRoom().getPlayer3())
-							roomManager.getCurrentRoom().setP3Ready(false);
+							roomManager.setP3Ready(false);
 						else if (username == roomManager.getCurrentRoom().getPlayer4())
-							roomManager.getCurrentRoom().setP4Ready(false);*/
+							roomManager.setP4Ready(false);
 						break;
 					case Button::buttonEnum::Leave:
 						std::cout << "LEAVE !" << std::endl;
+						roomManager.leaveRoom();
+						firstTime = true;
 						return (loadPrevScene());
 					default:
 						break;
@@ -536,7 +591,12 @@ bool Graphique::handleServerCode()
 	RtypeProtocol::Data::PlayerInfo		info;
 	RtypeProtocol::Data::PlayerScore	score;
 
-	if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined)))
+	if (!socket.receive(sizeof(RtypeProtocol::Data::RoomJoined::code) +
+	    sizeof(RtypeProtocol::Data::RoomJoined::id) +
+	    sizeof(RtypeProtocol::Data::RoomJoined::name1)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name2)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name3)
+	    + sizeof(RtypeProtocol::Data::RoomJoined::name4)))
 		return (false);
 	socket.getReceivedData().read(reinterpret_cast<char *>(&(code.code)), sizeof(code.code));
 	switch (RtypeProtocol::convertServer(code.code)) {
@@ -640,7 +700,7 @@ bool	Graphique::inGameScene()
 		mainShip.setScore(0);
 		mainShip.setId(mainShipId);
 		mainShip.setLongName(mainShipId);
-		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::BrownSoldier, 0);
+		mainShip.addAComponent(1, Sprite::TypeSpriteEnum::Player1, 0);
 		mainShip.addAComponent(2, Sprite::TypeSpriteEnum::Load, 0);
 		mainShip.setPos(position.x, position.y);
 		// SEND POS
@@ -790,7 +850,7 @@ bool		Graphique::GameScoreScene()
 
 		if (!gameScore.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
 			return (false);
-		
+
 		gameScore.addText(sf::Vector2f(100 * static_cast<float>(window.getSize().x) / 1920, 100 * static_cast<float>(window.getSize().y) / 1080), "Score", 48);
 		gameScore.setTextColor(0, sf::Color::Yellow);
 
@@ -820,7 +880,7 @@ bool		Graphique::GameScoreScene()
 		case sf::Event::MouseButtonPressed:
 			pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 			for (std::vector<Button *>::const_iterator i = gameScore.getButtons().begin(); i != gameScore.getButtons().end(); i++) {
-				
+
 			}
 			break;
 		case sf::Event::KeyPressed:

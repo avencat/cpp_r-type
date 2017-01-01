@@ -67,10 +67,10 @@ private:
 	u_short		port;
 	fd_set		readfs;
 	TIMEVAL		tv;
+	int		ttw;
 
 	int			sockInit();
 	int			sockQuit();
 };
 
 #endif /* !ASOCKET_HPP_ */
-

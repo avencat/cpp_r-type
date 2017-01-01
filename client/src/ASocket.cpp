@@ -3,7 +3,8 @@
 ASocket::ASocket()
 {
 	fromLen = sizeof(udpAddrFrom);
-	tv.tv_sec = 3;
+	ttw = 3;
+	tv.tv_sec = ttw;
 	tv.tv_usec = 0;
 	blocking = true;
 }
@@ -127,7 +128,8 @@ bool ASocket::recv(std::stringstream &data, const size_t &len, const int &flags)
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
 	if (!blocking) {
-		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
+		tv.tv_sec = 0;
+		if ((ret = select(sock + 1, &readfs, NULL, NULL, &tv)) < 0) {
 			perror("select()");
 			return (false);
 		}
@@ -136,7 +138,8 @@ bool ASocket::recv(std::stringstream &data, const size_t &len, const int &flags)
 			return (false);
 		}
 	} else {
-		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
+		tv.tv_sec = ttw;
+		if ((ret = select(sock + 1, &readfs, NULL, NULL, &tv)) < 0) {
 			perror("select()");
 			return (false);
 		}
@@ -152,7 +155,8 @@ bool ASocket::recv(std::stringstream &data, const size_t &len, const int &flags)
 		lastRecvDataLength = ::recv(sock, reinterpret_cast<void *>(buf), len, flags);
 #endif /* !_WIN32 */
 	}
-	data.str(buf);
+	data.str("");
+	data.write(buf, lastRecvDataLength);
 	return (lastRecvDataLength != -1);
 }
 
@@ -168,7 +172,8 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, SOCKADDR &des
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
 	if (!blocking) {
-		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
+		tv.tv_sec = 0;
+		if ((ret = select(sock + 1, &readfs, NULL, NULL, &tv)) < 0) {
 			perror("select()");
 			return (false);
 		}
@@ -177,6 +182,7 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, SOCKADDR &des
 			return (false);
 		}
 	} else {
+		tv.tv_sec = ttw;
 		if ((ret = select(sock + 1, &readfs, NULL, NULL, &tv)) < 0) {
 			perror("select()");
 			return (false);
@@ -193,7 +199,8 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, SOCKADDR &des
 		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<void *>(buf), len, flags, &dest, &destLen);
 #endif /* !_WIN32 */
 	}
-	data.str(buf);
+	data.str("");
+	data.write(buf, lastRecvDataLength);
 	return (lastRecvDataLength != -1);
 }
 
@@ -207,9 +214,9 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &fl
 	}
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
-    tv.tv_sec = 3;
 	if (!blocking) {
-		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
+		tv.tv_sec = 0;
+		if ((ret = select(sock + 1, &readfs, NULL, NULL, &tv)) < 0) {
 			perror("select()");
 			return (false);
 		}
@@ -218,7 +225,8 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &fl
 			return (false);
 		}
 	} else {
-		if ((ret = select(sock, &readfs, NULL, NULL, &tv)) < 0) {
+		tv.tv_sec = ttw;
+		if ((ret = select(sock + 1, &readfs, NULL, NULL, &tv)) < 0) {
 			perror("select()");
 			return (false);
 		}
@@ -234,10 +242,11 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &fl
 		lastRecvDataLength = ::recvfrom(sock, reinterpret_cast<void *>(buf), len, flags, &udpAddrFrom, &fromLen);
 #endif /* !_WIN32 */
 	}
-	data.str(buf);
+	data.str("");
+	data.write(buf, lastRecvDataLength);
 	return (lastRecvDataLength != -1);
 }
- 
+
 void ASocket::setBlocking(const bool &block)
 {
 	blocking = block;
