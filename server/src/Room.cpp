@@ -23,12 +23,12 @@ std::vector<std::string>	Room::getPlayers()
 {
   std::vector<std::string>	vec;
 
-  lockMutex();
-  for (std::list<Player*>::iterator it = player.begin(); it != player.end(); it++)
+  lockPlayer();
+  for (std::list<Player>::iterator it = player.begin(); it != player.end(); it++)
     {
-      vec.push_back((*it)->getUsername());
+      vec.push_back(it->getUsername());
     }
-  unlockMutex();
+  unlockPlayer();
   return vec;
 }
 
@@ -59,7 +59,7 @@ void	Room::loop()
 
 void	Room::queue()
 {
-  std::list<Player*>::iterator				it;
+  std::list<Player>::iterator				it;
   size_t						count;
   bool							start;
   std::chrono::seconds					sec(10);
@@ -73,47 +73,40 @@ void	Room::queue()
   chg = true;
   lockMutex();
   while (start == false && active == true && end == false)
-    {
+  {
       unlockMutex();
       lockPlayer();
       lockMutex();
       if (player.size() == 4)
-	state = Full;
+          state = Full;
       else
-	state = Waiting;
+          state = Waiting;
       unlockMutex();
-      if(player.size() != 0)
-	{
-	  unlockPlayer();
-	  chg = true;
-	  lockPlayer();
-	  it = player.begin();
-	  for (count = 1; count <= player.size(); count++, it++)
-	    {
-	      if (count == 1)
-		start = true;
-	      if ((*it)->getIsReady() == false)
-		start = false;
-	    }
-	  unlockPlayer();
-	}
-      else
-	{
-	  unlockPlayer();
-	  if (chg == true)
-	    lap = std::chrono::system_clock::now();
-	  else if (std::chrono::system_clock::now()-lap > sec)
-	    active = false;
-	  chg = false;
-	}
-      if (start == true)
-	{
-	  std::cout << "Room started." << std::endl;
-	  play();
-	  active = false;
-	}
+      if (player.size() != 0) {
+          chg = true;
+          it = player.begin();
+          for (count = 1; count <= player.size(); count++, it++) {
+              if (count == 1)
+                  start = true;
+              if (it->getIsReady() == false)
+                  start = false;
+          }
+          unlockPlayer();
+      } else {
+          unlockPlayer();
+          if (chg == true)
+              lap = std::chrono::system_clock::now();
+          else if (std::chrono::system_clock::now() - lap > sec)
+              active = false;
+          chg = false;
+      }
+      if (start == true) {
+          std::cout << "Room started." << std::endl;
+          play();
+          active = false;
+      }
       lockMutex();
-    }
+  }
   unlockMutex();
   std::cout << "Boucle terminée." << std::endl;
   std::cout << "start = " << start << ", active = " << active << ", end = " << end << std::endl;
@@ -242,7 +235,7 @@ int	Room::getId()
   return (tmp);
 }
 
-std::vector<std::string>	Room::addPlayer(Player *newPlayer)
+std::vector<std::string>	Room::addPlayer(AClient &newPlayer)
 {
   std::vector<std::string>	vec;
 
@@ -252,12 +245,12 @@ std::vector<std::string>	Room::addPlayer(Player *newPlayer)
       unlockPlayer();
       return vec;
     }
-  player.push_back(newPlayer);
+  player.push_back(Player(newPlayer));
   unlockPlayer();
   return getPlayers();
 }
 
-bool	Room::addViewer(Player *newViewer)
+bool	Room::addViewer(AClient &newViewer)
 {
   lockMutex();
   viewer.push_back(newViewer);
@@ -267,7 +260,7 @@ bool	Room::addViewer(Player *newViewer)
 
 bool	Room::deletePlayer(Player *delPlayer)
 {
-  std::list<Player*>::iterator	it;
+  std::list<Player>::iterator	it;
 
   lockPlayer();
   if (getNbPlayer() == 0)
@@ -277,7 +270,7 @@ bool	Room::deletePlayer(Player *delPlayer)
     }
   for (it = player.begin(); it != player.end(); it++)
     {
-      if ((*it)->getIp() == delPlayer->getIp() && (*it)->getPort() == delPlayer->getPort())
+      if (it->getIp() == delPlayer->getIp() && it->getPort() == delPlayer->getPort())
 	{
 	  player.erase(it);
 	  unlockPlayer();
@@ -288,9 +281,9 @@ bool	Room::deletePlayer(Player *delPlayer)
   return false;
 }
 
-bool	Room::deleteViewer(Player *delViewer)
+bool	Room::deleteViewer(AClient &delViewer)
 {
-  std::list<Player*>::iterator	it;
+  std::list<AClient>::iterator	it;
 
   lockMutex();
   if (getNbViewer() == 0)
@@ -300,7 +293,7 @@ bool	Room::deleteViewer(Player *delViewer)
     }
   for (it = viewer.begin(); it != viewer.end(); it++)
     {
-      if ((*it)->getIp() == delViewer->getIp() && (*it)->getPort() == delViewer->getPort())
+      if (it->getIp() == delViewer.getIp() && it->getPort() == delViewer.getPort())
 	{
 	  viewer.erase(it);
 	  unlockMutex();
@@ -313,12 +306,12 @@ bool	Room::deleteViewer(Player *delViewer)
 
 bool	Room::findPlayer(const AClient &playerToFind)
 {
-  std::list<Player*>::iterator	it;
+  std::list<Player>::iterator	it;
 
   lockPlayer();
   for (it = player.begin(); it != player.end(); it++)
     {
-      if (playerToFind.getIp() == (*it)->getIp())
+      if (playerToFind.getIp() == it->getIp())
 	{
 	  unlockPlayer();
 	  return true;

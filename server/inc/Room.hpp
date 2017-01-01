@@ -27,8 +27,8 @@ enum		eState
 class		Room
 {
 private:
-  std::list<Player*>	player;
-  std::list<Player*>	viewer;
+  std::list<Player>	player;
+  std::list<AClient>	viewer;
   short			ticrate;
   int			id;
   eState		state;
@@ -59,10 +59,10 @@ public:
   size_t			getNbViewer();
   int				getId();
   bool				findPlayer(const AClient &);
-  std::vector<std::string>	addPlayer(Player *);
-  bool				addViewer(Player *);
+  std::vector<std::string>	addPlayer(AClient &);
+  bool				addViewer(AClient&);
   bool				deletePlayer(Player *);
-  bool				deleteViewer(Player *);
+  bool				deleteViewer(AClient&);
   bool				isActive();
   void				setId(const int);
   void				setActive(const bool);

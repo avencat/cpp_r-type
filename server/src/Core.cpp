@@ -59,14 +59,11 @@ void		Core::checkRooms()
 
 bool		Core::addPlayerInRoom(AClient &client,const int id)
 {
-  Player	player(client);
-
-  std::cout << std::boolalpha << "player state is : " << (player.getIsReady()) << std::endl;
   for (std::list<Room *>::iterator it = active_rooms.begin(); it != active_rooms.end(); it++)
     {
       if ((*it)->getId() == id)
 	{
-	  (*it)->addPlayer(&player);
+	  (*it)->addPlayer(client);
 	  return true;
 	}
     }
