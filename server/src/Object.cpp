@@ -11,12 +11,8 @@
 #include <stdexcept>
 #include "Object.hh"
 
-Object::Object()
-{
-}
-
-Object::Object(const int id, const Object::Type &type, const int hp, const int move_x, const int move_y, Object *parent, const char playerID) :
-    _id(id), _type(type), _hp(hp), _movement(move_x, move_y), parent(parent), _playerID(playerID)
+Object::Object(const int id, const Object::Type &type, const int hp, const int move_x, const int move_y, Object *_parent, const char playerID) :
+    _id(id), _type(type), _hp(hp), _movement(move_x, move_y), parent(_parent), _playerID(playerID)
 {
     _reloading = 0;
     _reloadTime = 1000;

@@ -48,9 +48,8 @@ const std::vector<Object*>   &Level::getObjects() const
 int   Level::getAvailableID() const
 {
     int     id = 0;
-    Object  obj;
+    Object  obj(id);
 
-    obj.setId(id);
     while (std::find_if(objects.begin(), objects.end(), [&obj](const Object *p){ return *p == obj; }) != objects.end())
         obj.setId(++id);
     return (id);
@@ -80,8 +79,8 @@ Object::Type  Level::ObjectTypeToType(const LevelMapping::Object::ObjectType &_t
 void                        Level::createObject(const LevelMapping::Object &obj)
 {
     LevelMapping::mapCode   code = obj.getCode();
-    Object                  *_obj;
     AComponent              *comp;
+    Object                  *_obj;
 
     if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject)
     {
@@ -102,7 +101,7 @@ void                        Level::createObject(const LevelMapping::Object &obj)
         _obj->setHp(1);
         if (code == LevelMapping::mapCode::MovingObject)
         {
-            const LevelMapping::Pair  p = obj.getVector();
+            const LevelMapping::Pair p = obj.getVector();
             _obj->setMovement(p.x, p.y);
         }
         objects.push_back(_obj);

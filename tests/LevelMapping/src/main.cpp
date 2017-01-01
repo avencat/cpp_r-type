@@ -266,14 +266,17 @@ bool    levelMappingObjectToObject()
 
     std::cout << "==LEVEL MAPPING OBJECT TO OBJECT==" << std::endl;
     std::cout << "---LevelMapping Object---" << std::endl << "Struct:" << std::endl << a << std::endl;
-    Level   l("", true);
+    Level   l("");
     l.createObject(a);
+    l.dump();
     const std::vector<Object*> objs = l.getObjects();
-    std::cout << *(objs[0]) << std::endl;
-    if (objs[0]->getType() == Object::Type::PLAYER && objs[0]->getComponents().size() == 2)
+    if (objs.size() > 0)
     {
-        std::cout << "---Object data does match LevelMappingObject data---" << std::endl;
-        return (false);
+        std::cout << *(objs[0]) << std::endl;
+        if (objs[0]->getType() == Object::Type::PLAYER && objs[0]->getComponents().size() == 2) {
+            std::cout << "---Object data does match LevelMappingObject data---" << std::endl;
+            return (false);
+        }
     }
     std::cerr << "---Object data does not match LevelMappingObject data---" << std::endl;
     return (true);
@@ -301,7 +304,6 @@ bool    levelMappingMapRead(const std::string &fname)
     map.writeObject(b);
     map.writeObject(a);
     map.dump();
-    std::cout << std::endl << "Program should be \"paused\" for " << static_cast<double>(b.getWaitTime()) / 1000 << " seconds." << std::endl;
     waitingSince = std::chrono::steady_clock::now();
     while (l.readFile())
     {
@@ -310,6 +312,7 @@ bool    levelMappingMapRead(const std::string &fname)
             hasWait = true;
             std::cout << "Is waiting.. dumping current Level:" << std::endl;
             l.dump();
+            std::cout << std::endl << "Program should be \"paused\" for " << static_cast<double>(b.getWaitTime()) / 1000 << " seconds." << std::endl;
         }
     }
     tp = std::chrono::steady_clock::now();

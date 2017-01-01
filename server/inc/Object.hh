@@ -48,8 +48,7 @@ class		Object: public Relationnals<Object>
   double                    _reloading;
 
  public:
-  Object();
-  Object(const int id, const Type &type = Type::NONE, const int hp = 1, const int move_x = 0, const int move_y = 0, Object *parent = nullptr, const char playerID = 0);
+  Object(const int id, const Type &type = Type::NONE, const int hp = 1, const int move_x = 0, const int move_y = 0, Object *_parent = nullptr, const char playerID = 0);
   ~Object();
 
   const std::vector<AComponent*>		&getComponents() const;
