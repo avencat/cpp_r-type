@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 12:06:30 2017 Maxime BOUCHER
+// Last update Sun Jan  1 15:22:27 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -57,17 +57,20 @@ void		Core::checkRooms()
     }
 }
 
-bool		Core::activateRoom()
+int		Core::activateRoom()
 {
+  int		id;
+
   if (waiting_rooms.empty())
-    return false;
+    return -1;
+  id =   waiting_rooms.front()->getId();
   waiting_rooms.front()->signal();
   waiting_rooms.front()->setActive(true);
   active_rooms.splice(active_rooms.end(),waiting_rooms, waiting_rooms.begin());
-  return true;
+  return id;
 }
 
-std::list<Room*>	Core::getListRoom()
+std::list<Room*>	&Core::getListRoom()
 {
   return active_rooms;
 }
