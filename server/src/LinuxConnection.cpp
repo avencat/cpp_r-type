@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 19:42:53 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 21:51:14 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include "LinuxConnection.hpp"
@@ -126,13 +126,12 @@ bool					Network::runServer(bool stateServer,
 	std::cout << "client quit." << std::endl;
       clientPort = ntohs(clientAddr.sin_port);
       std::string clientIp(inet_ntoa(clientAddr.sin_addr));
-      std::cout << "/////// client ip : "<< clientIp
-		<< " , port : " << clientPort << "\\\\\\ "<< std::endl;
+      // std::cout << "/////// client ip : "<< clientIp
+      // 		<< " , port : " << clientPort << "\\\\\\ "<< std::endl;
       if (std::find(clients.begin(), clients.end(), clientAddr) == clients.end())	
 	{
 	  addClient(clientIp, clientPort, clientAddr);
 	  config.addToWhitelist(clientIp);
-	  //std::cout << "add to client list and whitelist" << std::endl;
 	}
       try
 	{
@@ -140,7 +139,6 @@ bool					Network::runServer(bool stateServer,
           analyzeMsg(clientAddr);
 	  std::list<Room *> room;
 	  room = core.getListRoom();
-	  std::cout << "size room fin createRoom :" << room.size() << std::endl;
       }
     }
       catch (ClientNotFoundException &e)
@@ -392,14 +390,25 @@ void					Network::checkJoinRoom(AClient &client, bool avoid)
 	    {
 	      core.addPlayerInRoom(client, roomJoin.id);
 	      room = core.getListRoom();
-	      std::cout << "nbplayer in Room : " << (*it)->getNbPlayer() << std::endl;
-	      std::cout << "je verifie la taille :  " << room.size() << std::endl;
+	      sendCode(RtypeProtocol::serverCodes::RoomJoined, client);
 	      return;
 	    }
 	}
     }
   createRoom(client, roomJoin.id);
 }
+
+// void					Network::refreshList(AClient &client)
+// {
+//   std::stringstream			ss;
+//   RtypeProtocol::Data::Code		code;
+
+//   ss.clear();
+//   ss.str("");
+//   ss.write(this->msgReceived, size);
+  
+// }
+
 
 void					Network::sendCode(const RtypeProtocol::Data::Code &code, AClient &client)
 {
@@ -470,13 +479,11 @@ void					Network::analyzeMsg(const struct sockaddr_in &client)
 	    checkJoinRoom(*it, false);
 	    break;
 	  case RtypeProtocol::clientCodes::RoomCreate:
-	    {
 	    checkCreateRoom(*it);
-	    std::list<Room *> room;
-	    room = core.getListRoom();
-	    std::cout << "size room fin createRoom :" << room.size() << std::endl;
-	    }
 	    break;
+	  // case RtypeProtocol::clientCodes::GameMenu:
+	  //   refreshList(*it);
+	  //   break;
 	  default:
 	    {
 	      ss.clear();
