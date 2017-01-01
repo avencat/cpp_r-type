@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sat Dec 31 19:38:28 2016 Maxime BOUCHER
+// Last update Sun Jan  1 11:24:12 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -13,10 +13,10 @@
 Core::Core(){}
 Core::~Core(){}
 
-void		Core::initRooms()
+void		Core::initRooms(short tic)
 {
   for (int i = 0; i < 8; ++i)
-    waiting_rooms.push_back(new Room);
+    waiting_rooms.push_back(new Room(tic, i));
 }
 
 bool		Core::lockPlayerRoom(const AClient player, const bool lock)

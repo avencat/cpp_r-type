@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Sat Dec 31 20:09:20 2016 Maxime BOUCHER
+// Last update Sun Jan  1 11:26:42 2017 Maxime BOUCHER
 //
 
 #include <unistd.h>
@@ -17,8 +17,21 @@ void	Room::setLevel(const int lvl)
   level = lvl;
 }
 
-Room::Room()
+std::vector<std::string>	Room::getPlayers()
 {
+  std::vector<std::string>	vec;
+
+  for (std::list<Player*>::iterator it = player.begin(); it != player.end(); it++)
+    {
+      vec.push_back((*it)->getUsername());
+    }
+  return vec;
+}
+
+Room::Room(short tic, int i)
+{
+  ticrate = tic;
+  id = i;
   end = false;
   active = false;
   this->thread.createThread(this);
@@ -146,12 +159,19 @@ size_t	Room::getNbPlayer()
   return (player.size());
 }
 
-bool	Room::addPlayer(Player *newPlayer)
+int	Room::getId()
 {
+  return (id);
+}
+
+std::vector<std::string>	Room::addPlayer(Player *newPlayer)
+{
+  std::vector<std::string>	vec;
+
   if (getNbPlayer() >= 4)
-    return false;
+    return vec;
   player.push_back(newPlayer);
-  return true;
+  return getPlayers();
 }
 
 bool	Room::addViewer(Player *newViewer)

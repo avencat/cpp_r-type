@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:23 2016 Maxime BOUCHER
-// Last update Sat Dec 31 19:34:54 2016 Maxime BOUCHER
+// Last update Sun Jan  1 11:25:45 2017 Maxime BOUCHER
 //
 
 #ifndef ROOM_HPP_
@@ -29,6 +29,7 @@ class		Room
 private:
   std::list<Player*>	player;
   std::list<Player*>	viewer;
+  short			ticrate;
   int			id;
   eState		state;
   int			level;
@@ -39,30 +40,32 @@ private:
   bool			end;
 
 public:
-  Room();
+  Room(short, int);
   ~Room();
 
-  size_t		getNbPlayer();
-  static void		*startThread(void *data);
-  int			unlockMutex();
-  int			lockMutex();
-  void			endLoop();
-  void			join();
-  void			loop();
-  void			queue();
-  void			setLevel(const int);
-  size_t		getNbViewer();
-  bool			findPlayer(const AClient &);
-  bool			addPlayer(Player *);
-  bool			addViewer(Player *);
-  bool			deletePlayer(Player *);
-  bool			deleteViewer(Player *);
-  bool			isActive();
-  void			setActive(const bool);
-  void			play();
-  void			wait();
-  void			signal();
-  Thread		&getThread();
+  std::vector<std::string>	getPlayers();
+  size_t			getNbPlayer();
+  static void			*startThread(void *data);
+  int				unlockMutex();
+  int				lockMutex();
+  void				endLoop();
+  void				join();
+  void				loop();
+  void				queue();
+  void				setLevel(const int);
+  size_t			getNbViewer();
+  int				getId();
+  bool				findPlayer(const AClient &);
+  std::vector<std::string>	addPlayer(Player *);
+  bool				addViewer(Player *);
+  bool				deletePlayer(Player *);
+  bool				deleteViewer(Player *);
+  bool				isActive();
+  void				setActive(const bool);
+  void				play();
+  void				wait();
+  void				signal();
+  Thread			&getThread();
 };
 
 #endif /* !ROOM_HPP_ */
