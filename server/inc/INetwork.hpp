@@ -1,15 +1,15 @@
 //
-// INetwork.hpp for INetwork in /home/van-de_j/Tek3/rendu/RType/test_rtype
+// ANetwork.hpp for ANetwork in /home/van-de_j/Tek3/rendu/RType/rtype
 // 
 // Made by Jessica VAN-DEN-ZANDE
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:47:42 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 16:36:17 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 23:05:06 2017 Jessica VAN-DEN-ZANDE
 //
 
-#ifndef TEST_RTYPE_INETWORK_HPP
-# define TEST_RTYPE_INETWORK_HPP
+#ifndef ANETWORK_HPP
+# define ANETWORK_HPP
 
 # include <iostream>
 # include <list>
@@ -23,6 +23,7 @@
 # include <stdlib.h>
 # include <sstream>
 # include <string>
+# include <vector>
 # include "Configuration.hh"
 # include "Core.hpp"
 # include "Player.hpp"
@@ -37,4 +38,4 @@ public:
 			 Configuration &config) = 0;
 };
 
-#endif /* TEST_RTYPE_INETWORK_HPP */
+#endif /* ANETWORK_HPP */

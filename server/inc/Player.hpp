@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:37 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 19:59:47 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 22:38:20 2017 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef PLAYER_HPP__
@@ -13,13 +13,13 @@
 
 # include "AClient.hpp"
 
-class			Player : public AClient
+class				Player : public AClient
 {
 private:
-  int			score;
-  int			lives;
-  int			powerup;
-  bool			isReady;
+  int				score;
+  int				lives;
+  int				powerup;
+  bool				isReady;
   std::vector<std::string>	msg;	
 
 public:

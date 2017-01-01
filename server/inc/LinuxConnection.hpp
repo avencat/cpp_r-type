@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 17:03:58 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 18:42:06 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 23:34:58 2017 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef LINUXCONNECTION_HPP__
@@ -35,7 +35,7 @@ public:
   Network();
   ~Network();
   bool				initServer(const int port);
-  bool				runServer(bool stateServer, Configuration &config);
+  bool				runServer(const bool stateServer, Configuration &config);
   void				addClient(const std::string &ip, const int port, 
 					  struct sockaddr_in &clientAddr);
   void				deleteClient(const AClient &toDelete);
