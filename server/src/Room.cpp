@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Sun Jan  1 23:39:53 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 23:43:12 2017 Maxime BOUCHER
 //
 
 #include <unistd.h>
@@ -67,7 +67,6 @@ void	Room::queue()
   bool							chg;
 
   start = false;
-  std::cout << &thread;
   if (!active)
     wait();
   chg = true;

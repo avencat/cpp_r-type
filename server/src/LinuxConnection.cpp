@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 23:38:49 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 23:46:50 2017 Maxime BOUCHER
 //
 
 #include "LinuxConnection.hpp"
@@ -74,7 +74,6 @@ bool					Network::sendMsg(const std::string &msgToSend,
   size_t				clientAddrSize;
 
   clientAddrSize = sizeof(clientAddr);
-  std::cout << std::endl;
   rv = sendto(this->servSocket, msgToSend.c_str(), msgToSend.length(), 0,
 	      (struct sockaddr *)&clientAddr, clientAddrSize);
   if (rv == -1)
