@@ -13,6 +13,7 @@
 Level::Level(const std::string &_fileName, const bool &forceTrunc) :
     fileName(_fileName), fileMap(fileName, forceTrunc), timeToWait(0)
 {
+    lastLoop = std::chrono::steady_clock::now();
 }
 
 Level::~Level()
@@ -79,11 +80,12 @@ Object::Type  Level::ObjectTypeToType(const LevelMapping::Object::ObjectType &_t
 void                        Level::createObject(const LevelMapping::Object &obj)
 {
     LevelMapping::mapCode   code = obj.getCode();
-    Object                  *_obj = new Object(getAvailableID());
+    Object                  *_obj;
     AComponent              *comp;
 
     if (code == LevelMapping::mapCode::Object || code == LevelMapping::mapCode::MovingObject)
     {
+        _obj = new Object(getAvailableID());
         _obj->setType(ObjectTypeToType(obj.getObjectType()));
         const std::vector<LevelMapping::Sprite> sprs = obj.getSprites();
         for (std::vector<LevelMapping::Sprite>::const_iterator it = sprs.begin(); it != sprs.end(); ++it)
@@ -238,6 +240,9 @@ void            Level::enemyCollision(Object &enemy, Object &coll) const
         case Object::Type::PLAYER | Object::Type::PLAYERBULLET :
             enemy.setHp(enemy.getHp() - 1);
             coll.setHp(0);
+            // TODO get bullet parent (player) and update score
+            //if (coll.getType() == Object::PLAYERBULLET && enemy.getHp() <= 0)
+                //coll.getParent()->getPlayerID();
             break;
         case Object::Type::ENEMY | Object::Type::ENEMYBULLET :
             break;
@@ -299,17 +304,47 @@ bool    Level::checkAlive()
     }
     for (std::vector<Object*>::iterator it = objects.begin(); it != objects.end(); ++it)
     {
-        return (true);
+        if ((*it)->getType() == Object::Type::PLAYER)
+            return (true);
     }
     return (false);
+}
+
+void                Level::checkFire(Object &obj)
+{
+    Object::Type    type = obj.getType();
+
+    // TODO check player_shot(s)
+    if (type == Object::Type::PLAYER || type == Object::Type::ENEMY)
+    {
+
+    }
+}
+
+void        Level::initGame(const int &players)
+{
+    Object  *_obj;
+
+    for (int i = 0; i < players; ++i)
+    {
+        _obj = new Object(i, Object::Type::PLAYER, 1, 0, 0, nullptr, static_cast<char>(i + 1));
+        _obj->addComponent(new Hitbox(10, 10, 25, 25));
+        _obj->addComponent(new Sprite("40", 10, 10));
+        objects.push_back(_obj);
+    }
 }
 
 bool        Level::loopGame()
 {
     readFile();
+    //checkFire();
     for (std::vector<Object*>::iterator obj = objects.begin(); obj != objects.end(); ++obj)
+    {
         (*obj)->moveComponents();
+        (*obj)->updateReload(std::chrono::duration<double>(lastLoop - std::chrono::steady_clock::now()).count());
+    }
     checkCollisions();
+    lastLoop = std::chrono::steady_clock::now();
     return (checkAlive());
 }
 

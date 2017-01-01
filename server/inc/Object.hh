@@ -42,17 +42,21 @@ class		Object: public Relationnals<Object>
   int				        _hp;
   std::pair<int, int>       _movement;
   Object                    *parent;
+  char                      _playerID;
   std::vector<Object*>      children;
+  double                    _reloadTime;
+  double                    _reloading;
 
  public:
   Object();
-  Object(const int id, const Type &type = Type::NONE, const int hp = 1, const int move_x = 0, const int move_y = 0);
+  Object(const int id, const Type &type = Type::NONE, const int hp = 1, const int move_x = 0, const int move_y = 0, Object *parent = nullptr, const char playerID = 0);
   ~Object();
 
   const std::vector<AComponent*>		&getComponents() const;
   int				getId() const;
   Object::Type		getType() const;
   int				getHp() const;
+  char              getPlayerID() const;
   const std::pair<int, int> &getMovement() const;
   void              addComponent(AComponent *component);
   void              moveComponents();
@@ -62,6 +66,10 @@ class		Object: public Relationnals<Object>
   void				setId(const int id);
   void				setHp(const int hp);
   void              setMovement(const int move_x, const int move_y);
+
+  bool              isLoaded() const;
+  void              reload();
+  void              updateReload(const double &time);
 
   void              setParent(Object *parent);
   const Object      *getParent() const;

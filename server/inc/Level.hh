@@ -52,7 +52,9 @@ public:
   void      enemyCollision(Object &enemy, Object &coll) const;
   void      updateObjectsOnCollision(const std::vector<std::pair<Object&, Object&>> &coll);
   void      checkCollisions();
+  void      checkFire(Object &obj);
   bool      checkAlive();
+  void      initGame(const int &players);
   bool      loopGame();
 
   void      dump() const;
@@ -66,8 +68,10 @@ private:
   std::streampos            checkpoint;
   double                    timeToWait;
   std::vector<Object*>      objects;
+  std::vector<Object*>      players;
   std::vector<Collider>     colliders;
-  std::chrono::steady_clock::time_point   waitingSince;
+  std::chrono::steady_clock::time_point waitingSince;
+  std::chrono::steady_clock::time_point lastLoop;
 };
 
 #endif /* !LEVEL_HH_ */

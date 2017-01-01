@@ -15,9 +15,11 @@ Object::Object()
 {
 }
 
-Object::Object(const int id, const Object::Type &type, const int hp, const int move_x, const int move_y) :
-    _id(id), _type(type), _hp(hp), _movement(move_x, move_y), parent(nullptr)
+Object::Object(const int id, const Object::Type &type, const int hp, const int move_x, const int move_y, Object *parent, const char playerID) :
+    _id(id), _type(type), _hp(hp), _movement(move_x, move_y), parent(parent), _playerID(playerID)
 {
+    _reloading = 0;
+    _reloadTime = 1000;
 }
 
 Object::~Object()
@@ -51,6 +53,11 @@ Object::Type		Object::getType() const
 int			Object::getHp() const
 {
   return (this->_hp);
+}
+
+char        Object::getPlayerID() const
+{
+    return (_playerID);
 }
 
 const std::pair<int, int> &Object::getMovement() const
@@ -117,6 +124,21 @@ void			Object::setHp(int hp)
 void    Object::setMovement(const int move_x, const int move_y)
 {
     _movement = std::pair<int, int>(move_x, move_y);
+}
+
+bool        Object::isLoaded() const
+{
+    return (_reloading <= 0.0);
+}
+
+void              Object::reload()
+{
+    _reloading = _reloadTime;
+}
+
+void              Object::updateReload(const double &time)
+{
+    _reloading = (_reloadTime - time < 0 ? 0 : _reloadTime - time);
 }
 
 void              Object::setParent(Object *_parent)
