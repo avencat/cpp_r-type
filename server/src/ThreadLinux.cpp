@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Wed Dec 14 17:01:58 2016 Maxime BOUCHER
-// Last update Sun Jan  1 16:03:22 2017 Maxime BOUCHER
+// Last update Sun Jan  1 17:46:43 2017 Maxime BOUCHER
 //
 
 #include "ThreadLinux.hpp"
@@ -14,6 +14,7 @@
 Thread::Thread()
 {
   lock = PTHREAD_MUTEX_INITIALIZER;
+  player = PTHREAD_MUTEX_INITIALIZER;
   waiting = PTHREAD_COND_INITIALIZER;
 }
 Thread::~Thread(){}
