@@ -25,12 +25,13 @@ class	Level
 private:
     struct Collider
     {
-        Hitbox  hb;
-        Object  obj;
+        Collider(Hitbox &_hb, Object &_obj) : hb(_hb), obj(_obj) {}
+        Hitbox  &hb;
+        Object  &obj;
     };
 
 public:
-  Level(const std::string &_fileName = "stage1.lvl");
+  Level(const std::string &_fileName = "stage1.lvl", const bool &forceTrunc = false);
   ~Level();
 
   const std::string	&getFileName() const;

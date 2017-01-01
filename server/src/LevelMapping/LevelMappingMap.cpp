@@ -14,10 +14,10 @@ LevelMapping::Map::Map()
 {
 }
 
-LevelMapping::Map::Map(const std::string &name) :
+LevelMapping::Map::Map(const std::string &name, const bool &forceTrunc) :
   filename(name)
 {
-  this->open(name);
+  this->open(name, forceTrunc);
 }
 
 LevelMapping::Map::~Map()
@@ -25,12 +25,17 @@ LevelMapping::Map::~Map()
   this->close();
 }
 
-bool	LevelMapping::Map::open(const std::string &name)
+bool	LevelMapping::Map::open(const std::string &name, const bool &forceTrunc)
 {
   filename = name;
-  file.open(filename, std::fstream::out | std::fstream::in | std::fstream::app);
-  if (!file)
-    file.open(filename, std::fstream::out | std::fstream::in | std::fstream::trunc);
+  if (forceTrunc)
+      file.open(filename, std::fstream::out | std::fstream::in | std::fstream::trunc);
+  else
+  {
+      file.open(filename, std::fstream::out | std::fstream::in | std::fstream::app);
+      if (!file)
+          file.open(filename, std::fstream::out | std::fstream::in | std::fstream::trunc);
+  }
   return (file.is_open());
 }
 

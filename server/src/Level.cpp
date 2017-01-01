@@ -10,8 +10,8 @@
 
 #include "Level.hh"
 
-Level::Level(const std::string &_fileName) :
-    fileName(_fileName), fileMap(fileName), timeToWait(0)
+Level::Level(const std::string &_fileName, const bool &forceTrunc) :
+    fileName(_fileName), fileMap(fileName, forceTrunc), timeToWait(0)
 {
 }
 
@@ -197,20 +197,17 @@ bool		Level::readFile(const std::string &fname)
 void        Level::gatherHitboxes()
 {
     std::vector<AComponent*>    comps;
-    Level::Collider             coll;
 
     colliders.clear();
     for (std::vector<Object*>::iterator obj = objects.begin(); obj != objects.end(); ++obj)
     {
-        coll.obj = *(*obj);
         comps.clear();
         comps = (*obj)->getComponents();
         for (std::vector<AComponent*>::iterator comp = comps.begin(); comp != comps.end(); ++comp)
         {
             if ((*comp)->getId() == AComponent::Type::HITBOX)
             {
-                coll.hb = *(dynamic_cast<Hitbox *>(*comp));
-                colliders.push_back(coll);
+                colliders.push_back(Level::Collider(*(dynamic_cast<Hitbox *>(*comp)), *(*obj)));
             }
         }
     }

@@ -175,7 +175,7 @@ std::fstream			&LevelMapping::operator<<(std::fstream &fs, const LevelMapping::S
 
 std::ostream	&LevelMapping::operator<<(std::ostream &os, const LevelMapping::StringData &str)
 {
-  os << str.data;
+  os.write(str.data.c_str(), str.length);
   return (os);
 }
 

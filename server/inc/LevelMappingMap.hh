@@ -19,11 +19,11 @@ namespace LevelMapping
   {
   public:
     Map();
-    Map(const std::string &name);
+    Map(const std::string &name, const bool &forceTrunc = false);
     ~Map();
 
   public:
-    bool	open(const std::string &name);
+    bool	open(const std::string &name, const bool &forceTrunc = false);
     void    close();
     bool	isOpen() const;
     bool    eof() const;

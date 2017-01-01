@@ -16,12 +16,16 @@ Object::Object()
 }
 
 Object::Object(const int id, const Object::Type &type, const int hp, const int move_x, const int move_y) :
-    _id(id), _type(type), _hp(hp), _movement(move_x, move_y)
+    _id(id), _type(type), _hp(hp), _movement(move_x, move_y), parent(nullptr)
 {
 }
 
 Object::~Object()
 {
+    if (parent)
+        parent->removeChild(this);
+    for (std::vector<Object*>::iterator it = children.begin(); it != children.end(); ++it)
+        (*it)->setParent(nullptr);
     while (_components.begin() != _components.end())
     {
         delete *(_components.begin());
@@ -113,6 +117,37 @@ void			Object::setHp(int hp)
 void    Object::setMovement(const int move_x, const int move_y)
 {
     _movement = std::pair<int, int>(move_x, move_y);
+}
+
+void              Object::setParent(Object *_parent)
+{
+    parent = _parent;
+}
+
+const Object      *Object::getParent() const
+{
+    return (parent);
+}
+
+void                                  Object::removeChild(Object *child)
+{
+    std::vector<Object*>::iterator    it;
+
+    if ((it = std::find(children.begin(), children.end(), child)) != children.end())
+        children.erase(it);
+}
+
+void              Object::addChild(const Object *child)
+{
+    std::vector<Object*>::iterator    it;
+
+    if ((it = std::find(children.begin(), children.end(), child)) == children.end())
+        children.erase(it);
+}
+
+const std::vector<Object*>    &Object::getChildren() const
+{
+    return (children);
 }
 
 bool    operator==(const Object &a, const Object &b)

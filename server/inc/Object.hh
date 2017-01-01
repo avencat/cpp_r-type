@@ -11,6 +11,7 @@
 #ifndef OBJECT_HH_
 # define OBJECT_HH_
 
+# include <algorithm>
 # include <exception>
 # include <iostream>
 # include <string>
@@ -40,6 +41,8 @@ class		Object: public Relationnals<Object>
   Object::Type		        _type;
   int				        _hp;
   std::pair<int, int>       _movement;
+  Object                    *parent;
+  std::vector<Object*>      children;
 
  public:
   Object();
@@ -59,6 +62,12 @@ class		Object: public Relationnals<Object>
   void				setId(const int id);
   void				setHp(const int hp);
   void              setMovement(const int move_x, const int move_y);
+
+  void              setParent(Object *parent);
+  const Object      *getParent() const;
+  void              removeChild(Object *child);
+  void              addChild(const Object *child);
+  const std::vector<Object*>  &getChildren() const;
 
   friend bool    operator==(const Object &a, const Object &b);
   friend bool    operator<(const Object &a, const Object &b);
