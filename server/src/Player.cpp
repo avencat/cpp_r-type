@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 01:05:16 2016 Jessica VAN-DEN-ZANDE
-// Last update Sun Jan  1 19:59:55 2017 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 23:35:02 2017 Maxime BOUCHER
 //
 
 #include "Player.hpp"
@@ -13,6 +13,7 @@
 Player::Player(AClient &client) : AClient(client)
 {
   msg = client.getMsgQueue();
+  this->username = client.getUsername();
   this->isInRoom = false;
   this->isReady = false;
   this->score = 0;

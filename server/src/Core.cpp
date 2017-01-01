@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 23:01:15 2017 Maxime BOUCHER
+// Last update Sun Jan  1 23:32:53 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -15,7 +15,7 @@ Core::~Core(){}
 
 void		Core::initRooms(int tic)
 {
-  for (int i = 0; i < 3; ++i)
+  for (int i = 0; i < 10; ++i)
     waiting_rooms.push_back(new Room(tic, i));
 }
 
