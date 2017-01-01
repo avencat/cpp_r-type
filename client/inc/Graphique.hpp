@@ -92,6 +92,7 @@ private:
 	// Scene In Game
 	unsigned short				isCharging;
 	Object						mainShip;
+	sf::Texture					background;
 	sf::Vector2f				position;
 	sf::Vector2f				velocity;
 	float						maxspeed;

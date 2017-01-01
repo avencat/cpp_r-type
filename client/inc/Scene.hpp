@@ -42,6 +42,7 @@ public:
 	const sf::Clock					&getClock() const;
 	void							refreshAnimation();
 	void							restartClock();
+	void							addSpriteInVector(const sf::Sprite &);
 
 
 	void							addButs(const std::string &, const sf::Vector2f &, const sf::Vector2f &, const sf::Color &, const sf::Color &, const Button::buttonEnum &);

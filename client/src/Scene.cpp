@@ -111,6 +111,11 @@ void						Scene::removeBackText(const unsigned int &id)
 	}
 }
 
+void						Scene::addSpriteInVector(const sf::Sprite &_sprite)
+{
+	sprites.push_back(_sprite);
+}
+
 void						Scene::addSprite(const sf::Vector2f &pos, const sf::Vector2f &size, const std::string &file, const sf::Vector2f &winsize)
 {
 	sf::Texture tx;

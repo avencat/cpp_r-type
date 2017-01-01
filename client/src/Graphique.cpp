@@ -10,7 +10,7 @@ Graphique::Graphique(Socket &socket, const int &_x, const int &_y, const std::st
 	this->username = "";
 	this->firstTime = true;
 	this->user = Player;
-	this->activeScene = ScenesEnum::InGame;
+	this->activeScene = ScenesEnum::listRooms;
 	mainShipId = 1;
 }
 
@@ -333,6 +333,9 @@ bool	Graphique::showRoomScene()
 	unsigned int	k = 0;
 
 	if (firstTime) {
+
+		background.loadFromFile("./assets/Sprites/background_menu.jpg");
+		listRooms.addSpriteInVector(sf::Sprite(background));
 
 		if (!listRooms.loadFont("./assets/fonts/Inconsolata-Regular.ttf"))
 			return (false);
