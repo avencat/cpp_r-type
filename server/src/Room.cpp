@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:44:37 2016 Maxime BOUCHER
-// Last update Sun Jan  1 11:26:42 2017 Maxime BOUCHER
+// Last update Sun Jan  1 14:29:48 2017 Maxime BOUCHER
 //
 
 #include <unistd.h>
@@ -157,6 +157,11 @@ bool	Room::isActive()
 size_t	Room::getNbPlayer()
 {
   return (player.size());
+}
+
+eState	Room::getState()
+{
+  return state;
 }
 
 int	Room::getId()

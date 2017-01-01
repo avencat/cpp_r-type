@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Tue Dec 13 16:45:23 2016 Maxime BOUCHER
-// Last update Sun Jan  1 11:25:45 2017 Maxime BOUCHER
+// Last update Sun Jan  1 14:29:15 2017 Maxime BOUCHER
 //
 
 #ifndef ROOM_HPP_
@@ -45,6 +45,7 @@ public:
 
   std::vector<std::string>	getPlayers();
   size_t			getNbPlayer();
+  eState			getState();
   static void			*startThread(void *data);
   int				unlockMutex();
   int				lockMutex();
