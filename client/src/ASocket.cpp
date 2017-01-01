@@ -207,6 +207,7 @@ bool ASocket::recvFrom(std::stringstream &data, const size_t &len, const int &fl
 	}
 	FD_ZERO(&readfs);
 	FD_SET(sock, &readfs);
+    tv.tv_sec = 3;
 	if (!blocking) {
 		if ((ret = select(sock + 1, &readfs, NULL, NULL, 0)) < 0) {
 			perror("select()");

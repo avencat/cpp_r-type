@@ -56,11 +56,12 @@ class	ClientNotFoundException : public std::runtime_error
 {
 private:
   std::string			ip;
-  std::stringstream		ss;
+
 public:
   ClientNotFoundException(const std::string &ip);
-  virtual const char *what() throw();
-  std::string		&getIp();
+  virtual const char *what() const throw();
+  const std::string		&getIp() const;
+	void				setIp(const std::string &_ip);
 };
 
 #endif /* !LINUXCONNECTION_HPP__ */

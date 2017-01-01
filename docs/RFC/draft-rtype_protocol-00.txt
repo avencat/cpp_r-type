@@ -1,0 +1,1131 @@
+R-Type group                                                M. Boucher
+Internet Draft                                               K. Rochon
+Intended status: Informational                               T. Touzet
+Expires: May 22, 2017                                 J. Van-den-zande
+                                                       A. Vencatareddy
+                                                              L. Vezia
+                                                               EPITECH
+                                                     November 22, 2016
+
+
+
+                              R-Type protocol
+                        draft-rtype_protocol-00.txt
+
+
+Status of this Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79. This document may not be modified,
+   and derivative works of it may not be created, except to publish it
+   as an RFC and to translate it into languages other than English.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html
+
+   This Internet-Draft will expire on May 22 2017.
+
+Copyright Notice
+
+   Copyright (c) 2016 IETF Trust and the persons identified as the
+   document authors. All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+
+
+
+Touzet                  Expires May 22, 2017                  [Page 1]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   publication of this document. Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document. Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Abstract
+
+   The R-Type protocol has been created to allow communication between
+   an R-Type server and several clients. This protocol will define the
+   two-way communication upon connection, during the game and after the
+   game.
+
+Table of Contents
+
+
+   1. Introduction ................................................ 3
+      1.1. Client ................................................. 3
+      1.2. Server ................................................. 3
+   2. Conventions used in this document............................ 3
+   3. Connection phase ............................................ 4
+      3.1. Handshake .............................................. 4
+         3.1.1. Format ............................................ 4
+         3.1.2. Example ........................................... 5
+      3.2. Username and room list.................................. 5
+         3.2.1. Format ............................................ 6
+         3.2.2. Examples .......................................... 6
+      3.3. Room join and room create............................... 7
+         3.3.1. Format ............................................ 7
+         3.3.2. Examples .......................................... 8
+      3.4. Readiness and room leaving.............................. 8
+         3.4.1. Format ............................................ 9
+         3.4.2. Examples: ......................................... 9
+      3.5. Game start ............................................ 10
+         3.5.1. Format ........................................... 10
+         3.5.2. Example .......................................... 10
+   4. Game phase ................................................. 10
+      4.1. Client actions ........................................ 10
+         4.1.1. Format ........................................... 11
+         4.1.2. Examples ......................................... 11
+      4.2. Objects ............................................... 11
+         4.2.1. Objects creation.................................. 12
+            4.2.1.1. Format....................................... 12
+            4.2.1.2. Example...................................... 12
+         4.2.2. Objects update.................................... 12
+            4.2.2.1. Format....................................... 12
+
+
+Touzet                  Expires May 22, 2017                  [Page 2]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+            4.2.2.2. Example...................................... 12
+         4.2.3. Objects destruction............................... 12
+            4.2.3.1. Format....................................... 13
+            4.2.3.2. Example...................................... 13
+      4.3. Game information....................................... 13
+         4.3.1. Format ........................................... 13
+         4.3.2. Examples ......................................... 14
+      4.4. Game over ............................................. 14
+         4.4.1. Format ........................................... 14
+         4.4.2. Example .......................................... 14
+   5. After game phase ........................................... 15
+      5.1. Format ................................................ 15
+      5.2. Examples .............................................. 16
+   6. Other commands ............................................. 16
+      6.1. Format ................................................ 16
+      6.2. Examples .............................................. 17
+   7. Security Considerations..................................... 17
+   8. IANA Considerations ........................................ 17
+   9. References ................................................. 17
+      9.1. Normative References................................... 17
+      9.2. Informative References................................. 18
+   10. Acknowledgments ........................................... 18
+
+1. Introduction
+
+   This RFC will cover the designed protocol of the R-Type software. R-
+   Type is a server to client game. No RFC has been created for this
+   purpose until now meaning the present RFC should be considered has
+   standard.
+
+   Every data will be ended by a carriage return, line feed (CRLF).
+
+1.1. Client
+
+   The R-Type client is a graphical interface that can be used to play
+   or watch a R-Type game. Every game can group up to 4 clients.
+
+1.2. Server
+
+   The R-Type server can be design to handle several games each
+   containing up to 4 players but this rule can be hack on server side.
+
+2. Conventions used in this document
+
+   In format sections, values above the message representation indicate
+   the data ranges expressed in bytes. Format sections do not include a
+   CRLF at the end of each message.
+
+
+Touzet                  Expires May 22, 2017                  [Page 3]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   In examples, "C:" and "S:" indicate lines sent by the client and
+   server respectively. In these examples, pipes (|) are used as a
+   separator between different values. Examples do not include a CRLF at
+   the end of each message.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+   In this document, these words will appear with that interpretation
+   only when in ALL CAPS. Lower case uses of these words are not to be
+   interpreted as carrying significance described in RFC 2119.
+
+   In this document, the characters ">>" preceding an indented line(s)
+   indicates a statement using the key words listed above. This
+   convention aids reviewers in quickly identifying or finding the
+   portions of this RFC covered by these keywords.
+
+3. Connection phase
+
+   This section will describe the connection phase of the R-Type
+   protocol.
+
+3.1. Handshake
+
+   The handshake used in the R-Type protocol is a standard three-way
+   handshake as used in TCP connection.
+   >> Handshake is REQUIRED meaning that any communication attempt not
+   starting by a three-way handshake MUST be rejected.
+   >> Client MUST provide a randomly generated number.
+   >> Server MUST respond this number incremented by one followed by
+   another number.
+   >> Client MUST send back this last number incremented by one.
+   Once the handshake has been verified, the client can provide his
+   credentials.
+
+3.1.1. Format
+
+   SYN (Client code 100):
+   0      2               6
+   +------+---------------+
+   | CODE | RANDOM_NUMBER |
+   +------+---------------+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                  [Page 4]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   SYN-ACK (Server code 100):
+   0     2                     6              10
+   +-----+---------------------+---------------+
+   | 100 | PREVIOUS_NUMBER + 1 | RANDOM_NUMBER |
+   +-----+---------------------+---------------+
+
+   ACK (Client code 101):
+   0      2                     6
+   +------+---------------------+
+   | CODE | PREVIOUS_NUMBER + 1 |
+   +------+---------------------+
+
+   ACCEPTED (Server code 200):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+3.1.2. Example
+
+   C: 100|4242
+   S: 100|4243|2121
+   C: 101|2122
+   S: 200
+
+3.2. Username and room list
+
+   >> The client MUST provide a username which will identify him to
+   others during the session.
+   >> The username MUST contain at least one character. Otherwise,
+   server will return ERR_INVALID_NAME and close the connection.
+
+   If the username is valid, the server will return the rate of update
+   (tickrate) and a list of currently existing rooms.
+   Room states can be the following:
+
+      o  0 - Waiting
+
+      o  1 - Full (maximum player number reached)
+
+      o  2 - Playing
+
+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                  [Page 5]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+3.2.1. Format
+
+   USERNAME (Client code 200):
+   0      2         14
+   +------+----------+
+   | CODE | USERNAME |
+   +------+----------+
+
+   ERR_INVALID_NAME (Server code 400):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   ROOM_LIST (Server code 201):
+   0      2          4
+   +------+----------+
+   | CODE | TICKRATE |
+   +------+----------+
+
+   ROOM (Server code 202):
+   0      2         6               7       8
+   +------+---------+---------------+-------+
+   | CODE | ROOM_ID | NB_OF_PLAYERS | STATE |
+   +------+---------+---------------+-------+
+
+   ROOM_LIST_END (Server code 203):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+3.2.2. Examples
+
+   Valid username example:
+   C: 200|NEW_USER
+   S: 201|64
+   S: 202|1|2|0
+   S: 202|2|1|1
+   S: 203
+
+   Invalid username example:
+   C: 200|
+   S: 400
+
+
+
+
+
+Touzet                  Expires May 22, 2017                  [Page 6]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+3.3. Room join and room create
+
+   A client can join a room as player or spectator. A client cannot join
+   a room as a player if it already has four players or if the game has
+   already started. If a player tries to join a room that does not
+   exist, the room will be created.
+   >> For a room to exist, it MUST have at least one player.
+
+   Different modes are:
+
+      o  0 - Player
+
+      o  1 - Spectator
+
+   The server will either reply by a ROOM_CREATED, ROOM_JOINED,
+   ERR_PLAYER_LIMIT, ERR_ALREADY_STARTED or ERR_ID_CONFLICT.
+
+3.3.1. Format
+
+   ROOM_JOIN (Client code 201):
+   0      2    6      7
+   +------+----+------+
+   | CODE | ID | MODE |
+   +------+----+------+
+
+   ROOM_CREATE (Client code 202):
+   0      2    6
+   +------+----+
+   | CODE | ID |
+   +------+----+
+
+   ROOM_JOINED (Server code 205):
+   0      2    6     18     30     42     54
+   +------+----+------+------+------+------+
+   | CODE | ID | NAME | NAME | NAME | NAME |
+   +------+----+------+------+------+------+
+
+   ROOM_CREATED (Server code 204):
+   0      2    6
+   +------+----+
+   | CODE | ID |
+   +------+----+
+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                  [Page 7]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   ERR_PLAYER_LIMIT (Server code 401):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   ERR_ALREADY_STARTED (Server code 402):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   ERR_ID_CONFLICT (Server code 403):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+3.3.2. Examples
+
+   Room join:
+   C: 201|21|0
+   S: 205|21|Xeno|Teneryan||
+
+   Room creation:
+   C: 202|42
+   S: 204|42
+
+   Room join failure (already 4 players):
+   C: 201|21|0
+   S: 401
+
+   Room join failure (already started):
+   C: 201|21|0
+   S: 402
+
+   Room creation failure:
+   C: 202|42
+   S: 403
+
+3.4. Readiness and room leaving
+
+   A client can set his state to ready. When all clients in a room are
+   ready, server will start the game.
+   Any client can leave a room at any moment by sending a ROOM_LEAVE
+   command.
+
+
+
+Touzet                  Expires May 22, 2017                  [Page 8]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+3.4.1. Format
+
+   ROOM_READY (Client code 103):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   ROOM_NOT_READY (Client code 104):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   ROOM_LEAVE (Client code 203):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   ROOM_READY (Server code 102):
+   0      2     14
+   +------+------+
+   | CODE | NAME |
+   +------+------+
+
+   ROOM_NOT_READY (Server code 103):
+   0      2     14
+   +------+------+
+   | CODE | NAME |
+   +------+------+
+
+   ROOM_LEFT (Server code 104):
+   0      2     14
+   +------+------+
+   | CODE | NAME |
+   +------+------+
+
+3.4.2. Examples:
+
+   Client ready:
+   C: 103
+   S: 102|Xeno
+
+   Client not ready:
+   C: 104
+   S: 103|Xeno
+
+
+Touzet                  Expires May 22, 2017                  [Page 9]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   Client leaving room:
+   C: 203
+   S: 104|Xeno
+
+3.5. Game start
+
+   >> The server MUST send a GAME_START command when all clients in the
+   room are ready. It will assign an ID to each client.
+
+   When this command is issued, the connection will pass to game phase.
+
+3.5.1. Format
+
+   GAME_START (Server code 206):
+   0      2     14     26     38     50
+   +------+------+------+------+------+
+   | CODE | NAME | NAME | NAME | NAME |
+   +------+------+------+------+------+
+
+3.5.2. Example
+
+   S: 206|Xeno|Teneryan||
+
+4. Game phase
+
+   This section will describe data exchange during a R-Type game. In
+   this section, invalid data from the client will be ignored by the
+   server.
+
+4.1. Client actions
+
+   A client can send commands in order to give inputs to the server.
+   These inputs can be used for movement, fire charging and fire
+   release.
+
+   For a movement (PLAYER_MOVE), x and y are both values in range -100
+   to 100.
+
+   The server can provide information about the charge of all players.
+   The charge is a value in range 0 to 100.
+
+
+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 10]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+4.1.1. Format
+
+   PLAYER_MOVE (Client code 204):
+   0      2   3   4
+   +------+---+---+
+   | CODE | X | Y |
+   +------+---+---+
+
+   PLAYER_SHOOT (Client code 205):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   PLAYER_CHARGE (Client code 206):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   PLAYER_CHARGE (Server code 106):
+   0      2        3        4        5        6
+   +------+--------+--------+--------+--------+
+   | CODE | CHARGE | CHARGE | CHARGE | CHARGE |
+   +------+--------+--------+--------+--------+
+
+4.1.2. Examples
+
+   Player moving:
+   C: 204|-20|40
+
+   Player shooting:
+   C: 205
+
+   Player charging:
+   C: 206
+
+   Server information about charge level:
+   S: 106|40|10|0|0
+
+4.2. Objects
+
+   Several objects can be created and updated during the game.
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 11]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+4.2.1. Objects creation
+
+   Objects are created using the OBJECT_CREATE command. This command is
+   sent with coordinates (POS) and a displacement vector (VEC). The name
+   variable gives the sprite abbreviation.
+
+4.2.1.1. Format
+
+   OBJECT_CREATE (Server code 207):
+   0      2    4   8  12  16  20     28
+   +------+----+---+---+---+---+------+
+   | CODE | ID | X | Y | X | Y | NAME |
+   +------+----+---+---+---+---+------+
+     CODE   ID    POS     VEC    NAME
+
+4.2.1.2. Example
+
+   S: 207|42|200|400|0|0|1
+
+4.2.2. Objects update
+
+   Objects already created can receive updates using the OBJECT_UPDATE
+   command. This command is sent with new coordinates.
+
+4.2.2.1. Format
+
+   OBJECT_UPDATE (Server code 208):
+   0      2    4   8  12
+   +------+----+---+---+
+   | CODE | ID | X | Y |
+   +------+----+---+---+
+
+4.2.2.2. Example
+
+   S: 208|42|201|400
+
+4.2.3. Objects destruction
+
+   Object already created can be destroyed using the OBJECT_DESTROY
+   command. A destroyed object will not receive any update and his ID
+   will be free for use in another OBJECT_CREATE.
+
+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 12]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+4.2.3.1. Format
+
+   OBJECT_DESTROY (Server code 209):
+   0      2    4
+   +------+----+
+   | CODE | ID |
+   +------+----+
+
+4.2.3.2. Example
+
+   S: 209|42
+
+4.3. Game information
+
+   The server can send information to the connected clients such as
+   score and remaining lives. The server also sends information when a
+   player dies or leave the game.
+
+   A client can send a PLAYER_LEAVE command in order to leave the game
+   and server.
+
+4.3.1. Format
+
+   PLAYER_SCORE (Server code 105):
+   0      2      10
+   +------+-------+
+   | CODE | SCORE |
+   +------+-------+
+
+   PLAYER_LEAVE (Client code 105):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   PLAYER_LEFT (Server code 107):
+   0      2    3
+   +------+----+
+   | CODE | ID |
+   +------+----+
+
+   PLAYER_LIVES (Server code 108):
+   0      2       3
+   +------+-------+
+   | CODE | LIVES |
+   +------+-------+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 13]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   PLAYER_DEAD (Server code 109):
+   0      2    3
+   +------+----+
+   | CODE | ID |
+   +------+----+
+
+4.3.2. Examples
+
+   Player score:
+   S: 105|250000
+
+   Player leaving:
+   C: 105
+   S: 107|1
+
+   Remaining lives:
+   S: 108|2
+
+   Player died:
+   S: 109|1
+
+4.4. Game over
+
+   >> When the game is over, either by winning or losing, a GAME_OVER
+   command MUST be send to all connected clients in the room.
+
+   When this command is issued, connection will pass to end phase.
+
+   This command will contain a status that can be:
+
+      o  0 - Win
+
+      o  1 - Lose
+
+4.4.1. Format
+
+   GAME_OVER (Server code 110):
+   0      2        3
+   +------+--------+
+   | CODE | STATUS |
+   +------+--------+
+
+4.4.2. Example
+
+   S: 110|0
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 14]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+5. After game phase
+
+   The server will give the score of each player followed by the highest
+   score of the current stage. It will also contain a variable that let
+   the client know if there is a next stage.
+
+   The next value can be:
+
+      o  0 - No next stage
+
+      o  1 - Next stage exists
+
+   Client can then answer either by PLAYER_LEAVE, GAME_NEXT or
+   GAME_MENU.
+   The PLAYER_LEAVE command will close the connection.
+   The GAME_NEXT command will wait for other players to make their
+   choice. If there is no next level, it will act as a GAME_MENU
+   command.
+   The GAME_MENU command will reset the client with a ROOM_LIST command.
+   A client can also ask for the highest score which will be provided
+   with the username used when making it.
+
+5.1. Format
+
+   GAME_SCORE (Server code 210):
+   0      2      10      18      26      34        42     43
+   +------+-------+-------+-------+-------+---------+------+
+   | CODE | SCORE | SCORE | SCORE | SCORE | HIGHEST | NEXT |
+   +------+-------+-------+-------+-------+---------+------+
+
+   GAME_NEXT (Client code 207):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   GAME_MENU (Client code 208):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   GAME_HIGHEST (Client code 106):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+
+Touzet                  Expires May 22, 2017                 [Page 15]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   GAME_HIGHEST (Server code 111):
+   0      2        10     22
+   +------+---------+------+
+   | CODE | HIGHEST | NAME |
+   +------+---------+------+
+
+5.2. Examples
+
+   Player exiting game:
+   S: 210|250000|100000|0|0|420000|1
+   C: 105
+   S: 107|1
+
+   Player asking highest score:
+   C: 106
+   S: 111|420000|Mariachi
+
+   Player going to the next level:
+   S: 210|250000|100000|0|0|420000|1
+   C: 207
+   S: 206|Xeno|Teneryan||
+
+   Player leaving to menu:
+   S: 210|250000|100000|0|0|420000|1
+   C: 208
+   S: 107|1
+   S: 201|64
+   S: 202|1|2|0
+   S: 202|2|1|1
+   S: 203
+
+6. Other commands
+
+   Other commands such as PING - PONG or server errors can be used.
+
+6.1. Format
+
+   PING (Client code 102):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 16]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   PONG (Server code 101):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+   ERR_SERVER_CLOSING (Server code 500):
+   0      2
+   +------+
+   | CODE |
+   +------+
+
+6.2. Examples
+
+   Ping - pong:
+   C: 102
+   S: 101
+
+   Undefined server error:
+   S: 500
+
+7. Security Considerations
+
+   This protocol provided as-is does not include any security. Every
+   data, although none-sensitive, is communicated in plain-text
+   following the codes list given in this RFC.
+
+   The protocol does not include any encryption because data has not
+   been judged sensitive enough to add such a layer.
+
+8. IANA Considerations
+
+   User port number 42142 (which was used for development and test
+   purposes) will be reclaimed by the IANA.
+
+9. References
+
+9.1. Normative References
+
+   [1]  Bradner, S., "Key words for use in RFCs to Indicate Requirement
+         Levels", BCP 14, RFC 2119, March 1997.
+
+   [2]  Crocker, D. and Overell, P.(Editors), "Augmented BNF for Syntax
+         Specifications: ABNF", RFC 2234, Internet Mail Consortium and
+         Demon Internet Ltd., November 1997.
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 17]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   [RFC2119] Bradner, S., "Key words for use in RFCs to Indicate
+             Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2234] Crocker, D. and Overell, P.(Editors), "Augmented BNF for
+             Syntax Specifications: ABNF", RFC 2234, Internet Mail
+             Consortium and Demon Internet Ltd., November 1997.
+
+9.2. Informative References
+
+   [3]  Faber, T., Touch, J. and W. Yue, "The TIME-WAIT state in TCP
+         and Its Effect on Busy Servers", Proc. Infocom 1999 pp. 1573-
+         1583.
+
+   [Fab1999] Faber, T., Touch, J. and W. Yue, "The TIME-WAIT state in
+             TCP and Its Effect on Busy Servers", Proc. Infocom 1999 pp.
+             1573-1583.
+
+10. Acknowledgments
+
+   This document was prepared using 2-Word-v2.0.template.dot.
+
+   Copyright (c) 2016 IETF Trust and the persons identified as authors
+   of the code. All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions
+   are met:
+
+     oRedistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+
+     oRedistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in
+        the documentation and/or other materials provided with the
+        distribution.
+
+     oNeither the name of Internet Society, IETF or IETF Trust, nor the
+        names of specific contributors, may be used to endorse or
+        promote products derived from this software without specific
+        prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+   OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+
+
+Touzet                  Expires May 22, 2017                 [Page 18]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+   THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 19]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+Authors' Addresses
+
+   Maxime Boucher
+   EPITECH Bordeaux
+   85 Rue du Jardin Public
+   33000 Bordeaux
+   France
+
+   Email: maxime1.boucher@epitech.eu
+
+
+   Kevin Rochon
+   EPITECH Bordeaux
+   85 Rue du Jardin Public
+   33000 Bordeaux
+   France
+
+   Email: kevin.rochon@epitech.eu
+
+
+   Théo Touzet
+   EPITECH Bordeaux
+   85 Rue du Jardin Public
+   33000 Bordeaux
+   France
+
+   Email: theo.touzet@epitech.eu
+
+
+   Jessica Van-den-zande
+   EPITECH Bordeaux
+   85 Rue du Jardin Public
+   33000 Bordeaux
+   France
+
+   Email: jessica.van-den-zande@epitech.eu
+
+
+   Axel Vencatareddy
+   EPITECH Bordeaux
+   85 Rue du Jardin Public
+   33000 Bordeaux
+   France
+
+   Email: axel.vencatareddy@epitech.eu
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 20]
+
+Internet-Draft             R-Type protocol               Novembre 2016
+
+
+   Louis Vezia
+   EPITECH Bordeaux
+   85 Rue du Jardin Public
+   33000 Bordeaux
+   France
+
+   Email: louis.vezia@epitech.eu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Touzet                  Expires May 22, 2017                 [Page 21]
+

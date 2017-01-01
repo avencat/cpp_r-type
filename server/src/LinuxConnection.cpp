@@ -13,18 +13,20 @@
 ClientNotFoundException::ClientNotFoundException(const std::string &_ip) : runtime_error("Client not found"), ip(_ip)
 {}
 
-const char *ClientNotFoundException::what() throw()
+const char *ClientNotFoundException::what() const throw()
 {
-  ss.str("");
-  ss << std::runtime_error::what() << ": ip " << ip;
-  return ss.str().c_str();
+  return ((std::string(std::runtime_error::what()) + ": ip - " + ip).c_str());
 }
 
-std::string &ClientNotFoundException::getIp()
+const std::string &ClientNotFoundException::getIp() const
 {
-  return ip;
+    return ip;
 }
 
+void    ClientNotFoundException::setIp(const std::string &_ip)
+{
+    ip = _ip;
+}
 
 Network::Network() {}
 
@@ -98,7 +100,7 @@ bool					Network::checkClientState(const struct sockaddr_in &client)
 	it->addMsgInQueue(msgReceived);
       return false;
     }
-  throw new ClientNotFoundException(inet_ntoa(client.sin_addr));
+  throw ClientNotFoundException(inet_ntoa(client.sin_addr));
 }
 
 bool					Network::runServer(bool stateServer, 
@@ -130,9 +132,10 @@ bool					Network::runServer(bool stateServer,
 	}
       try
 	{
-	  if (checkClientState(clientAddr) == true)
-	    analyzeMsg(clientAddr);
-	}
+        if (checkClientState(clientAddr) == true) {
+          analyzeMsg(clientAddr);
+      }
+    }
       catch (ClientNotFoundException &e)
 	{
 	  std::cerr << e.what() << std::endl;
