@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 00:59:07 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 21:57:41 2016 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 10:39:09 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include "AClient.hpp"
@@ -20,8 +20,6 @@ AClient::AClient(const AClient &client)
   this->clientAddr = client.clientAddr;
   this->state = NEW;
   this->isInRoom = false;
-  this->synState = false;
-  this->ackState = false;
   this->ack = 0;
   this->syn = 0;
 }
@@ -76,26 +74,6 @@ void			AClient::setAck(int ack)
 int			AClient::getAck(void) const
 {
   return ack;
-}
-
-void			AClient::setSynState(bool state)
-{
-  this->synState = state;
-}
-
-bool			AClient::getSynState(void) const
-{
-  return synState;
-}
-
-void			AClient::setAckState(bool state)
-{
-  this->ackState = state;
-}
-
-bool			AClient::getAckState(void) const
-{
-  return ackState;
 }
 
 void			AClient::setState(const AClient::State &state)

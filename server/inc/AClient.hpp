@@ -5,11 +5,11 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Thu Dec 15 00:59:15 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 21:58:36 2016 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 10:40:11 2017 Jessica VAN-DEN-ZANDE
 //
 
-#ifndef ASOCKET_HPP__
-# define ASOCKET_HPP__
+#ifndef ACLIENT_HPP__
+# define ACLIENT_HPP__
 
 # include <iostream>
 # include <unistd.h>
@@ -39,8 +39,6 @@ private:
   State				state;
   int				syn;
   int				ack;
-  bool				synState;
-  bool				ackState;
 public:
   AClient();
   ~AClient();
@@ -55,10 +53,6 @@ public:
   int  			getSyn(void) const;
   void 			setAck(int ack);
   int  			getAck(void) const;
-  void 			setSynState(bool state);
-  bool 			getSynState(void) const;
-  void 			setAckState(bool state);
-  bool 			getAckState(void) const;
   void			setState(const State &state);
   const State  		&getState() const;
   void			setclientAddr(struct sockaddr_in &clientAddr);

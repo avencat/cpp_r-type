@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 17:03:58 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 22:04:47 2016 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 11:09:56 2017 Jessica VAN-DEN-ZANDE
 //
 
 #ifndef LINUXCONNECTION_HPP__
@@ -48,6 +48,8 @@ public:
   void				analyzeMsg(const struct sockaddr_in &clientAddr);
   void				checkSyn(AClient &client);
   void				checkAck(AClient &client);
+  void				checkUsername(AClient &client);
+  void				checkJoinRoom(AClient &client);
   void				doPong(AClient &client);
 //bool				secureConnection(Socket &client);
 };

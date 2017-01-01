@@ -5,7 +5,7 @@
 // Login   <van-de_j@epitech.net>
 // 
 // Started on  Wed Dec 14 15:57:21 2016 Jessica VAN-DEN-ZANDE
-// Last update Sat Dec 31 22:04:39 2016 Jessica VAN-DEN-ZANDE
+// Last update Sun Jan  1 11:23:36 2017 Jessica VAN-DEN-ZANDE
 //
 
 #include "LinuxConnection.hpp"
@@ -79,7 +79,7 @@ bool					Network::sendMsg(const std::string &msgToSend,
     std::cout << "Msg[" << i << "]: " << static_cast<int>(static_cast<unsigned char>(msgToSend[i])) << std::endl;
 
   rv = sendto(this->servSocket, msgToSend.c_str(), msgToSend.length(), 0,
-	 (struct sockaddr *)&clientAddr, clientAddrSize);
+	      (struct sockaddr *)&clientAddr, clientAddrSize);
   if (rv == -1)
     {
       std::cerr << "sendMsg() failed" << std::endl;
@@ -153,11 +153,8 @@ void					Network::checkSyn(AClient &client)
 
   if (static_cast<unsigned long>(rv) != size)
     {
-      code.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrConnectionFailure);
-      ss.clear();
-      ss.str("");
-      ss.write(reinterpret_cast<char*>(&(code.code)), sizeof(code.code));
-      sendMsg(ss.str(), client.getclientAddr());
+      sendCode(RtypeProtocol::serverCodes::ErrConnectionFailure, client);
+      deleteClient(client);
       return;
     }
   ss.clear();
@@ -195,11 +192,8 @@ void					Network::checkAck(AClient &client)
 
   if (static_cast<unsigned long>(rv) != size)
     {
-      code.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrConnectionFailure);
-      ss.clear();
-      ss.str("");
-      ss.write(reinterpret_cast<char*>(&(code.code)), sizeof(code.code));
-      sendMsg(ss.str(), client.getclientAddr());
+      sendCode(RtypeProtocol::serverCodes::ErrConnectionFailure, client);
+      deleteClient(client);
       return;
     }
   ss.clear();
@@ -219,11 +213,7 @@ void					Network::checkAck(AClient &client)
   client.setAck(syn_ack.ack);
   client.setState(AClient::State::ACK);
   std::cout << "Send validation to client.\n" << std::endl;
-  code.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Accepted);
-  ss.clear();
-  ss.str("");
-  ss.write(reinterpret_cast<char*>(&(code.code)), sizeof(code.code));
-  sendMsg(ss.str(), client.getclientAddr());
+  sendCode(RtypeProtocol::serverCodes::Accepted, client);
   std::cout << "Connection securised.\n" << std::endl;
 }
 
@@ -234,9 +224,59 @@ void					Network::doPong(AClient &client)
 
   ss.clear();
   ss.str("");
-  pong.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::Pong);
-  ss.write(reinterpret_cast<char*>(&(pong.code)), sizeof(pong.code));
-  sendMsg(ss.str().c_str(), client.getclientAddr());
+  sendCode(RtypeProtocol::serverCodes::Pong, client);
+}
+
+void					Network::checkUsername(AClient &client)
+{
+  std::stringstream			ss;
+  RtypeProtocol::Data::Code		code;
+  RtypeProtocol::Data::Username		username;
+  unsigned long				size = sizeof(username.code) + sizeof(username.username);
+  std::string	       			name;
+
+  if (static_cast<unsigned long>(rv) != size)
+    {
+      sendCode(RtypeProtocol::serverCodes::ErrInvalidName, client);
+      deleteClient(client);
+      return;
+    }
+  ss.clear();
+  ss.str("");
+  ss.write(this->msgReceived, size);
+  ss.read(reinterpret_cast<char*>(&(username.code)), sizeof(username.code));
+  ss.read(reinterpret_cast<char*>(&(username.username)), sizeof(username.username));
+  name = username.username;
+  if (name.length() < 2)
+    {
+      sendCode(RtypeProtocol::serverCodes::ErrInvalidName, client);
+      deleteClient(client);
+      return;
+    }
+  client.setState(AClient::State::USERNAME);
+  //function return tickrate + list room (one by one) + code end list
+  sendCode(RtypeProtocol::serverCodes::Accepted, client);
+}
+
+void					Network::checkJoinRoom(AClient &client)
+{
+  std::stringstream			ss;
+  RtypeProtocol::Data::Code		code;
+  RtypeProtocol::Data::RoomJoin		roomJoin;
+  unsigned long				size = sizeof(roomJoin.code) + sizeof(roomJoin.id) + sizeof(roomJoin.mode);
+
+  if (static_cast<unsigned long>(rv) != size)
+    {
+      sendCode(RtypeProtocol::serverCodes::ErrIDConflict, client);
+      deleteClient(client);
+      return;
+    }
+  ss.clear();
+  ss.str("");
+  ss.write(this->msgReceived, size);
+  ss.read(reinterpret_cast<char*>(&(roomJoin.code)), sizeof(roomJoin.code));
+  ss.read(reinterpret_cast<char*>(&(roomJoin.id)), sizeof(roomJoin.id));  
+  ss.read(reinterpret_cast<char*>(&(roomJoin.mode)), sizeof(roomJoin.mode));
 }
 
 void					Network::sendCode(const RtypeProtocol::Data::Code &code, AClient &client)
@@ -294,21 +334,14 @@ void					Network::analyzeMsg(const struct sockaddr_in &client)
 	  deleteClient(*it);
 	}
       else
-	it->setState(AClient::State::USERNAME);
-	//checkUsername(*it);
+	checkUsername(*it);
       break;
     case AClient::State::USERNAME:
       {
 	switch(code)
 	  {
 	  case RtypeProtocol::clientCodes::Ping:
-	    {
-	      std::cout << "Ping" << std::endl;
-	      doPong(*it);
-	    }
-	    break;
-	  case RtypeProtocol::clientCodes::Username:
-	    std::cout << "Username" << std::endl;
+	    doPong(*it);
 	    break;
 	  case RtypeProtocol::clientCodes::RoomJoin:
 	    std::cout << "RoomJoin" << std::endl;
@@ -320,10 +353,8 @@ void					Network::analyzeMsg(const struct sockaddr_in &client)
 	    {
 	      ss.clear();
 	      ss.str("");
-	      code_send.code = RtypeProtocol::convertShort(RtypeProtocol::serverCodes::ErrNotFound);
-	      ss.write(reinterpret_cast<char*>(&(code_send.code)), sizeof(code_send.code));
-	      std::cout << code << std::endl;
-	      sendMsg(ss.str(), it->getclientAddr());
+	      std::cout << "Code [: " << code << "] not found" << std::endl;
+	      sendCode(RtypeProtocol::serverCodes::ErrNotFound, *it);
 	    }
 	    
 	  }
