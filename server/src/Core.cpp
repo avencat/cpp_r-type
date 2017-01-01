@@ -5,7 +5,7 @@
 // Login   <bouche_2@epitech.net>
 // 
 // Started on  Thu Dec 29 13:55:14 2016 Maxime BOUCHER
-// Last update Sun Jan  1 23:32:53 2017 Maxime BOUCHER
+// Last update Sun Jan  1 23:41:07 2017 Maxime BOUCHER
 //
 
 #include "Core.hpp"
@@ -80,7 +80,6 @@ int		Core::activateRoom(const int id)
   waiting_rooms.front()->signal();
   waiting_rooms.front()->setActive(true);
   active_rooms.splice(active_rooms.end(),waiting_rooms, waiting_rooms.begin());
-  std::cout << "room activated" << std::endl;
   return id;
 }
 
