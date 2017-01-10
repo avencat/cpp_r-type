@@ -1,6 +1,8 @@
 #ifndef CORE_HPP_
 # define CORE_HPP_
 
+# include <SFML/Audio.hpp>
+# include <SFML/Audio/Music.hpp>
 # include "Graphique.hpp"
 # include "Socket.hpp"
 
@@ -17,6 +19,7 @@ public:
 private:
 	Graphique	graphique;
 	Socket		socket;
+	sf::Music	music;
 };
 
 #endif /* !CORE_HPP_ */

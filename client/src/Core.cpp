@@ -3,6 +3,10 @@
 Core::Core(const int &_x, const int &_y, const std::string &_title) : graphique(socket, _x, _y, _title)
 {
 	graphique.initWindow(_x, _y, _title);
+	music.openFromFile("./assets/Music/Muse-Psycho.wav");
+	music.setLoop(true);
+	music.play();
+	
 }
 
 Core::~Core()
